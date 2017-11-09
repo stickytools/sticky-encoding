@@ -65,7 +65,7 @@ internal class UnkeyedStorageContainer: StorageContainer {
         }
     }
 
-    fileprivate var storage: [Element]
+    private var storage: [Element]
 }
 
 ///

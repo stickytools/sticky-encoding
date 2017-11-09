@@ -21,7 +21,7 @@
 import Swift
 import StickyUtilities
 
-fileprivate enum Error: Swift.Error {
+private enum Error: Swift.Error {
     case valueCorrupt(Any.Type, String)
 }
 
@@ -40,7 +40,7 @@ fileprivate enum Error: Swift.Error {
 ///
 /// ```
 ///
-fileprivate enum Raw {
+private enum Raw {
 
     struct ContainerType: Equatable {
         static let null    = ContainerType(0xa)

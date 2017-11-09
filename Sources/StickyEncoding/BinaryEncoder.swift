@@ -55,7 +55,7 @@ open class BinaryEncoder {
 ///
 /// Main Encoder class
 ///
-fileprivate class _BinaryEncoder : Encoder {
+private class _BinaryEncoder : Encoder {
 
     // MARK: - Initialization
 
@@ -134,7 +134,7 @@ fileprivate class _BinaryEncoder : Encoder {
     /// root storage container which can be a `SingleValueContainer`,
     /// a `UnkeyedStorageContainer`, or a `KeyStorageContainer`.
     ///
-    fileprivate var rootStorage: StorageContainerReference
+    var rootStorage: StorageContainerReference
 }
 
 // MARK: - Containers
@@ -149,7 +149,7 @@ extension _BinaryEncoder {
     ///
     ///  Encoding container which encodes values into an keyed (Dictionary type) container.
     ///
-    fileprivate struct _BinaryKeyedEncodingContainer<K : CodingKey>: KeyedEncodingContainerProtocol  {
+    private struct _BinaryKeyedEncodingContainer<K : CodingKey>: KeyedEncodingContainerProtocol  {
 
         // MARK: - Initialization
 
@@ -161,7 +161,7 @@ extension _BinaryEncoder {
         ///     - codingPath:   The path of coding keys taken to get to this point in encoding.
         ///     - rootStorage:  The rootStorage container for storing the results from this containers encoding.
         ///
-        fileprivate init(codingPath: [CodingKey], rootStorage: KeyedStorageContainer) {
+        init(codingPath: [CodingKey], rootStorage: KeyedStorageContainer) {
             self.rootStorage = rootStorage
             self.codingPath = codingPath
         }
@@ -233,7 +233,7 @@ extension _BinaryEncoder {
     ///
     ///  Encoding container which encodes values into an unkeyed (Array type) container.
     ///
-    fileprivate struct _BinaryUnkeyedEncodingContainer: UnkeyedEncodingContainer {
+    private struct _BinaryUnkeyedEncodingContainer: UnkeyedEncodingContainer {
 
         // MARK: - Initialization
 
@@ -245,7 +245,7 @@ extension _BinaryEncoder {
         ///     - codingPath:   The path of coding keys taken to get to this point in encoding.
         ///     - rootStorage:  The rootStorage container for storing the results from this containers encoding.
         ///
-        fileprivate init(codingPath: [CodingKey], rootStorage: UnkeyedStorageContainer) {
+        init(codingPath: [CodingKey], rootStorage: UnkeyedStorageContainer) {
             self.rootStorage = rootStorage
             self.codingPath = codingPath
         }
@@ -314,7 +314,7 @@ extension _BinaryEncoder {
     ///
     ///  Encoding container which encodes single primitive type values to storage.
     ///
-    fileprivate struct _BinarySingleValueEncodingContainer: SingleValueEncodingContainer {
+    private struct _BinarySingleValueEncodingContainer: SingleValueEncodingContainer {
 
         // MARK: - Initialization
 
@@ -326,7 +326,7 @@ extension _BinaryEncoder {
         ///     - codingPath:   The path of coding keys taken to get to this point in encoding.
         ///     - rootStorage:  The `StorageContainerReference` for storing the results from this containers encoding.
         ///
-        fileprivate init(codingPath: [CodingKey], rootStorage: StorageContainerReference) {
+        init(codingPath: [CodingKey], rootStorage: StorageContainerReference) {
             self.rootStorage = rootStorage
             self.codingPath = codingPath
         }
@@ -380,6 +380,5 @@ extension _BinaryEncoder {
         /// will be stored at its current location.
         ///
         private var rootStorage: StorageContainerReference
-
     }
 }

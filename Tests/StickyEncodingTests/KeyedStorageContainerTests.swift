@@ -24,7 +24,7 @@ import XCTest
 ///
 /// Class used for testing functionality in this test file.
 ///
-fileprivate class ValueType: StorageContainer, Equatable, CustomStringConvertible, CustomDebugStringConvertible {
+private class ValueType: StorageContainer, Equatable, CustomStringConvertible, CustomDebugStringConvertible {
     let value: Int
     init(_ value: Int) { self.value = value }
 

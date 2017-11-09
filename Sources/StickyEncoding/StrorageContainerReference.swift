@@ -38,7 +38,7 @@ internal class PassthroughReference: StorageContainerReference {
         get { return self.wrapped }
         set { if let newValue = newValue { wrapped = newValue }  }
     }
-    fileprivate var wrapped: StorageContainer?
+    private var wrapped: StorageContainer?
 }
 
 ///

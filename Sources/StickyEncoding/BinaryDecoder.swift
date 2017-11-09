@@ -49,7 +49,7 @@ open class BinaryDecoder {
 ///
 /// Private class implementing the `Decoder` protocol
 ///
-fileprivate class _BinaryDecoder : Decoder {
+private class _BinaryDecoder : Decoder {
 
     // MARK: - Initialization
 
@@ -61,7 +61,7 @@ fileprivate class _BinaryDecoder : Decoder {
     ///     - codingPath:   The path of coding keys taken to get to this point in decoding.
     ///     - rootStorage:  The rootStorage container used for decoding values.
     ///
-    fileprivate init(codingPath: [CodingKey], rootStorage: StorageContainer) {
+    init(codingPath: [CodingKey], rootStorage: StorageContainer) {
         self.rootStorage = rootStorage
         self.codingPath = codingPath
         self.userInfo   = [:]
@@ -117,7 +117,7 @@ fileprivate class _BinaryDecoder : Decoder {
     /// root storage container which can be a `SingleValueContainer`,
     /// a `UnkeyedStorageContainer`, or a `KeyStorageContainer`.
     ///
-    fileprivate var rootStorage: StorageContainer
+    private var rootStorage: StorageContainer
 }
 
 // MARK: - Containers
@@ -132,7 +132,7 @@ extension _BinaryDecoder {
     ///
     ///  Decoding container which decodes values from a keyed (Dictionary type) storage container.
     ///
-    fileprivate struct _BinaryKeyedDecodingContainer<K : CodingKey> : KeyedDecodingContainerProtocol {
+    private struct _BinaryKeyedDecodingContainer<K : CodingKey> : KeyedDecodingContainerProtocol {
 
         ///
         /// Init with the current codingPath and a `KeyedStorageContainer` which will be filled with
@@ -315,7 +315,7 @@ extension _BinaryDecoder {
     ///
     ///  Decoding container which decodes values from an unkeyed (Array type) storage container.
     ///
-    fileprivate struct _BinaryUnkeyedDecodingContainer : UnkeyedDecodingContainer {
+    private struct _BinaryUnkeyedDecodingContainer : UnkeyedDecodingContainer {
 
         ///
         /// Init with the current codingPath and a `UnkeyedStorageContainer` which will be filled with
@@ -491,7 +491,7 @@ extension _BinaryDecoder {
     ///
     ///  Decoding container which decodes a single primitive type.
     ///
-    fileprivate struct _BinarySingleValueDecodingContainer: SingleValueDecodingContainer {
+    private struct _BinarySingleValueDecodingContainer: SingleValueDecodingContainer {
 
         ///
         /// Init with the current codingPath and a `StorageContainer` containing

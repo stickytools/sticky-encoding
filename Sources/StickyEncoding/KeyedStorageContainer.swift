@@ -63,7 +63,7 @@ internal class KeyedStorageContainer: StorageContainer {
         set { self.storage[key] = newValue }
     }
 
-    fileprivate var storage: [Key: Value]
+    private var storage: [Key: Value]
 }
 
 ///

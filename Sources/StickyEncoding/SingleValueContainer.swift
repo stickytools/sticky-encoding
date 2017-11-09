@@ -173,7 +173,7 @@ internal class SingleValueContainer {
     ///
     /// Internal storage of the binary representation of the encoded value.
     ///
-    fileprivate var buffer: UnsafeRawBufferPointer
+    private var buffer: UnsafeRawBufferPointer
 }
 
 ///
