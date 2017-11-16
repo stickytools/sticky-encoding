@@ -358,7 +358,7 @@ extension _BinaryDecoder {
                 else { throw DecodingError.valueNotFoundError(at: self.codingPath, expected: SingleValueDecodingContainer.self, isAtEnd: true) }
 
             if rootStorage[currentIndex] is NullStorageContainer {
-                currentIndex = currentIndex + 1
+                currentIndex += 1
                 return true
             }
             return false
@@ -437,7 +437,7 @@ extension _BinaryDecoder {
             guard !(rootStorage[currentIndex] is NullStorageContainer)
                 else { throw DecodingError.valueNotFoundError(at: self.codingPath, expected: Decoder.self) }
 
-            defer { currentIndex = currentIndex + 1 }
+            defer { currentIndex += 1 }
 
             return _BinaryDecoder(codingPath: self.codingPath, rootStorage: rootStorage[currentIndex])
         }
@@ -478,7 +478,7 @@ extension _BinaryDecoder {
             guard let storage = rootStorage[currentIndex] as? T
                 else { throw DecodingError.typeMismatchError(at: self.codingPath, expected: errorType, actual: rootStorage[currentIndex]) }
 
-            currentIndex = currentIndex + 1
+            currentIndex += 1
 
             return storage
         }

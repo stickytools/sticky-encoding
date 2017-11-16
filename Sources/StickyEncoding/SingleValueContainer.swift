@@ -114,7 +114,7 @@ internal class SingleValueContainer {
         var offset = Offset.value
         for codeUnit in utf8 {
             buffer.storeBytes(of: codeUnit, toByteOffset: offset, as: Unicode.UTF8.CodeUnit.self)
-            offset = offset + MemoryLayout<Unicode.UTF8.CodeUnit>.stride
+            offset += MemoryLayout<Unicode.UTF8.CodeUnit>.stride
         }
         self.buffer = UnsafeRawBufferPointer(buffer)
     }

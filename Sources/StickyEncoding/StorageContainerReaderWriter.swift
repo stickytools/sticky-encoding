@@ -288,11 +288,11 @@ internal class StorageContainerWriter {
         /// Write -> Data
         switch storageContainer {
 
-        case let container as KeyedStorageContainer:   bytes = bytes + byteCount(keyed:   container); break
-        case let container as UnkeyedStorageContainer: bytes = bytes + byteCount(unkeyed: container); break
-        case let container as SingleValueContainer:    bytes = bytes + byteCount(value:   container); break
+        case let container as KeyedStorageContainer:   bytes += byteCount(keyed:   container); break
+        case let container as UnkeyedStorageContainer: bytes += byteCount(unkeyed: container); break
+        case let container as SingleValueContainer:    bytes += byteCount(value:   container); break
         case is NullStorageContainer: fallthrough
-        default: bytes = bytes + byteCount(null: NullStorageContainer.null); break
+        default: bytes += byteCount(null: NullStorageContainer.null); break
         }
         return bytes
     }
@@ -420,7 +420,7 @@ internal class StorageContainerWriter {
         var offset = align(offset: MemoryLayout<Int32>.stride, to: MemoryLayout<Unicode.UTF8.CodeUnit>.self)
         for codeUnit in utf8 {
             buffer.storeBytes(of: codeUnit, toByteOffset: offset, as: Unicode.UTF8.CodeUnit.self)
-            offset = offset + MemoryLayout<Unicode.UTF8.CodeUnit>.stride
+            offset += MemoryLayout<Unicode.UTF8.CodeUnit>.stride
         }
         return offset
     }
