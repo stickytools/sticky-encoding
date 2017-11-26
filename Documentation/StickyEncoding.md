@@ -1,0 +1,2 @@
+#  Sticky Encoding
+

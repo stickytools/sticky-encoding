@@ -21,13 +21,16 @@
 
 ---
 
-**Sticky**, a lightweight, high-performance persistent key-value store.
+**Sticky**, a collection of high performance components for persistence.  It consists of multiple modules that can either be used as a whole or individually to make up larger systems.
 
 ## Documentation
 
-To get started using Sticky quickly, see the [Quick Start Guide](Documentation/Quick&#32;Start&#32;Guide.md).
+For specific documentation on each "Sticky" component see the links below:
 
-For extensive documentation on using Sticky and more, see [Documentation](Documentation).
+- [**StickyCollections**](Documentation/StickyCollections.md) - Persistent collection classes backed by "StickyDB".
+- [**StickyEncoding**](Documentation/StickyEncoding.md) - A high performance binary encoder for `Encodable` types.
+- [**StickyDB**](Documentation/StickyDB.md) - A high performance lightweight embedable transactional database.
+- [**StickyLocking**](Documentation/StickyLocking.md) - A lighweight hierarchical lock manager.
 
 ## Sources and Binaries
 
@@ -44,15 +47,11 @@ You can find the latest sources and binaries on [github](https://github.com/tony
    - Push to the branch: `git push origin my-new-feature`
    - Submit a pull request :-)
 
-## Installation (CocoaPods)
+## Installation 
 
-Sticky is available through [CocoaPods](http://cocoapods.org). Currently Swift is the default so to install it, simply add the following line to your Podfile:
+**Sticky** supports dependency management via Swift Package Manager on All Apple OS variants as well as Linux.
 
-```ruby
-pod "Sticky"
-```
-
-See the ["Using CocoaPods"](https://guides.cocoapods.org/using/using-cocoapods.html) guide for more information.
+Please see [Swift Package Manager](https://swift.org/package-manager/#conceptual-overview) for further information.
 
 ## Minimum Requirements
 
