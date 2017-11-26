@@ -35,7 +35,7 @@ private enum Error: Swift.Error {
 ///
 /// ```
 ///     |--------------------|---------/ /--------|--------------------|---------/ /--------|
-///     |   Contianer Header |    Container Data  |   Container Header |    Container Data  |  ...
+///     |   Container Header |    Container Data  |   Container Header |    Container Data  |  ...
 ///     |--------------------|--------/ /---------|--------------------|--------/ /---------|
 ///
 /// ```
@@ -233,6 +233,8 @@ internal class StorageContainerReader {
 /// Writes StorageContainers to binary storage.
 ///
 internal class StorageContainerWriter {
+    
+    // MARK: - Root level methods
 
     @discardableResult
     @inline(__always)
@@ -246,8 +248,6 @@ internal class StorageContainerWriter {
     }
 
     // MARK: - Private methods
-
-    // MARK: - Root level methods
 
     ///
     /// ```

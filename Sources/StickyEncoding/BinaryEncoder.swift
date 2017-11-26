@@ -259,7 +259,7 @@ extension _BinaryEncoder {
         mutating func encodeNil() throws { self.rootStorage.push(NullStorageContainer.null) }
 
         ///
-        /// All encode types accpet encodeNil can throw the following.
+        /// All encode types accept encodeNil can throw the following.
         //
         /// - throws: `EncodingError.invalidValue` if the given value is invalid in the current context for this format.
         ///
@@ -338,7 +338,7 @@ extension _BinaryEncoder {
         mutating func encodeNil() throws { self.rootStorage.value = NullStorageContainer.null }
         
         ///
-        /// All encode types accpet encodeNil can throw the following.
+        /// All encode types accept encodeNil can throw the following.
         //
         /// - throws: `EncodingError.invalidValue` if the given value is invalid in the current context for this format.
         ///

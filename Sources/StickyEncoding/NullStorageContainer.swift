@@ -22,7 +22,7 @@ import Swift
 
 ///
 /// A class representing a Null or empty storage container.  Used as a placeholder
-/// when you need to assign a value to a variable but don't have an actaul value yet.
+/// when you need to assign a value to a variable but don't have an actual value yet.
 ///
 internal class NullStorageContainer: StorageContainer {
     private init() {}

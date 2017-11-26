@@ -41,7 +41,7 @@ internal class SingleValueContainer {
     ///
     enum Error: Swift.Error {
         ///
-        /// A typeMismatch occures when a value is stored as one type and retrieved as a different type.
+        /// A typeMismatch occurs when a value is stored as one type and retrieved as a different type.
         ///
         case typeMismatch(Any.Type, EncodedType)
         ///

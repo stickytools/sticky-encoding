@@ -25,7 +25,7 @@ import Swift
 ///
 public class EncodedData {
 
-    // MARK: - Readiing encoded data
+    // MARK: - Reading encoded data
 
     ///
     /// Initializes `self` with a null value.
