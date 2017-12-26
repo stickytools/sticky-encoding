@@ -221,10 +221,6 @@ extension _BinaryDecoder {
         func decode<T: Decodable >(_ type: T.Type, forKey key: K) throws -> T {
             let storage = try storageContainer(StorageContainer.self, forKey: key, errorType: type)
 
-            /// We are decoding an object in this decode method so if we encounter a SingleValueContainer, we have an incorrect container type
-            if let singleValueContainer = storage as? SingleValueContainer {
-                throw DecodingError.typeMismatchError(at: self.codingPath + key, expected: type, actual: singleValueContainer.type)
-            }
             return try T.init(from: _BinaryDecoder(codingPath: self.codingPath + key, rootStorage: storage))
         }
 
@@ -399,10 +395,6 @@ extension _BinaryDecoder {
         mutating func decode<T: Decodable>(_ type: T.Type)   throws -> T {
             let storage = try self.nextStorageContainer(as: StorageContainer.self, errorType: type)
 
-            /// We are decoding an object in this decode method so if we encounter a SingleValueContainer, we have an incorrect container type
-            if let singleValueContainer = storage as? SingleValueContainer {
-                throw DecodingError.typeMismatchError(at: self.codingPath, expected: type, actual: singleValueContainer.type)
-            }
             return try T.init(from: _BinaryDecoder(codingPath: self.codingPath, rootStorage: storage))
         }
 
@@ -556,10 +548,13 @@ extension _BinaryDecoder {
             guard !(rootStorage is NullStorageContainer)
                 else { throw DecodingError.valueNotFoundError(at: self.codingPath, expected: type) }
 
-            /// We are decoding an object in this decode method so if we encounter a SingleValueContainer, we have an incorrect container type
-            if let singleValueContainer = rootStorage as? SingleValueContainer {
-                throw DecodingError.typeMismatchError(at: self.codingPath, expected: type, actual: singleValueContainer.type)
-            }
+            ///
+            /// Object values are a special case here.  We can't decode them in a primitive Single value container
+            /// as they are not meant to support that type.
+            ///
+            /// Instead we create a new _BinaryDecoder and pass the storage reference up to that decoder
+            /// which will then decode the value.
+            ///
             return try T.init(from: _BinaryDecoder(codingPath: self.codingPath, rootStorage: rootStorage))
         }
 

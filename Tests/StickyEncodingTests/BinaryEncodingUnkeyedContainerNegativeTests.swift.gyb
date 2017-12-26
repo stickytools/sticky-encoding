@@ -192,7 +192,11 @@ class BinaryEncodingUnkeyedContainerNegativeTests: XCTestCase {
                 var container = encoder.unkeyedContainer(); try container.encode(self.value)
             }
         }
+% if ExpectedTypeName == "CodableType":
+        _testDecodeTypeMismatch(input: InputType(value: ${InputValue}), expected: (ExpectedType.self, ${ExpectedTypeName}.self, [], "Expected to decode KeyedDecodingContainer<CodingKeys> but found SingleValueDecodingContainer instead."))
+% else:
         _testDecodeTypeMismatch(input: InputType(value: ${InputValue}), expected: (ExpectedType.self, ${ExpectedTypeName}.self, [], "Expected to decode ${ExpectedTypeName} but found ${InputTypeName} instead."))
+% end
     }
 
     ///

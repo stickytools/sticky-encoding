@@ -154,8 +154,12 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
             init(value: ${ExpectedTypeName}) { self.value = value }
             enum CodingKeys: CodingKey { case value }
         }
+% if ExpectedTypeName == "CodableType":
+        _testDecodeTypeMismatch(input: InputType(value: ${InputValue}), expected: (ExpectedType.self, KeyedDecodingContainer<CodableType.CodingKeys>.self, [ExpectedType.CodingKeys.value], "Expected to decode KeyedDecodingContainer<CodingKeys> but found SingleValueDecodingContainer instead."))
+% else:
         _testDecodeTypeMismatch(input: InputType(value: ${InputValue}), expected: (ExpectedType.self, ${ExpectedTypeName}.self, [ExpectedType.CodingKeys.value], "Expected to decode ${ExpectedTypeName} but found ${InputTypeName} instead."))
-    }
+% end
+   }
 
     ///
     /// Test that a `DecodingError.valueNotFound` is thrown when a user tries to decode a `${ExpectedTypeName}` value that is nil.

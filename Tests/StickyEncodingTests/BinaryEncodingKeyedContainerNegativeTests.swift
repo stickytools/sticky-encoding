@@ -135,7 +135,7 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
             enum CodingKeys: CodingKey { case value }
         }
         _testDecodeTypeMismatch(input: InputType(value: 64), expected: (ExpectedType.self, Bool.self, [ExpectedType.CodingKeys.value], "Expected to decode Bool but found Int instead."))
-    }
+   }
 
     ///
     /// Test that a `DecodingError.valueNotFound` is thrown when a user tries to decode a `Bool` value that is nil.
@@ -241,7 +241,7 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
             enum CodingKeys: CodingKey { case value }
         }
         _testDecodeTypeMismatch(input: InputType(value: true), expected: (ExpectedType.self, Int.self, [ExpectedType.CodingKeys.value], "Expected to decode Int but found Bool instead."))
-    }
+   }
 
     ///
     /// Test that a `DecodingError.valueNotFound` is thrown when a user tries to decode a `Int` value that is nil.
@@ -347,7 +347,7 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
             enum CodingKeys: CodingKey { case value }
         }
         _testDecodeTypeMismatch(input: InputType(value: true), expected: (ExpectedType.self, Int8.self, [ExpectedType.CodingKeys.value], "Expected to decode Int8 but found Bool instead."))
-    }
+   }
 
     ///
     /// Test that a `DecodingError.valueNotFound` is thrown when a user tries to decode a `Int8` value that is nil.
@@ -453,7 +453,7 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
             enum CodingKeys: CodingKey { case value }
         }
         _testDecodeTypeMismatch(input: InputType(value: true), expected: (ExpectedType.self, Int16.self, [ExpectedType.CodingKeys.value], "Expected to decode Int16 but found Bool instead."))
-    }
+   }
 
     ///
     /// Test that a `DecodingError.valueNotFound` is thrown when a user tries to decode a `Int16` value that is nil.
@@ -559,7 +559,7 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
             enum CodingKeys: CodingKey { case value }
         }
         _testDecodeTypeMismatch(input: InputType(value: true), expected: (ExpectedType.self, Int32.self, [ExpectedType.CodingKeys.value], "Expected to decode Int32 but found Bool instead."))
-    }
+   }
 
     ///
     /// Test that a `DecodingError.valueNotFound` is thrown when a user tries to decode a `Int32` value that is nil.
@@ -665,7 +665,7 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
             enum CodingKeys: CodingKey { case value }
         }
         _testDecodeTypeMismatch(input: InputType(value: true), expected: (ExpectedType.self, Int64.self, [ExpectedType.CodingKeys.value], "Expected to decode Int64 but found Bool instead."))
-    }
+   }
 
     ///
     /// Test that a `DecodingError.valueNotFound` is thrown when a user tries to decode a `Int64` value that is nil.
@@ -771,7 +771,7 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
             enum CodingKeys: CodingKey { case value }
         }
         _testDecodeTypeMismatch(input: InputType(value: true), expected: (ExpectedType.self, UInt.self, [ExpectedType.CodingKeys.value], "Expected to decode UInt but found Bool instead."))
-    }
+   }
 
     ///
     /// Test that a `DecodingError.valueNotFound` is thrown when a user tries to decode a `UInt` value that is nil.
@@ -877,7 +877,7 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
             enum CodingKeys: CodingKey { case value }
         }
         _testDecodeTypeMismatch(input: InputType(value: true), expected: (ExpectedType.self, UInt8.self, [ExpectedType.CodingKeys.value], "Expected to decode UInt8 but found Bool instead."))
-    }
+   }
 
     ///
     /// Test that a `DecodingError.valueNotFound` is thrown when a user tries to decode a `UInt8` value that is nil.
@@ -983,7 +983,7 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
             enum CodingKeys: CodingKey { case value }
         }
         _testDecodeTypeMismatch(input: InputType(value: true), expected: (ExpectedType.self, UInt16.self, [ExpectedType.CodingKeys.value], "Expected to decode UInt16 but found Bool instead."))
-    }
+   }
 
     ///
     /// Test that a `DecodingError.valueNotFound` is thrown when a user tries to decode a `UInt16` value that is nil.
@@ -1089,7 +1089,7 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
             enum CodingKeys: CodingKey { case value }
         }
         _testDecodeTypeMismatch(input: InputType(value: true), expected: (ExpectedType.self, UInt32.self, [ExpectedType.CodingKeys.value], "Expected to decode UInt32 but found Bool instead."))
-    }
+   }
 
     ///
     /// Test that a `DecodingError.valueNotFound` is thrown when a user tries to decode a `UInt32` value that is nil.
@@ -1195,7 +1195,7 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
             enum CodingKeys: CodingKey { case value }
         }
         _testDecodeTypeMismatch(input: InputType(value: true), expected: (ExpectedType.self, UInt64.self, [ExpectedType.CodingKeys.value], "Expected to decode UInt64 but found Bool instead."))
-    }
+   }
 
     ///
     /// Test that a `DecodingError.valueNotFound` is thrown when a user tries to decode a `UInt64` value that is nil.
@@ -1301,7 +1301,7 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
             enum CodingKeys: CodingKey { case value }
         }
         _testDecodeTypeMismatch(input: InputType(value: true), expected: (ExpectedType.self, Float.self, [ExpectedType.CodingKeys.value], "Expected to decode Float but found Bool instead."))
-    }
+   }
 
     ///
     /// Test that a `DecodingError.valueNotFound` is thrown when a user tries to decode a `Float` value that is nil.
@@ -1407,7 +1407,7 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
             enum CodingKeys: CodingKey { case value }
         }
         _testDecodeTypeMismatch(input: InputType(value: true), expected: (ExpectedType.self, Double.self, [ExpectedType.CodingKeys.value], "Expected to decode Double but found Bool instead."))
-    }
+   }
 
     ///
     /// Test that a `DecodingError.valueNotFound` is thrown when a user tries to decode a `Double` value that is nil.
@@ -1513,7 +1513,7 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
             enum CodingKeys: CodingKey { case value }
         }
         _testDecodeTypeMismatch(input: InputType(value: true), expected: (ExpectedType.self, String.self, [ExpectedType.CodingKeys.value], "Expected to decode String but found Bool instead."))
-    }
+   }
 
     ///
     /// Test that a `DecodingError.valueNotFound` is thrown when a user tries to decode a `String` value that is nil.
@@ -1618,8 +1618,8 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
             init(value: CodableType) { self.value = value }
             enum CodingKeys: CodingKey { case value }
         }
-        _testDecodeTypeMismatch(input: InputType(value: true), expected: (ExpectedType.self, CodableType.self, [ExpectedType.CodingKeys.value], "Expected to decode CodableType but found Bool instead."))
-    }
+        _testDecodeTypeMismatch(input: InputType(value: true), expected: (ExpectedType.self, KeyedDecodingContainer<CodableType.CodingKeys>.self, [ExpectedType.CodingKeys.value], "Expected to decode KeyedDecodingContainer<CodingKeys> but found SingleValueDecodingContainer instead."))
+   }
 
     ///
     /// Test that a `DecodingError.valueNotFound` is thrown when a user tries to decode a `CodableType` value that is nil.

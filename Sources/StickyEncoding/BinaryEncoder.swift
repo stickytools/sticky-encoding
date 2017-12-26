@@ -361,6 +361,7 @@ extension _BinaryEncoder {
         /// Encode an object type value.
         ///
         mutating func encode<T: Encodable>(_ value: T) throws {
+
             ///
             /// Object values are a special case here.  We can't encode them in a primitive Single value container
             /// as they are not meant to support that type.
@@ -368,8 +369,7 @@ extension _BinaryEncoder {
             /// Instead we create a new _BinaryEncoder and pass the storage reference up to that encoder
             /// which will then fill the reference with the appropriate type of storage for the type.
             ///
-            let encoder = _BinaryEncoder(codingPath: self.codingPath, rootStorage: self.rootStorage)
-            try value.encode(to: encoder)
+            try value.encode(to: _BinaryEncoder(codingPath: self.codingPath, rootStorage: rootStorage))
         }
 
         // MARK: - Private methods and storage
