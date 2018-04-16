@@ -18,7 +18,6 @@
 ///  Created by Tony Stone on 10/23/17.
 ///
 import XCTest
-import TestFixtures
 
 ///
 /// Note: This file contains public interface tests so do not use @testable.
