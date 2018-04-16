@@ -3,40 +3,104 @@
 #
 set_directory_properties(PROPERTIES CLEAN_NO_CUSTOM 1)
 
-file(GLOB_RECURSE TEST_FILES  *.swift)
-file(GLOB_RECURSE TEST_GYB    *.gyb)
-file(GLOB LINUX_MAIN LinuxMain.swift)
+file(GLOB_RECURSE TEST_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.swift *.gyb)
+file(GLOB LINUX_MAIN RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} LinuxMain.swift)
 
 #
 # Remove LinuxMain.swift from the list as this will be handled separately if Linux.
 #
 list(REMOVE_ITEM TEST_FILES "${LINUX_MAIN}")
+get_filename_component(LINUX_MAIN ${LINUX_MAIN} ABSOLUTE BASE_DIR ${CMAKE_SOURCE_DIR})
 
 #
 # Test Target
 #
-add_custom_target(sticky-tests
+add_custom_target(tests ALL
         COMMAND swift test
-        DEPENDS sticky-package
-        SOURCES ${TEST_FILES} ${TEST_GYB}
-        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+        DEPENDS build
+        SOURCES ${TEST_FILES} ${CMAKE_SOURCE_DIR}/Package.swift
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
         )
 
-add_gyb_dependencies("${TEST_GYB}" sticky-tests)
+# GYB Targets
+set(GYB_COMMON_FLAGS --line-directive "''")
 
-if(UNIX AND NOT APPLE)
+add_gyb_target(generate-BinaryEncodingKeyedContainerNegativeTests
+        SOURCE StickyEncodingTests/BinaryEncodingKeyedContainerNegativeTests.swift.gyb
+        OUTPUT StickyEncodingTests/BinaryEncodingKeyedContainerNegativeTests.swift
+        FLAGS ${GYB_COMMON_FLAGS}
+        DEPENDS build-tools
+        )
 
-    add_custom_command(
-            DEPENDS ${TEST_FILES} build-tools
-            OUTPUT "${LINUX_MAIN}"
-            COMMAND "${LINUXMAINTOOL}"
-            ARGS --package-path "${CMAKE_SOURCE_DIR}"
-            VERBATIM
-    )
+add_gyb_target(generate-BinaryEncodingKeyedContainerTests
+        SOURCE StickyEncodingTests/BinaryEncodingKeyedContainerTests.swift.gyb
+        OUTPUT StickyEncodingTests/BinaryEncodingKeyedContainerTests.swift
+        FLAGS ${GYB_COMMON_FLAGS}
+        DEPENDS build-tools
+        )
 
-    add_custom_target(linux-main
-            DEPENDS "${LINUX_MAIN}"
-            )
-    add_dependencies(sticky-tests linux-main)
+add_gyb_target(generate-BinaryEncodingSingleValueContainerNegativeTests
+        SOURCE StickyEncodingTests/BinaryEncodingSingleValueContainerNegativeTests.swift.gyb
+        OUTPUT StickyEncodingTests/BinaryEncodingSingleValueContainerNegativeTests.swift
+        FLAGS ${GYB_COMMON_FLAGS}
+        DEPENDS build-tools
+        )
 
-endif()
+add_gyb_target(generate-BinaryEncodingSingleValueContainerTests
+        SOURCE StickyEncodingTests/BinaryEncodingSingleValueContainerTests.swift.gyb
+        OUTPUT StickyEncodingTests/BinaryEncodingSingleValueContainerTests.swift
+        FLAGS ${GYB_COMMON_FLAGS}
+        DEPENDS build-tools
+        )
+
+add_gyb_target(generate-BinaryEncodingUnkeyedContainerNegativeTests
+        SOURCE StickyEncodingTests/BinaryEncodingUnkeyedContainerNegativeTests.swift.gyb
+        OUTPUT StickyEncodingTests/BinaryEncodingUnkeyedContainerNegativeTests.swift
+        FLAGS ${GYB_COMMON_FLAGS}
+        DEPENDS build-tools
+        )
+
+add_gyb_target(generate-BinaryEncodingUnkeyedContainerTests
+        SOURCE StickyEncodingTests/BinaryEncodingUnkeyedContainerTests.swift.gyb
+        OUTPUT StickyEncodingTests/BinaryEncodingUnkeyedContainerTests.swift
+        FLAGS ${GYB_COMMON_FLAGS}
+        DEPENDS build-tools
+        )
+
+add_gyb_target(generate-EncodedTypeTests
+        SOURCE StickyEncodingTests/EncodedTypeTests.swift.gyb
+        OUTPUT StickyEncodingTests/EncodedTypeTests.swift
+        FLAGS ${GYB_COMMON_FLAGS}
+        DEPENDS build-tools
+        )
+
+add_gyb_target(generate-SingleValueContainerTests
+        SOURCE StickyEncodingTests/SingleValueContainerTests.swift.gyb
+        OUTPUT StickyEncodingTests/SingleValueContainerTests.swift
+        FLAGS ${GYB_COMMON_FLAGS}
+        DEPENDS build-tools
+        )
+
+add_custom_target(generate-tests
+        DEPENDS generate-BinaryEncodingKeyedContainerNegativeTests generate-BinaryEncodingKeyedContainerTests generate-BinaryEncodingSingleValueContainerNegativeTests generate-BinaryEncodingSingleValueContainerTests generate-BinaryEncodingUnkeyedContainerNegativeTests generate-BinaryEncodingUnkeyedContainerTests generate-EncodedTypeTests generate-SingleValueContainerTests
+        )
+
+add_dependencies(tests generate-tests)
+
+#
+# Build the LinuxMain file.
+#
+# Note: We do this for all platforms so that we are assured that it is maintained whenever a change is made to the tests.
+#
+add_custom_command(
+        DEPENDS build-tools
+        OUTPUT "${LINUX_MAIN}"
+        COMMAND "${BUILD_TOOLS_BIN}/xctest_tool.rb"
+        ARGS --package-path "${CMAKE_SOURCE_DIR}"
+        VERBATIM
+)
+
+add_custom_target(linux-main
+        DEPENDS "${LINUX_MAIN}" generate-tests
+        )
+add_dependencies(tests linux-main)
