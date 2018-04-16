@@ -1,4 +1,9 @@
 #==============================================================================#
+# GeoFeatures specific files
+#==============================================================================#
+Documentation/html/*
+
+#==============================================================================#
 # OSX
 #==============================================================================#
 .DS_STORE
@@ -15,7 +20,10 @@ build/
 DerivedData/
 
 #==============================================================================#
-# Idea IDE products (AppCode, InteliJ, etc.
+# Idea (Jetbrains)
+#
+# We ignore all jetbrains project files since it is a generated output of cmake.
+#
 #==============================================================================#
 .idea
 
@@ -55,12 +63,11 @@ playground.xcworkspace
 
 #==============================================================================#
 # Swift Package Manager
-#
-# Add this line if you want to avoid checking in source code from Swift Package Manager dependencies.
-# Packages/
-# Package.pins
 #==============================================================================#
 .build/
+Packages/
+Package.pins
+Package.resolved
 
 #==============================================================================#
 # CocoaPods
@@ -102,6 +109,7 @@ Vagrantfile
 # build-tools (https://github.com/tonystone/build-tools)
 #==============================================================================#
 .build-tools
+*.gyb.swp
 
 #==============================================================================#
 # Ignore CMake temporary files
@@ -118,3 +126,8 @@ compile_commands.json
 CTestTestfile.cmake
 cmake-build-debug
 *.cbp
+
+#==============================================================================#
+# Python
+#==============================================================================#
+*.pyc
