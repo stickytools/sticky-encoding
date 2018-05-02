@@ -26,7 +26,7 @@ let package = Package(
             .library(name: "StickyEncoding", type: .dynamic, targets: ["StickyEncoding"])
         ],
         dependencies: [
-            .package(url: "https://github.com/tonystone/sticky-utilities.git", .branch("master"))
+            .package(url: "https://github.com/stickytools/sticky-utilities.git", .branch("master"))
         ],
         targets: [
             /// Module targets
