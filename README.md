@@ -13,10 +13,10 @@
   <img src="https://codecov.io/gh/stickytools/sticky-encoding/branch/master/graph/badge.svg" alt="Codecov" />
 </a>
 <a href="https://github.com/stickytools/sticky-encoding/" target="_blank">
-    <img src="https://img.shields.io/cocoapods/v/Sticky.svg?style=flat" alt="Pod version">
+    <img src="https://img.shields.io/cocoapods/v/StickyEncoding.svg?style=flat" alt="Pod version">
 </a>
 <a href="https://github.com/stickytools/sticky-encoding/" target="_blank">
-    <img src="https://img.shields.io/cocoapods/dt/Sticky.svg?style=flat" alt="Downloads">
+    <img src="https://img.shields.io/cocoapods/dt/StickyEncoding.svg?style=flat" alt="Downloads">
 </a>
 
 ---
