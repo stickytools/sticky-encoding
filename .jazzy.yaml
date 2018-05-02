@@ -1,0 +1,30 @@
+module: StickyEncoding
+author: Tony Stone
+author_url: http://github.com/tonystone
+github_url: http://github.com/stickytools/sticky-encoding
+readme: ./README.md
+exclude:
+  - "Tests/**/*.swift"
+  - "Sources/StickyEncoding/BinaryCodingKey.swift"
+  - "Sources/StickyEncoding/EncodedType.swift"
+  - "Sources/StickyEncoding/KeyedStorageContainer.swift"
+  - "Sources/StickyEncoding/NullStorageContainer.swift"
+  - "Sources/StickyEncoding/PassthroughReference.swift"
+  - "Sources/StickyEncoding/SingleValueContainer.swift"
+  - "Sources/StickyEncoding/UnkeyedStorageContainer.swift"
+
+xcodebuild_arguments: [clean,build,-project,StickyEncoding.xcodeproj,-scheme,StickyEncoding-Package]
+
+swift_version: 4.0.3
+
+theme: apple
+
+documentation: Documentation/Sections/*.md
+abstract: Documentation/Abstracts/*.md
+
+output: documentation/html
+
+custom_categories:
+  - name: User Guide
+    children:
+    - Binary Format

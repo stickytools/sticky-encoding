@@ -6,20 +6,19 @@ set_directory_properties(PROPERTIES CLEAN_NO_CUSTOM 1)
 #
 # Build the list of sources dynamically.
 #
-file(GLOB_RECURSE SOURCE_FILES *.swift Package.swift)
-file(GLOB_RECURSE SOURCE_GYB   *.gyb)
+file(GLOB_RECURSE SOURCE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.swift)
 
 #
 # Main Build Target
 #
-add_custom_target(sticky-package
+add_custom_target(build ALL
         COMMAND swift build
         BYPRODUCTS .build
-        SOURCES ${SOURCE_FILES} ${TEST_SOURCE}
-        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+        SOURCES ${SOURCE_FILES} ${CMAKE_SOURCE_DIR}/Package.swift
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         )
 
-#
-# We use gyb for many files, these commands define how to build those.
-#
-add_gyb_dependencies("${SOURCE_GYB}" sticky-package)
+add_custom_target(generate-source)
+
+add_dependencies(build generate-source)
+

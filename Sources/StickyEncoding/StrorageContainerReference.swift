@@ -25,35 +25,3 @@ import Swift
 internal protocol StorageContainerReference: StorageContainer {
     var value: StorageContainer? { get set }
 }
-
-///
-/// A passthrough `StorageContainerReference`
-///
-internal class PassthroughReference: StorageContainerReference {
-
-    init() { self.wrapped = nil }
-    init(_ value: StorageContainer) { self.wrapped = value }
-
-    var value: StorageContainer? {
-        get { return self.wrapped }
-        set { if let newValue = newValue { wrapped = newValue }  }
-    }
-    private var wrapped: StorageContainer?
-}
-
-///
-/// `CustomStringConvertible` and `CustomDebugStringConvertible` conformance.
-///
-extension PassthroughReference: CustomStringConvertible, CustomDebugStringConvertible {
-
-    public var description: String {
-        guard let value = wrapped
-            else { return "nil" }
-        return String(describing: value)
-    }
-    public var debugDescription: String {
-        guard let value = wrapped
-            else { return "nil" }
-        return String(reflecting: value)
-    }
-}

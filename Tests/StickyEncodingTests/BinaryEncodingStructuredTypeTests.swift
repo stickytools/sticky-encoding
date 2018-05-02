@@ -18,7 +18,6 @@
 ///  Created by Tony Stone on 10/6/17.
 ///
 import XCTest
-import TestFixtures
 
 @testable import StickyEncoding
 
