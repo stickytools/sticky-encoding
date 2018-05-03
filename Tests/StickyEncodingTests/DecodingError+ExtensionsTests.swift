@@ -23,7 +23,13 @@ import XCTest
 
 class DecodingError_ExtensionsTests: XCTestCase {
 
-    enum CodingKeys: CodingKey { case testVar1, testVar2 }
+    enum CodingKeys: CodingKey {
+        case testVar1, testVar2
+
+        var description: String {
+            return "\(self.stringValue)"
+        }
+    }
 
     // MARK: - `keyNotFound` tests.
 

@@ -59,7 +59,12 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
         struct ExpectedType: Codable {
             var value: Bool
             init(value: Bool) { self.value = value }
-            enum AlternateCodingKeys: CodingKey { case invalidValue }
+            enum AlternateCodingKeys: CodingKey {
+                case invalidValue
+                var description: String {
+                    return "\(self.stringValue)"
+                }
+            }
 
             init(from decoder: Decoder) throws {
                 let container = try decoder.container(keyedBy: AlternateCodingKeys.self)
@@ -102,7 +107,12 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
         struct ExpectedType: Codable {
             var value: Bool
             init(value: Bool) { self.value = value }
-            enum AlternateCodingKeys: CodingKey { case invalidValue }
+            enum AlternateCodingKeys: CodingKey {
+                case invalidValue
+                var description: String {
+                    return "\(self.stringValue)"
+                }
+            }
 
             init(from decoder: Decoder) throws {
                 let container = try decoder.container(keyedBy: AlternateCodingKeys.self)
@@ -208,7 +218,12 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
         struct ExpectedType: Codable {
             var value: Int
             init(value: Int) { self.value = value }
-            enum AlternateCodingKeys: CodingKey { case invalidValue }
+            enum AlternateCodingKeys: CodingKey {
+                case invalidValue
+                var description: String {
+                    return "\(self.stringValue)"
+                }
+            }
 
             init(from decoder: Decoder) throws {
                 let container = try decoder.container(keyedBy: AlternateCodingKeys.self)
@@ -314,7 +329,12 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
         struct ExpectedType: Codable {
             var value: Int8
             init(value: Int8) { self.value = value }
-            enum AlternateCodingKeys: CodingKey { case invalidValue }
+            enum AlternateCodingKeys: CodingKey {
+                case invalidValue
+                var description: String {
+                    return "\(self.stringValue)"
+                }
+            }
 
             init(from decoder: Decoder) throws {
                 let container = try decoder.container(keyedBy: AlternateCodingKeys.self)
@@ -420,7 +440,12 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
         struct ExpectedType: Codable {
             var value: Int16
             init(value: Int16) { self.value = value }
-            enum AlternateCodingKeys: CodingKey { case invalidValue }
+            enum AlternateCodingKeys: CodingKey {
+                case invalidValue
+                var description: String {
+                    return "\(self.stringValue)"
+                }
+            }
 
             init(from decoder: Decoder) throws {
                 let container = try decoder.container(keyedBy: AlternateCodingKeys.self)
@@ -526,7 +551,12 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
         struct ExpectedType: Codable {
             var value: Int32
             init(value: Int32) { self.value = value }
-            enum AlternateCodingKeys: CodingKey { case invalidValue }
+            enum AlternateCodingKeys: CodingKey {
+                case invalidValue
+                var description: String {
+                    return "\(self.stringValue)"
+                }
+            }
 
             init(from decoder: Decoder) throws {
                 let container = try decoder.container(keyedBy: AlternateCodingKeys.self)
@@ -632,7 +662,12 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
         struct ExpectedType: Codable {
             var value: Int64
             init(value: Int64) { self.value = value }
-            enum AlternateCodingKeys: CodingKey { case invalidValue }
+            enum AlternateCodingKeys: CodingKey {
+                case invalidValue
+                var description: String {
+                    return "\(self.stringValue)"
+                }
+            }
 
             init(from decoder: Decoder) throws {
                 let container = try decoder.container(keyedBy: AlternateCodingKeys.self)
@@ -738,7 +773,12 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
         struct ExpectedType: Codable {
             var value: UInt
             init(value: UInt) { self.value = value }
-            enum AlternateCodingKeys: CodingKey { case invalidValue }
+            enum AlternateCodingKeys: CodingKey {
+                case invalidValue
+                var description: String {
+                    return "\(self.stringValue)"
+                }
+            }
 
             init(from decoder: Decoder) throws {
                 let container = try decoder.container(keyedBy: AlternateCodingKeys.self)
@@ -844,7 +884,12 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
         struct ExpectedType: Codable {
             var value: UInt8
             init(value: UInt8) { self.value = value }
-            enum AlternateCodingKeys: CodingKey { case invalidValue }
+            enum AlternateCodingKeys: CodingKey {
+                case invalidValue
+                var description: String {
+                    return "\(self.stringValue)"
+                }
+            }
 
             init(from decoder: Decoder) throws {
                 let container = try decoder.container(keyedBy: AlternateCodingKeys.self)
@@ -950,7 +995,12 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
         struct ExpectedType: Codable {
             var value: UInt16
             init(value: UInt16) { self.value = value }
-            enum AlternateCodingKeys: CodingKey { case invalidValue }
+            enum AlternateCodingKeys: CodingKey {
+                case invalidValue
+                var description: String {
+                    return "\(self.stringValue)"
+                }
+            }
 
             init(from decoder: Decoder) throws {
                 let container = try decoder.container(keyedBy: AlternateCodingKeys.self)
@@ -1056,7 +1106,12 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
         struct ExpectedType: Codable {
             var value: UInt32
             init(value: UInt32) { self.value = value }
-            enum AlternateCodingKeys: CodingKey { case invalidValue }
+            enum AlternateCodingKeys: CodingKey {
+                case invalidValue
+                var description: String {
+                    return "\(self.stringValue)"
+                }
+            }
 
             init(from decoder: Decoder) throws {
                 let container = try decoder.container(keyedBy: AlternateCodingKeys.self)
@@ -1162,7 +1217,12 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
         struct ExpectedType: Codable {
             var value: UInt64
             init(value: UInt64) { self.value = value }
-            enum AlternateCodingKeys: CodingKey { case invalidValue }
+            enum AlternateCodingKeys: CodingKey {
+                case invalidValue
+                var description: String {
+                    return "\(self.stringValue)"
+                }
+            }
 
             init(from decoder: Decoder) throws {
                 let container = try decoder.container(keyedBy: AlternateCodingKeys.self)
@@ -1268,7 +1328,12 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
         struct ExpectedType: Codable {
             var value: Float
             init(value: Float) { self.value = value }
-            enum AlternateCodingKeys: CodingKey { case invalidValue }
+            enum AlternateCodingKeys: CodingKey {
+                case invalidValue
+                var description: String {
+                    return "\(self.stringValue)"
+                }
+            }
 
             init(from decoder: Decoder) throws {
                 let container = try decoder.container(keyedBy: AlternateCodingKeys.self)
@@ -1374,7 +1439,12 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
         struct ExpectedType: Codable {
             var value: Double
             init(value: Double) { self.value = value }
-            enum AlternateCodingKeys: CodingKey { case invalidValue }
+            enum AlternateCodingKeys: CodingKey {
+                case invalidValue
+                var description: String {
+                    return "\(self.stringValue)"
+                }
+            }
 
             init(from decoder: Decoder) throws {
                 let container = try decoder.container(keyedBy: AlternateCodingKeys.self)
@@ -1480,7 +1550,12 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
         struct ExpectedType: Codable {
             var value: String
             init(value: String) { self.value = value }
-            enum AlternateCodingKeys: CodingKey { case invalidValue }
+            enum AlternateCodingKeys: CodingKey {
+                case invalidValue
+                var description: String {
+                    return "\(self.stringValue)"
+                }
+            }
 
             init(from decoder: Decoder) throws {
                 let container = try decoder.container(keyedBy: AlternateCodingKeys.self)
@@ -1586,7 +1661,12 @@ class BinaryEncodingKeyedContainerNegativeTests: XCTestCase {
         struct ExpectedType: Codable {
             var value: CodableType
             init(value: CodableType) { self.value = value }
-            enum AlternateCodingKeys: CodingKey { case invalidValue }
+            enum AlternateCodingKeys: CodingKey {
+                case invalidValue
+                var description: String {
+                    return "\(self.stringValue)"
+                }
+            }
 
             init(from decoder: Decoder) throws {
                 let container = try decoder.container(keyedBy: AlternateCodingKeys.self)
