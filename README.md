@@ -21,7 +21,7 @@
 
 ---
 
-**StickyEncoding**, A high performance binary encoder for `Swift.Encodable` types.
+**StickyEncoding**, A high performance binary encoder for `Swift.Codable` types.
 
 
 ## Sources and Binaries
