@@ -192,7 +192,7 @@ class BinaryEncodingUnkeyedContainerNegativeTests: XCTestCase {
             }
         }
 % if ExpectedTypeName == "CodableType":
-        _testDecodeTypeMismatch(input: InputType(value: ${InputValue}), expected: (ExpectedType.self, ${ExpectedTypeName}.self, [], "Expected to decode KeyedDecodingContainer<CodingKeys> but found SingleValueDecodingContainer instead."))
+        _testDecodeTypeMismatch(input: InputType(value: ${InputValue}), expected: (ExpectedType.self, KeyedDecodingContainer<CodableType.CodingKeys>.self, [], "Expected to decode KeyedDecodingContainer<CodingKeys> but found SingleValueDecodingContainer instead."))
 % else:
         _testDecodeTypeMismatch(input: InputType(value: ${InputValue}), expected: (ExpectedType.self, ${ExpectedTypeName}.self, [], "Expected to decode ${ExpectedTypeName} but found ${InputTypeName} instead."))
 % end
