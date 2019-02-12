@@ -12,7 +12,7 @@ import StickyEncoding
 ///
 /// Generic func to test encoding and decoding round trip.
 ///
-internal func _testCodableRoundTrip<T : Codable>(input: T, validation: (T) -> Void) {
+internal func _testCodableRoundTrip<T : Codable>(input: T, file: StaticString = #file, line: UInt = #line, validation: (T) -> Void) {
     do {
         let encoder = BinaryEncoder()
         let decoder = BinaryDecoder()
@@ -22,13 +22,13 @@ internal func _testCodableRoundTrip<T : Codable>(input: T, validation: (T) -> Vo
 
         validation(result)
 
-    } catch { XCTFail("Expected test not to throw but threw: \(error)") }
+    } catch { XCTFail("Expected test not to throw but threw: \(error)", file: file, line: line) }
 }
 
 ///
 /// Generic func to test  that decoding throws a `DecodingError.typeMismatch` when required to.
 ///
-internal func _testDecodeTypeMismatch<I,T>(input: I, expected: (type: T.Type, errorType: Any.Type, codingPath: [CodingKey], description: String) ) where I: Codable, T: Codable {
+internal func _testDecodeTypeMismatch<I,T>(input: I, expected: (type: T.Type, errorType: Any.Type, codingPath: [CodingKey], description: String), file: StaticString = #file, line: UInt = #line) where I: Codable, T: Codable {
     do {
         let encoder = BinaryEncoder()
         let decoder = BinaryDecoder()
@@ -39,20 +39,20 @@ internal func _testDecodeTypeMismatch<I,T>(input: I, expected: (type: T.Type, er
             switch error {
             case DecodingError.typeMismatch(let anyType, let context):
 
-                XCTAssert(anyType == expected.errorType, "Incorrect type returned in error: expected type \(expected.errorType) but got \(anyType).")
-                XCTAssertTrue(context.codingPath.elementsEqual(expected.codingPath, by: { $0.stringValue == $1.stringValue }), "Incorrect codingPath returned: \(context.codingPath) is not equal to \(expected.codingPath).")
-                XCTAssertEqual(context.debugDescription, expected.description)
+                XCTAssert(anyType == expected.errorType, "Incorrect type returned in error: expected type \(expected.errorType) but got \(anyType).", file: file, line: line)
+                XCTAssertTrue(context.codingPath.elementsEqual(expected.codingPath, by: { $0.stringValue == $1.stringValue }), "Incorrect codingPath returned: \(context.codingPath) is not equal to \(expected.codingPath).", file: file, line: line)
+                XCTAssertEqual(context.debugDescription, expected.description, file: file, line: line)
 
-            default: XCTFail("Incorrect error returned: \(error)")
+            default: XCTFail("Incorrect error returned: \(error)", file: file, line: line)
             }
         }
-    } catch { XCTFail("Expected test not to throw but threw: \(error)") }
+    } catch { XCTFail("Expected test not to throw but threw: \(error)", file: file, line: line) }
 }
 
 ///
 /// Generic func to test  that decoding throws a `DecodingError.valueNotFound` when required to.
 ///
-internal func _testDecodeValueNotFound<I,T,E>(input: I, expected: (type: T.Type, errorType: E.Type, codingPath: [CodingKey], description: String) ) where I: Codable, T: Codable {
+internal func _testDecodeValueNotFound<I,T,E>(input: I, expected: (type: T.Type, errorType: E.Type, codingPath: [CodingKey], description: String), file: StaticString = #file, line: UInt = #line) where I: Codable, T: Codable {
     do {
         let encoder = BinaryEncoder()
         let decoder = BinaryDecoder()
@@ -63,20 +63,20 @@ internal func _testDecodeValueNotFound<I,T,E>(input: I, expected: (type: T.Type,
             switch error {
             case DecodingError.valueNotFound(let anyType, let context):
 
-                XCTAssert(anyType is E.Type, "Incorrect type returned in error: expected type \(E.self) but got \(anyType).")
-                XCTAssertTrue(context.codingPath.elementsEqual(expected.codingPath, by: { $0.stringValue == $1.stringValue }), "Incorrect codingPath returned: \(context.codingPath) is not equal to \(expected.codingPath).")
-                XCTAssertEqual(context.debugDescription, expected.description)
+                XCTAssert(anyType is E.Type, "Incorrect type returned in error: expected type \(E.self) but got \(anyType).", file: file, line: line)
+                XCTAssertTrue(context.codingPath.elementsEqual(expected.codingPath, by: { $0.stringValue == $1.stringValue }), "Incorrect codingPath returned: \(context.codingPath) is not equal to \(expected.codingPath).", file: file, line: line)
+                XCTAssertEqual(context.debugDescription, expected.description, file: file, line: line)
 
-            default: XCTFail("Incorrect error returned: \(error)")
+            default: XCTFail("Incorrect error returned: \(error)", file: file, line: line)
             }
         }
-    } catch { XCTFail("Expected test not to throw but threw: \(error)") }
+    } catch { XCTFail("Expected test not to throw but threw: \(error)", file: file, line: line) }
 }
 
 ///
 /// Generic func to test  that decoding throws a `DecodingError.keyNotFound` when required to.
 ///
-internal func _testDecodeKeyNotFound<I,T>(input: I, expected: (type: T.Type, key: CodingKey, codingPath: [CodingKey], description: String) ) where I: Codable, T: Codable {
+internal func _testDecodeKeyNotFound<I,T>(input: I, expected: (type: T.Type, key: CodingKey, codingPath: [CodingKey], description: String), file: StaticString = #file, line: UInt = #line) where I: Codable, T: Codable {
     do {
         let encoder = BinaryEncoder()
         let decoder = BinaryDecoder()
@@ -87,12 +87,12 @@ internal func _testDecodeKeyNotFound<I,T>(input: I, expected: (type: T.Type, key
             switch error {
             case DecodingError.keyNotFound(let codingKey, let context):
 
-                XCTAssert(codingKey.stringValue == expected.key.stringValue, "Incorrect type returned in error: expected type \(expected.key) but got \(codingKey).")
-                XCTAssertTrue(context.codingPath.elementsEqual(expected.codingPath, by: { $0.stringValue == $1.stringValue }), "Incorrect codingPath returned: \(context.codingPath) is not equal to \(expected.codingPath).")
-                XCTAssertEqual(context.debugDescription, expected.description)
+                XCTAssert(codingKey.stringValue == expected.key.stringValue, "Incorrect type returned in error: expected type \(expected.key) but got \(codingKey).", file: file, line: line)
+                XCTAssertTrue(context.codingPath.elementsEqual(expected.codingPath, by: { $0.stringValue == $1.stringValue }), "Incorrect codingPath returned: \(context.codingPath) is not equal to \(expected.codingPath).", file: file, line: line)
+                XCTAssertEqual(context.debugDescription, expected.description, file: file, line: line)
 
-            default: XCTFail("Incorrect error returned: \(error)")
+            default: XCTFail("Incorrect error returned: \(error)", file: file, line: line)
             }
         }
-    } catch { XCTFail("Expected test not to throw but threw: \(error)") }
+    } catch { XCTFail("Expected test not to throw but threw: \(error)", file: file, line: line) }
 }
