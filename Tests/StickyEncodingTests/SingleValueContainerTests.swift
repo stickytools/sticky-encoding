@@ -68,7 +68,7 @@ class SingleValueContainerTests: XCTestCase {
     func testUnsafeMutableRawBufferPointerRoundTripOfBool() throws {
         let input = SingleValueContainer(Bool(true))
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(count: input.byteCount)
+        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: input.byteCount, alignment: MemoryLayout<UInt8>.alignment)
         defer { buffer.deallocate() }
 
         /// Write the input to our buffer so we can use it to create a new instance.
@@ -133,7 +133,7 @@ class SingleValueContainerTests: XCTestCase {
     func testUnsafeMutableRawBufferPointerRoundTripOfInt() throws {
         let input = SingleValueContainer(Int(32))
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(count: input.byteCount)
+        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: input.byteCount, alignment: MemoryLayout<UInt8>.alignment)
         defer { buffer.deallocate() }
 
         /// Write the input to our buffer so we can use it to create a new instance.
@@ -212,7 +212,7 @@ class SingleValueContainerTests: XCTestCase {
     func testUnsafeMutableRawBufferPointerRoundTripOfInt8() throws {
         let input = SingleValueContainer(Int8(32))
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(count: input.byteCount)
+        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: input.byteCount, alignment: MemoryLayout<UInt8>.alignment)
         defer { buffer.deallocate() }
 
         /// Write the input to our buffer so we can use it to create a new instance.
@@ -291,7 +291,7 @@ class SingleValueContainerTests: XCTestCase {
     func testUnsafeMutableRawBufferPointerRoundTripOfInt16() throws {
         let input = SingleValueContainer(Int16(32))
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(count: input.byteCount)
+        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: input.byteCount, alignment: MemoryLayout<UInt8>.alignment)
         defer { buffer.deallocate() }
 
         /// Write the input to our buffer so we can use it to create a new instance.
@@ -370,7 +370,7 @@ class SingleValueContainerTests: XCTestCase {
     func testUnsafeMutableRawBufferPointerRoundTripOfInt32() throws {
         let input = SingleValueContainer(Int32(32))
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(count: input.byteCount)
+        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: input.byteCount, alignment: MemoryLayout<UInt8>.alignment)
         defer { buffer.deallocate() }
 
         /// Write the input to our buffer so we can use it to create a new instance.
@@ -449,7 +449,7 @@ class SingleValueContainerTests: XCTestCase {
     func testUnsafeMutableRawBufferPointerRoundTripOfInt64() throws {
         let input = SingleValueContainer(Int64(32))
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(count: input.byteCount)
+        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: input.byteCount, alignment: MemoryLayout<UInt8>.alignment)
         defer { buffer.deallocate() }
 
         /// Write the input to our buffer so we can use it to create a new instance.
@@ -528,7 +528,7 @@ class SingleValueContainerTests: XCTestCase {
     func testUnsafeMutableRawBufferPointerRoundTripOfUInt() throws {
         let input = SingleValueContainer(UInt(32))
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(count: input.byteCount)
+        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: input.byteCount, alignment: MemoryLayout<UInt8>.alignment)
         defer { buffer.deallocate() }
 
         /// Write the input to our buffer so we can use it to create a new instance.
@@ -607,7 +607,7 @@ class SingleValueContainerTests: XCTestCase {
     func testUnsafeMutableRawBufferPointerRoundTripOfUInt8() throws {
         let input = SingleValueContainer(UInt8(32))
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(count: input.byteCount)
+        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: input.byteCount, alignment: MemoryLayout<UInt8>.alignment)
         defer { buffer.deallocate() }
 
         /// Write the input to our buffer so we can use it to create a new instance.
@@ -686,7 +686,7 @@ class SingleValueContainerTests: XCTestCase {
     func testUnsafeMutableRawBufferPointerRoundTripOfUInt16() throws {
         let input = SingleValueContainer(UInt16(32))
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(count: input.byteCount)
+        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: input.byteCount, alignment: MemoryLayout<UInt8>.alignment)
         defer { buffer.deallocate() }
 
         /// Write the input to our buffer so we can use it to create a new instance.
@@ -765,7 +765,7 @@ class SingleValueContainerTests: XCTestCase {
     func testUnsafeMutableRawBufferPointerRoundTripOfUInt32() throws {
         let input = SingleValueContainer(UInt32(32))
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(count: input.byteCount)
+        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: input.byteCount, alignment: MemoryLayout<UInt8>.alignment)
         defer { buffer.deallocate() }
 
         /// Write the input to our buffer so we can use it to create a new instance.
@@ -844,7 +844,7 @@ class SingleValueContainerTests: XCTestCase {
     func testUnsafeMutableRawBufferPointerRoundTripOfUInt64() throws {
         let input = SingleValueContainer(UInt64(32))
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(count: input.byteCount)
+        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: input.byteCount, alignment: MemoryLayout<UInt8>.alignment)
         defer { buffer.deallocate() }
 
         /// Write the input to our buffer so we can use it to create a new instance.
@@ -923,7 +923,7 @@ class SingleValueContainerTests: XCTestCase {
     func testUnsafeMutableRawBufferPointerRoundTripOfFloat() throws {
         let input = SingleValueContainer(Float(32.0))
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(count: input.byteCount)
+        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: input.byteCount, alignment: MemoryLayout<UInt8>.alignment)
         defer { buffer.deallocate() }
 
         /// Write the input to our buffer so we can use it to create a new instance.
@@ -1001,7 +1001,7 @@ class SingleValueContainerTests: XCTestCase {
     func testUnsafeMutableRawBufferPointerRoundTripOfDouble() throws {
         let input = SingleValueContainer(Double(32.0))
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(count: input.byteCount)
+        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: input.byteCount, alignment: MemoryLayout<UInt8>.alignment)
         defer { buffer.deallocate() }
 
         /// Write the input to our buffer so we can use it to create a new instance.
@@ -1079,7 +1079,7 @@ class SingleValueContainerTests: XCTestCase {
     func testUnsafeMutableRawBufferPointerRoundTripOfString() throws {
         let input = SingleValueContainer(String("Test String"))
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(count: input.byteCount)
+        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: input.byteCount, alignment: MemoryLayout<UInt8>.alignment)
         defer { buffer.deallocate() }
 
         /// Write the input to our buffer so we can use it to create a new instance.

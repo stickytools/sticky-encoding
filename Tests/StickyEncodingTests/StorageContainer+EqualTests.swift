@@ -44,7 +44,7 @@ class StorageContainerEqualTests: XCTestCase {
         XCTAssert(input.equal(expected), "\(expected) does not equal \(input)")
     }
 
-    func testNotEqualWithKeyedtorageContainer() {
+    func testNotEqualWithKeyedStorageContainer() {
         let input = KeyedStorageContainer()
         let expected = UnkeyedStorageContainer()
 
@@ -65,7 +65,7 @@ class StorageContainerEqualTests: XCTestCase {
         XCTAssert(!input.equal(expected), "\(expected) equals \(input) but should not.")
     }
 
-    func testEqualWithSingleValueeContainer() {
+    func testEqualWithSingleValueContainer() {
         let input = SingleValueContainer("Test String")
         let expected = SingleValueContainer("Test String")
 

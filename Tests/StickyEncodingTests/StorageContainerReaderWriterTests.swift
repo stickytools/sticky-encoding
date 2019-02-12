@@ -30,7 +30,7 @@ class StorageContainerReaderWriterTests: XCTestCase {
         let input    = NullStorageContainer.null
         let expected = NullStorageContainer.null
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(count: StorageContainerWriter.byteCount(input))
+        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: StorageContainerWriter.byteCount(input), alignment: MemoryLayout<UInt8>.alignment)
         defer { buffer.deallocate() }
 
         StorageContainerWriter.write(input, to: buffer)
@@ -47,7 +47,7 @@ class StorageContainerReaderWriterTests: XCTestCase {
         let input    = SingleValueContainer("Test String")
         let expected = SingleValueContainer("Test String")
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(count: StorageContainerWriter.byteCount(input))
+        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: StorageContainerWriter.byteCount(input), alignment: MemoryLayout<UInt8>.alignment)
         defer { buffer.deallocate() }
 
         StorageContainerWriter.write(input, to: buffer)
@@ -70,7 +70,7 @@ class StorageContainerReaderWriterTests: XCTestCase {
         }()
         let expected = input
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(count: StorageContainerWriter.byteCount(input))
+        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: StorageContainerWriter.byteCount(input), alignment: MemoryLayout<UInt8>.alignment)
         defer { buffer.deallocate() }
 
         StorageContainerWriter.write(input, to: buffer)
@@ -92,7 +92,7 @@ class StorageContainerReaderWriterTests: XCTestCase {
         }()
         let expected = input
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(count: StorageContainerWriter.byteCount(input))
+        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: StorageContainerWriter.byteCount(input), alignment: MemoryLayout<UInt8>.alignment)
         defer { buffer.deallocate() }
 
         StorageContainerWriter.write(input, to: buffer)
@@ -112,7 +112,7 @@ class StorageContainerReaderWriterTests: XCTestCase {
         }()
         let expected = input
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(count: StorageContainerWriter.byteCount(input))
+        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: StorageContainerWriter.byteCount(input), alignment: MemoryLayout<UInt8>.alignment)
         defer { buffer.deallocate() }
 
         StorageContainerWriter.write(input, to: buffer)
@@ -135,7 +135,7 @@ class StorageContainerReaderWriterTests: XCTestCase {
         }()
         let expected = input
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(count: StorageContainerWriter.byteCount(input))
+        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: StorageContainerWriter.byteCount(input), alignment: MemoryLayout<UInt8>.alignment)
         defer { buffer.deallocate() }
 
         StorageContainerWriter.write(input, to: buffer)
