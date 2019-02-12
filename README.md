@@ -4,7 +4,10 @@
    <img src="https://img.shields.io/badge/platforms-iOS%20%7C%20macOS%20%7C%20watchOS%20%7C%20tvOS%20%7C%20Linux%20-lightgray.svg?style=flat" alt="Platforms: iOS | macOS | watchOS | tvOS | Linux" />
 </a>
 <a href="https://github.com/stickytools/sticky-encoding/" target="_blank">
-   <img src="https://img.shields.io/badge/Swift-4.0-orange.svg?style=flat" alt="Swift 4.0">
+   <img src="https://img.shields.io/badge/Swift-4.2-orange.svg?style=flat" alt="Swift 4.2">
+</a>
+<a href="http://cocoadocs.org/docsets/StickyEncoding" target="_blank">
+   <img src="https://img.shields.io/cocoapods/v/StickyEncoding.svg?style=flat" alt="Version"/>
 </a>
 <a href="https://travis-ci.org/stickytools/sticky-encoding" target="_blank">
   <img src="https://travis-ci.org/stickytools/sticky-encoding.svg?branch=master" alt="travis-ci.org" />
@@ -33,20 +36,29 @@ You can find the latest sources and binaries on [github](https://github.com/stic
    - Push to the branch: `git push origin my-new-feature`
    - Submit a pull request :-)
 
-## Installation 
+## Installation
 
-**StickyEncoding** supports dependency management via Swift Package Manager on All Apple OS variants as well as Linux.
+### Swift Package Manager
+
+**StickyEncoding** supports dependency management via Swift Package Manager on Darwin as well as Linux.
 
 Please see [Swift Package Manager](https://swift.org/package-manager/#conceptual-overview) for further information.
 
+### CocoaPods
+
+StickyEncoding is available through [CocoaPods](http://cocoapods.org). To install it, simply add the following line to your Podfile:
+
+```ruby
+   pod "StickyEncoding"
+```
 ## Minimum Requirements
 
 Build Environment
 
 | Platform | Swift | Swift Build | Xcode |
 |:--------:|:-----:|:----------:|:------:|
-| Linux    | 4.0 | &#x2714; | &#x2718; |
-| OSX      | 4.0 | &#x2714; | Xcode 9.0 |
+| Linux    | 4.2 | &#x2714; | &#x2718; |
+| OSX      | 4.2 | &#x2714; | Xcode 10.0 |
 
 Minimum Runtime Version
 
