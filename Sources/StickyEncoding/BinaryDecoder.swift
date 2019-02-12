@@ -66,7 +66,7 @@ private class _BinaryDecoder : Decoder {
         self.codingPath = codingPath
         self.userInfo   = [:]
     }
-    
+
     // MARK: - `Decoder` conformance.
 
     var codingPath: [CodingKey]
@@ -152,7 +152,7 @@ extension _BinaryDecoder {
         var codingPath: [CodingKey]
 
         var allKeys: [K] {
-            return self.rootStorage.keys.flatMap { K(stringValue: $0) }
+            return self.rootStorage.keys.compactMap { K(stringValue: $0) }
         }
 
         func contains(_ key: K) -> Bool { return self.rootStorage.contains(key.stringValue) }
@@ -302,7 +302,7 @@ extension _BinaryDecoder {
                 else { throw DecodingError.typeMismatchError(at: self.codingPath + key, expected: errorType, actual: storage) }
             return typedStorage
         }
-        
+
         private var rootStorage: KeyedStorageContainer
     }
 
@@ -474,7 +474,7 @@ extension _BinaryDecoder {
 
             return storage
         }
-        
+
         private var rootStorage: UnkeyedStorageContainer
     }
 
@@ -581,7 +581,7 @@ extension _BinaryDecoder {
                 throw DecodingError.typeMismatchError(at: self.codingPath, expected: type, actual: actualType)
             }
         }
-        
+
         private var rootStorage: StorageContainer
     }
 }

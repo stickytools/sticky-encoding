@@ -1,4 +1,4 @@
-// swift-tools-version:4.0
+// swift-tools-version:4.2
 ///
 /// Package.swift
 ///
@@ -32,5 +32,5 @@ let package = Package(
             /// Tests
             .testTarget(name: "StickyEncodingTests", dependencies: ["StickyEncoding"], path: "Tests/StickyEncodingTests")
         ],
-        swiftLanguageVersions: [4]
+        swiftLanguageVersions: [.v4_2]
 )

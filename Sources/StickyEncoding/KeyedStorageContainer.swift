@@ -45,7 +45,7 @@ internal class KeyedStorageContainer: StorageContainer {
     /// Returns all the keys contained in the `StorageContainer`.
     ///
     var keys: [Key] {
-        return self.storage.keys.flatMap { $0 }
+        return self.storage.keys.compactMap { $0 }
     }
 
     ///
