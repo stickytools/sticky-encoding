@@ -19,7 +19,6 @@
 ///
 ///
 import Swift
-import StickyUtilities
 
 private enum Error: Swift.Error {
     case valueCorrupt(Any.Type, String)

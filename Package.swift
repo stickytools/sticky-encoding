@@ -25,12 +25,9 @@ let package = Package(
         products: [
             .library(name: "StickyEncoding", type: .dynamic, targets: ["StickyEncoding"])
         ],
-        dependencies: [
-            .package(url: "https://github.com/stickytools/sticky-utilities.git", .branch("master"))
-        ],
         targets: [
             /// Module targets
-            .target(name: "StickyEncoding", dependencies: ["StickyUtilities"], path: "Sources/StickyEncoding"),
+            .target(name: "StickyEncoding", dependencies: [], path: "Sources/StickyEncoding"),
 
             /// Tests
             .testTarget(name: "StickyEncodingTests", dependencies: ["StickyEncoding"], path: "Tests/StickyEncodingTests")

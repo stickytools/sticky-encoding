@@ -18,7 +18,6 @@
 ///  Created by Tony Stone on 10/24/17.
 ///
 import Swift
-import StickyUtilities
 
 ///
 /// Type which contains a single value in binary form.
