@@ -19,15 +19,52 @@
 ///
 import Foundation
 
+/// ## Overview
 ///
-/// `BinaryEncoder` facilitates the encoding of `Encodable` values into a binary format StickyDB can store on disk.
+/// `BinaryEncoder` facilitates the encoding of `Encodable` values into a binary
+/// format that can be stored on disk or sent over a socket.
+///
+/// The encoder will encode any `Encodable` type whether you declare conformance to
+/// `Encodable` and let the compiler create the code or you manually implement the
+/// conformance yourself.
+///
+/// ### Examples
+///
+/// To create an instance of an BinaryEncoder:
+/// ```
+///    let encoder = BinaryEncoder()
+/// ```
+/// You can encode any top even top-level single value types including Int,
+/// UInt, Double, Bool, and Strings. Simply pass the value to the instance
+/// of the BinaryEncoder and call `encode`.
+/// ```
+///    let string = "You can encode single values of any type."
+///
+///    let bytes = try encoder.encode(string).bytes
+/// ```
+/// Basic structs and classes can also be encoded.
+/// ```
+///     struct Employee: Codable {
+///         let first: String
+///         let last: String
+///         let employeeNumber: Int
+///     }
+///
+///     let employee = Employee(first: "John", last: "Doe", employeeNumber: 2345643)
+///
+///     let bytes = try encoder.encode(employee).bytes
+/// ```
+/// As well as Complex types with sub classes.
+///
 ///
 open class BinaryEncoder {
 
     ///
     /// Initializes `self`.
     ///
-    public init() {}
+    public init(userInfo: [CodingUserInfoKey : Any] = [:]) {
+        self.userInfo = userInfo
+    }
 
     ///
     /// Encodes the given top-level value and returns its Binary representation.
@@ -40,7 +77,7 @@ open class BinaryEncoder {
     /// - throws: An error if any value throws an error during encoding.
     ///
     open func encode<T: Encodable>(_ value: T) throws -> EncodedData {
-        let encoder = _BinaryEncoder(codingPath: [])
+        let encoder = _BinaryEncoder(codingPath: [], userInfo: self.userInfo)
         try value.encode(to: encoder)
 
         if let storage = encoder.rootStorage.value {
@@ -48,6 +85,8 @@ open class BinaryEncoder {
         }
         return EncodedData(NullStorageContainer.null)
     }
+
+    public var userInfo: [CodingUserInfoKey : Any]
 }
 
 // MARK: -
@@ -66,10 +105,10 @@ private class _BinaryEncoder : Encoder {
     /// - Parameters:
     ///     - codingPath:   The path of coding keys taken to get to this point in encoding.
     ///
-    init(codingPath: [CodingKey]) {
+    init(codingPath: [CodingKey], userInfo: [CodingUserInfoKey : Any]) {
         self.rootStorage = PassthroughReference()
-        self.codingPath = codingPath
-        self.userInfo = [:]
+        self.codingPath  = codingPath
+        self.userInfo    = userInfo
     }
 
     ///
@@ -80,10 +119,10 @@ private class _BinaryEncoder : Encoder {
     ///     - codingPath:   The path of coding keys taken to get to this point in encoding.
     ///     - rootStorage:  The rootStorage container for storing the results from this containers encoding.  This is a reference element that will be filled by this class.
     ///
-    init(codingPath: [CodingKey], rootStorage: StorageContainerReference) {
+    init(codingPath: [CodingKey], rootStorage: StorageContainerReference, userInfo: [CodingUserInfoKey : Any]) {
         self.rootStorage = rootStorage
-        self.codingPath = codingPath
-        self.userInfo = [:]
+        self.codingPath  = codingPath
+        self.userInfo    = userInfo
     }
 
     // MARK: - `Encoder` conformance.
@@ -110,7 +149,7 @@ private class _BinaryEncoder : Encoder {
             self.rootStorage.value = storageContainer
         }
 
-        return KeyedEncodingContainer(_BinaryKeyedEncodingContainer<Key>(codingPath: codingPath, rootStorage: storageContainer))
+        return KeyedEncodingContainer(_BinaryKeyedEncodingContainer<Key>(referencing: self, codingPath: codingPath, rootStorage: storageContainer))
     }
 
     func unkeyedContainer() -> UnkeyedEncodingContainer {
@@ -122,11 +161,11 @@ private class _BinaryEncoder : Encoder {
             storageContainer = UnkeyedStorageContainer()
             self.rootStorage.value = storageContainer
         }
-        return _BinaryUnkeyedEncodingContainer(codingPath: codingPath, rootStorage: storageContainer)
+        return _BinaryUnkeyedEncodingContainer(referencing: self, codingPath: codingPath, rootStorage: storageContainer)
     }
 
     func singleValueContainer() -> SingleValueEncodingContainer {
-        return _BinarySingleValueEncodingContainer(codingPath: codingPath, rootStorage: self.rootStorage)
+        return _BinarySingleValueEncodingContainer(referencing: self, codingPath: codingPath, rootStorage: self.rootStorage)
     }
 
     ///
@@ -161,9 +200,10 @@ extension _BinaryEncoder {
         ///     - codingPath:   The path of coding keys taken to get to this point in encoding.
         ///     - rootStorage:  The rootStorage container for storing the results from this containers encoding.
         ///
-        init(codingPath: [CodingKey], rootStorage: KeyedStorageContainer) {
+        init(referencing encoder: _BinaryEncoder, codingPath: [CodingKey], rootStorage: KeyedStorageContainer) {
+            self.encoder     = encoder
             self.rootStorage = rootStorage
-            self.codingPath = codingPath
+            self.codingPath  = codingPath
         }
 
         // MARK: - `KeyedEncodingContainerProtocol` conformance
@@ -197,7 +237,7 @@ extension _BinaryEncoder {
         /// - throws: `EncodingError.invalidValue` if the given value is invalid in the current context for this format.
         ///
         mutating func encode<T: Encodable>(_ value: T, forKey key: K) throws {
-            let encoder = _BinaryEncoder(codingPath: self.codingPath + key, rootStorage: self.rootStorage.elementReference(for: key.stringValue))
+            let encoder = _BinaryEncoder(codingPath: self.codingPath + key, rootStorage: self.rootStorage.elementReference(for: key.stringValue), userInfo: self.encoder.userInfo)
             try value.encode(to: encoder)
         }
 
@@ -205,26 +245,32 @@ extension _BinaryEncoder {
             let storage = KeyedStorageContainer()
             self.rootStorage[key.stringValue] = storage
 
-            return KeyedEncodingContainer(_BinaryKeyedEncodingContainer<NestedKey>(codingPath: self.codingPath + key, rootStorage: storage))
+            return KeyedEncodingContainer(_BinaryKeyedEncodingContainer<NestedKey>(referencing: self.encoder, codingPath: self.codingPath + key, rootStorage: storage))
         }
 
         mutating func nestedUnkeyedContainer(forKey key: K) -> UnkeyedEncodingContainer {
             let storage = UnkeyedStorageContainer()
             self.rootStorage[key.stringValue] = storage
 
-            return _BinaryUnkeyedEncodingContainer(codingPath: self.codingPath + key, rootStorage: storage)
+            return _BinaryUnkeyedEncodingContainer(referencing: self.encoder, codingPath: self.codingPath + key, rootStorage: storage)
         }
 
         mutating func superEncoder(forKey key: K) -> Encoder {
-            return _BinaryEncoder(codingPath: self.codingPath + key, rootStorage: self.rootStorage.elementReference(for: key.stringValue))
+            return _BinaryEncoder(codingPath: self.codingPath + key, rootStorage: self.rootStorage.elementReference(for: key.stringValue), userInfo: self.encoder.userInfo)
         }
 
         mutating func superEncoder() -> Encoder {
-            return _BinaryEncoder(codingPath: self.codingPath, rootStorage: self.rootStorage.elementReference(for: "super"))
+            return _BinaryEncoder(codingPath: self.codingPath, rootStorage: self.rootStorage.elementReference(for: "super"), userInfo: self.encoder.userInfo)
         }
 
         // MARK: - Private methods and storage.
 
+        /// The encoder this container was created from.
+        ///
+        private let encoder: _BinaryEncoder
+
+        /// The root storage for this container.
+        ///
         private var rootStorage: KeyedStorageContainer
     }
 
@@ -245,9 +291,10 @@ extension _BinaryEncoder {
         ///     - codingPath:   The path of coding keys taken to get to this point in encoding.
         ///     - rootStorage:  The rootStorage container for storing the results from this containers encoding.
         ///
-        init(codingPath: [CodingKey], rootStorage: UnkeyedStorageContainer) {
+        init(referencing encoder: _BinaryEncoder, codingPath: [CodingKey], rootStorage: UnkeyedStorageContainer) {
+            self.encoder     = encoder
             self.rootStorage = rootStorage
-            self.codingPath = codingPath
+            self.codingPath  = codingPath
         }
 
         // MARK: - `UnkeyedEncodingContainer` conformance
@@ -282,7 +329,7 @@ extension _BinaryEncoder {
         /// - throws: `EncodingError.invalidValue` if the given value is invalid in the current context for this format.
         ///
         mutating func encode<T: Encodable>(_ value: T) throws {
-            let encoder = _BinaryEncoder(codingPath: self.codingPath, rootStorage: self.rootStorage.pushReference())
+            let encoder = _BinaryEncoder(codingPath: self.codingPath, rootStorage: self.rootStorage.pushReference(), userInfo: self.encoder.userInfo)
             try value.encode(to: encoder)
         }
 
@@ -290,22 +337,28 @@ extension _BinaryEncoder {
             let storage = KeyedStorageContainer()
             self.rootStorage.push(storage)
 
-            return KeyedEncodingContainer(_BinaryKeyedEncodingContainer(codingPath: self.codingPath, rootStorage: storage))
+            return KeyedEncodingContainer(_BinaryKeyedEncodingContainer(referencing: self.encoder, codingPath: self.codingPath, rootStorage: storage))
         }
 
         mutating func nestedUnkeyedContainer() -> UnkeyedEncodingContainer {
             let storage = UnkeyedStorageContainer()
             self.rootStorage.push(storage)
 
-            return _BinaryUnkeyedEncodingContainer(codingPath: self.codingPath, rootStorage: storage)
+            return _BinaryUnkeyedEncodingContainer(referencing: self.encoder, codingPath: self.codingPath, rootStorage: storage)
         }
 
         mutating func superEncoder() -> Encoder {
-            return _BinaryEncoder(codingPath: self.codingPath, rootStorage: self.rootStorage.pushReference())
+            return _BinaryEncoder(codingPath: self.codingPath, rootStorage: self.rootStorage.pushReference(), userInfo: self.encoder.userInfo)
         }
 
         // MARK: - Private methods and storage
 
+        /// The encoder this container was created from.
+        ///
+        private let encoder: _BinaryEncoder
+
+        /// The root storage for this container.
+        ///
         private var rootStorage: UnkeyedStorageContainer
     }
 
@@ -326,9 +379,10 @@ extension _BinaryEncoder {
         ///     - codingPath:   The path of coding keys taken to get to this point in encoding.
         ///     - rootStorage:  The `StorageContainerReference` for storing the results from this containers encoding.
         ///
-        init(codingPath: [CodingKey], rootStorage: StorageContainerReference) {
+        init(referencing encoder: _BinaryEncoder, codingPath: [CodingKey], rootStorage: StorageContainerReference) {
+            self.encoder     = encoder
             self.rootStorage = rootStorage
-            self.codingPath = codingPath
+            self.codingPath  = codingPath
         }
 
         // MARK: - `SingleValueEncodingContainer` conformance
@@ -336,7 +390,7 @@ extension _BinaryEncoder {
         var codingPath: [CodingKey]
 
         mutating func encodeNil() throws { self.rootStorage.value = NullStorageContainer.null }
-        
+
         ///
         /// All encode types accept encodeNil can throw the following.
         //
@@ -369,10 +423,15 @@ extension _BinaryEncoder {
             /// Instead we create a new _BinaryEncoder and pass the storage reference up to that encoder
             /// which will then fill the reference with the appropriate type of storage for the type.
             ///
-            try value.encode(to: _BinaryEncoder(codingPath: self.codingPath, rootStorage: rootStorage))
+            try value.encode(to: _BinaryEncoder(codingPath: self.codingPath, rootStorage: rootStorage, userInfo: self.encoder.userInfo))
         }
 
         // MARK: - Private methods and storage
+
+
+        /// The encoder this container was created from.
+        ///
+        private let encoder: _BinaryEncoder
 
         ///
         /// The root storage of our container is a reference because we are called

@@ -25,7 +25,9 @@ import Foundation
 open class BinaryDecoder {
 
     /// Initializes `self`.
-    public init() {}
+    public init(userInfo: [CodingUserInfoKey : Any] = [:]) {
+        self.userInfo = userInfo
+    }
 
     ///
     /// Decodes a top-level value of the given type `T` from the Binary representation `data`.
@@ -40,8 +42,10 @@ open class BinaryDecoder {
     /// - throws: An error if any value throws an error during decoding.
     ///
     open func decode<T : Decodable>(_ type: T.Type, from data: EncodedData) throws -> T {
-        return try T.init(from: _BinaryDecoder(codingPath: [], rootStorage: data.storage))
+        return try T.init(from: _BinaryDecoder(codingPath: [], rootStorage: data.storage, userInfo: self.userInfo))
     }
+
+    public var userInfo: [CodingUserInfoKey : Any]
 }
 
 // MARK: -
@@ -61,10 +65,10 @@ private class _BinaryDecoder : Decoder {
     ///     - codingPath:   The path of coding keys taken to get to this point in decoding.
     ///     - rootStorage:  The rootStorage container used for decoding values.
     ///
-    init(codingPath: [CodingKey], rootStorage: StorageContainer) {
+    init(codingPath: [CodingKey], rootStorage: StorageContainer, userInfo: [CodingUserInfoKey : Any]) {
         self.rootStorage = rootStorage
         self.codingPath = codingPath
-        self.userInfo   = [:]
+        self.userInfo   = userInfo
     }
 
     // MARK: - `Decoder` conformance.
@@ -79,7 +83,7 @@ private class _BinaryDecoder : Decoder {
     func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> where Key : CodingKey {
         let storage = try storageContainer(KeyedStorageContainer.self, errorType: KeyedDecodingContainer<Key>.self)
 
-        return KeyedDecodingContainer(_BinaryKeyedDecodingContainer<Key>(codingPath: self.codingPath, rootStorage: storage))
+        return KeyedDecodingContainer(_BinaryKeyedDecodingContainer<Key>(referencing: self, codingPath: self.codingPath, rootStorage: storage))
     }
 
     ///
@@ -88,14 +92,14 @@ private class _BinaryDecoder : Decoder {
     func unkeyedContainer() throws -> UnkeyedDecodingContainer {
         let storage = try storageContainer(UnkeyedStorageContainer.self, errorType: UnkeyedDecodingContainer.self)
 
-        return _BinaryUnkeyedDecodingContainer(codingPath: codingPath, rootStorage: storage)
+        return _BinaryUnkeyedDecodingContainer(referencing: self, codingPath: codingPath, rootStorage: storage)
     }
 
     ///
     /// - throws: `DecodingError.typeMismatch` if the encountered stored value is not a single value container.
     ///
     func singleValueContainer() throws -> SingleValueDecodingContainer {
-        return _BinarySingleValueDecodingContainer(codingPath: codingPath, storage: self.rootStorage)
+        return _BinarySingleValueDecodingContainer(referencing: self, codingPath: codingPath, storage: self.rootStorage)
     }
 
     // MARK: - Private methods and storage.
@@ -142,9 +146,10 @@ extension _BinaryDecoder {
         ///     - codingPath:   The path of coding keys taken to get to this point in decoding.
         ///     - rootStorage:  The `KeyedStorageContainer` used for decoding values.
         ///
-        init(codingPath: [CodingKey], rootStorage: KeyedStorageContainer) {
+        init(referencing decoder: _BinaryDecoder, codingPath: [CodingKey], rootStorage: KeyedStorageContainer) {
+            self.decoder     = decoder
             self.rootStorage = rootStorage
-            self.codingPath = codingPath
+            self.codingPath  = codingPath
         }
 
         // MARK: - `KeyedDecodingContainerProtocol` conformance.
@@ -221,7 +226,7 @@ extension _BinaryDecoder {
         func decode<T: Decodable >(_ type: T.Type, forKey key: K) throws -> T {
             let storage = try storageContainer(StorageContainer.self, forKey: key, errorType: type)
 
-            return try T.init(from: _BinaryDecoder(codingPath: self.codingPath + key, rootStorage: storage))
+            return try T.init(from: _BinaryDecoder(codingPath: self.codingPath + key, rootStorage: storage, userInfo: self.decoder.userInfo))
         }
 
         ///
@@ -230,7 +235,7 @@ extension _BinaryDecoder {
         func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: K) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {
             let storage = try storageContainer(KeyedStorageContainer.self, forKey:  key, errorType: KeyedDecodingContainer<NestedKey>.self)
 
-            return KeyedDecodingContainer(_BinaryKeyedDecodingContainer<NestedKey>(codingPath: self.codingPath + key, rootStorage: storage))
+            return KeyedDecodingContainer(_BinaryKeyedDecodingContainer<NestedKey>(referencing: self.decoder, codingPath: self.codingPath + key, rootStorage: storage))
         }
 
         ///
@@ -239,7 +244,7 @@ extension _BinaryDecoder {
         func nestedUnkeyedContainer(forKey key: K) throws -> UnkeyedDecodingContainer {
             let storage = try storageContainer(UnkeyedStorageContainer.self, forKey:  key, errorType: UnkeyedDecodingContainer.self)
 
-            return _BinaryUnkeyedDecodingContainer(codingPath: self.codingPath + key, rootStorage: storage)
+            return _BinaryUnkeyedDecodingContainer(referencing: self.decoder, codingPath: self.codingPath + key, rootStorage: storage)
         }
 
         ///
@@ -249,7 +254,7 @@ extension _BinaryDecoder {
         func superDecoder(forKey key: K) throws -> Decoder {
             let storage = try storageContainer(StorageContainer.self, forKey: key, errorType: Decoder.self)
 
-            return _BinaryDecoder(codingPath: self.codingPath + key, rootStorage: storage)
+            return _BinaryDecoder(codingPath: self.codingPath + key, rootStorage: storage, userInfo: self.decoder.userInfo)
         }
 
         ///
@@ -259,7 +264,7 @@ extension _BinaryDecoder {
         func superDecoder() throws -> Decoder {
             let storage = try storageContainer(StorageContainer.self, forKey: BinaryCodingKey("super"), errorType: Decoder.self)
 
-            return _BinaryDecoder(codingPath: self.codingPath, rootStorage: storage)
+            return _BinaryDecoder(codingPath: self.codingPath, rootStorage: storage, userInfo: self.decoder.userInfo)
         }
 
         // MARK: - Private methods and storage
@@ -303,6 +308,12 @@ extension _BinaryDecoder {
             return typedStorage
         }
 
+        /// The decoder this container was created from.
+        ///
+        private let decoder: _BinaryDecoder
+
+        /// The root storage for this container.
+        ///
         private var rootStorage: KeyedStorageContainer
     }
 
@@ -321,9 +332,10 @@ extension _BinaryDecoder {
         ///     - codingPath:   The path of coding keys taken to get to this point in decoding.
         ///     - rootStorage:  The `UnkeyedStorageContainer` used for decoding values.
         ///
-        init(codingPath: [CodingKey], rootStorage: UnkeyedStorageContainer) {
-            self.rootStorage = rootStorage
-            self.codingPath = codingPath
+        init(referencing decoder: _BinaryDecoder, codingPath: [CodingKey], rootStorage: UnkeyedStorageContainer) {
+            self.decoder      = decoder
+            self.rootStorage  = rootStorage
+            self.codingPath   = codingPath
             self.currentIndex = 0
         }
 
@@ -395,7 +407,7 @@ extension _BinaryDecoder {
         mutating func decode<T: Decodable>(_ type: T.Type)   throws -> T {
             let storage = try self.nextStorageContainer(as: StorageContainer.self, errorType: type)
 
-            return try T.init(from: _BinaryDecoder(codingPath: self.codingPath, rootStorage: storage))
+            return try T.init(from: _BinaryDecoder(codingPath: self.codingPath, rootStorage: storage, userInfo: self.decoder.userInfo))
         }
 
         ///
@@ -404,7 +416,7 @@ extension _BinaryDecoder {
         mutating func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type) throws -> KeyedDecodingContainer<NestedKey> where NestedKey : CodingKey {
             let storage = try self.nextStorageContainer(as: KeyedStorageContainer.self, errorType: KeyedDecodingContainer<NestedKey>.self)
 
-            return KeyedDecodingContainer<NestedKey>(_BinaryKeyedDecodingContainer(codingPath: self.codingPath, rootStorage: storage))
+            return KeyedDecodingContainer<NestedKey>(_BinaryKeyedDecodingContainer(referencing: self.decoder, codingPath: self.codingPath, rootStorage: storage))
         }
 
         ///
@@ -413,7 +425,7 @@ extension _BinaryDecoder {
         mutating func nestedUnkeyedContainer() throws -> UnkeyedDecodingContainer {
             let storage = try self.nextStorageContainer(as: UnkeyedStorageContainer.self, errorType: UnkeyedDecodingContainer.self)
 
-            return _BinaryUnkeyedDecodingContainer(codingPath: self.codingPath, rootStorage: storage)
+            return _BinaryUnkeyedDecodingContainer(referencing: self.decoder, codingPath: self.codingPath, rootStorage: storage)
         }
 
         ///
@@ -431,7 +443,7 @@ extension _BinaryDecoder {
 
             defer { currentIndex += 1 }
 
-            return _BinaryDecoder(codingPath: self.codingPath, rootStorage: rootStorage[currentIndex])
+            return _BinaryDecoder(codingPath: self.codingPath, rootStorage: rootStorage[currentIndex], userInfo: self.decoder.userInfo)
         }
 
         // MARK: - Private methods and storage.
@@ -475,6 +487,12 @@ extension _BinaryDecoder {
             return storage
         }
 
+        /// The decoder this container was created from.
+        ///
+        private let decoder: _BinaryDecoder
+
+        /// The root storage for this container.
+        ///
         private var rootStorage: UnkeyedStorageContainer
     }
 
@@ -493,8 +511,9 @@ extension _BinaryDecoder {
         ///     - codingPath:   The path of coding keys taken to get to this point in decoding.
         ///     - rootStorage:  The `StorageContainer` containing the value to decode.
         ///
-        init(codingPath: [CodingKey], storage: StorageContainer) {
-            self.codingPath = codingPath
+        init(referencing decoder: _BinaryDecoder, codingPath: [CodingKey], storage: StorageContainer) {
+            self.decoder     = decoder
+            self.codingPath  = codingPath
             self.rootStorage = storage
         }
 
@@ -555,7 +574,7 @@ extension _BinaryDecoder {
             /// Instead we create a new _BinaryDecoder and pass the storage reference up to that decoder
             /// which will then decode the value.
             ///
-            return try T.init(from: _BinaryDecoder(codingPath: self.codingPath, rootStorage: rootStorage))
+            return try T.init(from: _BinaryDecoder(codingPath: self.codingPath, rootStorage: rootStorage, userInfo: self.decoder.userInfo))
         }
 
         // MARK: - Private methods and storage
@@ -582,6 +601,12 @@ extension _BinaryDecoder {
             }
         }
 
+        /// The decoder this container was created from.
+        ///
+        private let decoder: _BinaryDecoder
+
+        /// The root storage for this container.
+        ///
         private var rootStorage: StorageContainer
     }
 }
