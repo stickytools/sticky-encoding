@@ -20,6 +20,89 @@
 
 **StickyEncoding**, A high performance binary encoder for `Swift.Codable` types.
 
+## Overview
+
+StickyEncoding facilitates the encoding and decoding of `Codable` values into and output of a binary
+format that can be stored on disk or sent over a socket.
+
+Encoding is done using a `BinaryEncoder` instance and will encode any `Encodable` type whether you declare conformance to `Encodable` and let the compiler create the code or you manually implement the conformance yourself.
+
+Decoding is done using a `BinaryDecoder` instance and can decode any `Decodable` type that was previously encoded using the `BinaryEncoder`. Of course you can declare `Encodable` or `Decodable` conformance by using `Codable` as well.
+
+StickyEncoding creates a compact binary format that represents the encoded object or data type.  You can read more about the format in the document [Binary Format](Documentation/Sections/Binary&#32;Format.md).
+
+To facilitate many use cases, StickyEncoding encodes the data to an instance of `EncodedData`.  EncodedData contains a binary format suitable
+for writing directly to memory, disk, or into a byte array. Or in the case of decoding, the format facilitates rapid decoding to Swift instances.
+
+### Encoding
+
+To create an instance of a BinaryEncoder:
+```Swift
+    let encoder = BinaryEncoder()
+```
+
+> Note: You may optionally pass your own userInfo `BinaryEncoder(userInfo:)` structure and it will be available to you during the encoding.
+
+You can encode any top even top-level single value types including Int,
+UInt, Double, Bool, and Strings. Simply pass the value to the instance
+of the BinaryEncoder and call `encode`.
+```Swift
+   let string = "You can encode single values of any type."
+
+   let encoded = try encoder.encode(string)
+```
+Basic structs and classes can also be encoded.
+```Swift
+   struct Employee: Codable {
+        let first: String
+        let last: String
+        let employeeNumber: Int
+   }
+
+   let employee = Employee(first: "John", last: "Doe", employeeNumber: 2345643)
+
+   let encodedData = try encoder.encode(employee)
+```
+As well as Complex types with sub classes.
+
+### Decoding
+
+To create an instance of a BinaryDecoder:
+```Swift
+    let decoder = BinaryDecoder()
+```
+
+> Note: You may optionally pass your own userInfo `BinaryDecoder(userInfo:)` structure and it will be available to you during the decoding.
+
+To decode, you pass the Type of object to create, and an instance of encoded data representing that type.
+```Swift
+   let employee = try decoder.decode(Employee.self, from: encodedData)
+```
+
+### EncodedData
+
+An intermediate representation which represents the encoded data.  This type is the direct connection between raw memory and a type that can be converted to and from a `Codable` object.
+
+StickyEncoding uses an intermediate representation so that it can support many use cases from direct byte conversion to writing/reading directly to/from raw memory.
+
+When encoding of an object, the intermediate representation has already been
+encoded down to a form that can be rapidly written to memory.
+```Swift
+   let encodedData = try encoder.encode(employee)
+
+   // Write the bytes directly to a file.
+   FileManager.default.createFile(atPath: "employee.bin", contents: Data(bytes: encodedData.bytes))
+```
+There are use cases that require writing to a buffer or socket in which case StickyEncoding offers a direct write method so that an intermediate structure (byte array) does not have to be created first.
+```Swift
+   let encodedData = try encoder.encode(employee)
+
+   // Allocate byte aligned raw memory to hold the binary encoded data.
+   let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: encodedData.byteCount, alignment: MemoryLayout<UInt8>.alignment)
+
+   // Write the encoded data directly to the raw memory.
+   encodedData.write(to: buffer)
+```
 
 ## Sources and Binaries
 
