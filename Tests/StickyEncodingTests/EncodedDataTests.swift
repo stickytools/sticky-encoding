@@ -80,7 +80,7 @@ class EncodedDataTests: XCTestCase {
         let input    = EncodedData()
         let expected = NullStorageContainer.null
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(count: input.byteCount)
+        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: input.byteCount, alignment: MemoryLayout<UInt8>.alignment)
         input.write(to: buffer)
 
         let result = EncodedData(from: UnsafeRawBufferPointer(buffer))
@@ -94,7 +94,7 @@ class EncodedDataTests: XCTestCase {
         let input    = EncodedData(UnkeyedStorageContainer())
         let expected = UnkeyedStorageContainer()
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(count: input.byteCount)
+        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: input.byteCount, alignment: MemoryLayout<UInt8>.alignment)
         input.write(to: buffer)
 
         let result = EncodedData(from: UnsafeRawBufferPointer(buffer))
@@ -107,7 +107,7 @@ class EncodedDataTests: XCTestCase {
         let input = EncodedData(KeyedStorageContainer())
         let expected = KeyedStorageContainer()
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(count: input.byteCount)
+        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: input.byteCount, alignment: MemoryLayout<UInt8>.alignment)
         input.write(to: buffer)
 
         let result = EncodedData(from: UnsafeRawBufferPointer(buffer))
@@ -120,7 +120,7 @@ class EncodedDataTests: XCTestCase {
         let input = EncodedData(SingleValueContainer("Test string"))
         let expected = SingleValueContainer("Test string")
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(count: input.byteCount)
+        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: input.byteCount, alignment: MemoryLayout<UInt8>.alignment)
         input.write(to: buffer)
 
         let result = EncodedData(from: UnsafeRawBufferPointer(buffer))

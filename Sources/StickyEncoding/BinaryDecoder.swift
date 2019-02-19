@@ -70,7 +70,7 @@ private class _BinaryDecoder : Decoder {
         self.codingPath = codingPath
         self.userInfo   = userInfo
     }
-    
+
     // MARK: - `Decoder` conformance.
 
     var codingPath: [CodingKey]
@@ -157,7 +157,7 @@ extension _BinaryDecoder {
         var codingPath: [CodingKey]
 
         var allKeys: [K] {
-            return self.rootStorage.keys.flatMap { K(stringValue: $0) }
+            return self.rootStorage.keys.compactMap { K(stringValue: $0) }
         }
 
         func contains(_ key: K) -> Bool { return self.rootStorage.contains(key.stringValue) }

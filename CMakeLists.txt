@@ -49,17 +49,9 @@ add_custom_target(build-clean
 #
 add_custom_target(xcode-project
         DEPENDS build-tools generate-source generate-tests
-        COMMAND swift package generate-xcodeproj --enable-code-coverage
+        COMMAND swift package generate-xcodeproj --xcconfig-overrides Package.xcconfig --enable-code-coverage
         WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
-        SOURCES Package.swift)
-
-#
-# Build xcode workspace Target which includes the playground
-#
-add_custom_target(xcode-workspace
-        DEPENDS build-tools xcode-project StickyEncoding-Playground.playground
-        COMMAND "${BUILD_TOOLS_BIN}/xcworkspace_tool.rb" StickyEncoding StickyEncoding.xcodeproj StickyEncoding-Playground.playground
-        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
+        SOURCES Package.swift Package.xcconfig)
 
 add_custom_target(documentation
         DEPENDS generate-source

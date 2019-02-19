@@ -19,7 +19,6 @@
 ///
 ///
 import Swift
-import StickyUtilities
 
 private enum Error: Swift.Error {
     case valueCorrupt(Any.Type, String)
@@ -233,7 +232,7 @@ internal class StorageContainerReader {
 /// Writes StorageContainers to binary storage.
 ///
 internal class StorageContainerWriter {
-    
+
     // MARK: - Root level methods
 
     @discardableResult
@@ -276,7 +275,7 @@ internal class StorageContainerWriter {
 
         /// Write -> Type/byteCount
         buffer.storeBytes(of: header, as: Raw.ContainerHeader.self)
-        
+
         return elementOffset + Int(header.byteCount)
     }
 
@@ -415,7 +414,7 @@ internal class StorageContainerWriter {
 
         /// Store the size of the string
         buffer.storeBytes(of: Int32(utf8.count), as: Int32.self)
-        
+
         /// Store the value
         var offset = align(offset: MemoryLayout<Int32>.stride, to: MemoryLayout<Unicode.UTF8.CodeUnit>.self)
         for codeUnit in utf8 {
@@ -428,7 +427,7 @@ internal class StorageContainerWriter {
     @inline(__always)
     private static func byteCount(string: String) -> Int {
         let bytes = align(offset: MemoryLayout<Int32>.stride, to: MemoryLayout<Unicode.UTF8.CodeUnit>.self)
-        
+
         return bytes + (MemoryLayout<Unicode.UTF8.CodeUnit>.stride * string.count)
     }
 }

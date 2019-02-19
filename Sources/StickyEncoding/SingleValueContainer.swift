@@ -18,7 +18,6 @@
 ///  Created by Tony Stone on 10/24/17.
 ///
 import Swift
-import StickyUtilities
 
 ///
 /// Type which contains a single value in binary form.
@@ -69,8 +68,8 @@ internal class SingleValueContainer {
     ///
     @inline(__always)
     init(from buffer: UnsafeRawBufferPointer) {
-        let tmp = UnsafeMutableRawBufferPointer.allocate(count: buffer.count)
-        tmp.copyBytes(from: buffer)
+        let tmp = UnsafeMutableRawBufferPointer.allocate(byteCount: buffer.count, alignment: MemoryLayout<UInt8>.alignment)
+        tmp.copyMemory(from: buffer)
         self.buffer = UnsafeRawBufferPointer(tmp)
     }
 
@@ -83,7 +82,7 @@ internal class SingleValueContainer {
     init<T: EncodableType>(_ value: T) {
         let encodedType = T.encodedType
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(count: Offset.value + MemoryLayout<T>.stride)
+        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: Offset.value + MemoryLayout<T>.stride, alignment: MemoryLayout<UInt8>.alignment) // allocate(count: Offset.value + MemoryLayout<T>.stride)
 
         /// Store the type of stored data
         buffer.storeBytes(of: encodedType, toByteOffset: Offset.type, as: EncodedType.self)
@@ -104,8 +103,8 @@ internal class SingleValueContainer {
     init(_ value: String) {
         let utf8 = value.utf8
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(count: Offset.value + (utf8.count * MemoryLayout<Unicode.UTF8.CodeUnit>.stride))
-        
+        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: Offset.value + (utf8.count * MemoryLayout<Unicode.UTF8.CodeUnit>.stride), alignment: MemoryLayout<UInt8>.alignment)
+
         /// Store the type of stored data
         buffer.storeBytes(of: .string, toByteOffset: Offset.type, as: EncodedType.self)
         /// Store the size of the data
@@ -192,7 +191,7 @@ extension SingleValueContainer: StorageContainer {
     /// Write our contents to a buffer.
     ///
     func write(to buffer: UnsafeMutableRawBufferPointer) {
-        buffer.copyBytes(from: self.buffer)
+        buffer.copyMemory(from: self.buffer)
     }
 }
 
