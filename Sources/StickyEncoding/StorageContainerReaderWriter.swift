@@ -33,19 +33,19 @@ private enum Error: Swift.Error {
 /// implies that you must read each element in turn in order to figure out where the next element is.
 ///
 /// ```
-///     |--------------------|---------/ /--------|--------------------|---------/ /--------|
-///     |   Container Header |    Container Data  |   Container Header |    Container Data  |  ...
-///     |--------------------|--------/ /---------|--------------------|--------/ /---------|
+///     |----------|----------|-----------|
+///     |  Element |  Element |   Element |  ...
+///     |----------|----------|-----------|
 ///
 /// ```
 ///
-private enum Raw {
+private enum Element {
 
     struct ContainerType: Equatable {
-        static let null    = ContainerType(0xa)
-        static let keyed   = ContainerType(0xb)
-        static let unkeyed = ContainerType(0xc)
-        static let value   = ContainerType(0xd)
+        static let null          = ContainerType(0xa)
+        static let keyed         = ContainerType(0xb)
+        static let unkeyed       = ContainerType(0xc)
+        static let singleValue   = ContainerType(0xd)
 
         static func == (lhs: ContainerType, rhs: ContainerType) -> Bool {
             return lhs.value == rhs.value
@@ -57,174 +57,15 @@ private enum Raw {
     }
 
     ///
-    /// Container Element Header
+    /// Element Header structure (will be written at the beginning of each Element)
     ///
-    struct ContainerHeader {
+    struct Header {
         init(_ type: ContainerType, byteCount: Int) {
             self.type  = type
             self.byteCount = Int32(byteCount)
         }
         let type: ContainerType
         let byteCount: Int32
-    }
-}
-
-///
-/// Reads binary storage containers into `StorageContainer`.
-///
-internal class StorageContainerReader {
-
-    ///
-    /// Reads `buffer` into a root-level `StorageContainer`.
-    ///
-    /// - Parameter buffer: `UnsafeRawBufferPointer` to a representation previously written to by a writer.
-    ///
-    /// - Returns: `StorageContainer` representation of the raw buffer.
-    ///
-    @inline(__always)
-    static func read(from buffer: UnsafeRawBufferPointer) -> StorageContainer {
-
-        guard buffer.count >= MemoryLayout<Raw.ContainerHeader>.stride
-            else { return NullStorageContainer.null }
-
-        let (container, _) = read(from: buffer)
-
-        return container
-    }
-
-    // MARK: - Private implementation
-
-    ///
-    ///  Reads a root-level `StorageContainer` from `buffer`.
-    ///
-    ///
-    /// ```
-    ///     |----------|---------/ /-----------|
-    ///     |  Header  |     Container Data    |
-    ///     |----------|--------/ /------------|
-    /// ```
-    ///
-    /* Do not inline, recursively called */
-    private static func read(from buffer: UnsafeRawBufferPointer) -> (StorageContainer, Int) {
-
-        /// Load the buffer header
-        let header = buffer.load(as: Raw.ContainerHeader.self)
-
-        let containerOffset = align(offset: MemoryLayout<Raw.ContainerHeader>.stride, to: UnsafeRawPointer.self)
-        let containerBuffer = UnsafeRawBufferPointer(rebasing: buffer[containerOffset..<containerOffset + Int(header.byteCount)])
-
-        var storageContainer: StorageContainer
-
-        switch header.type {
-
-        case .keyed:   storageContainer = read(containerBuffer, as: KeyedStorageContainer.self);   break
-        case .unkeyed: storageContainer = read(containerBuffer, as: UnkeyedStorageContainer.self); break
-        case .value:   storageContainer = read(containerBuffer, as: SingleValueContainer.self);    break
-        case .null: fallthrough
-        default:    storageContainer = read(containerBuffer, as: NullStorageContainer.self);    break
-        }
-        return (storageContainer, containerOffset + containerBuffer.count)
-    }
-
-    ///
-    /// Reads a `NullStorageContainer` from `buffer`.
-    ///
-    @inline(__always)
-    private static func read(_ buffer: UnsafeRawBufferPointer, as: NullStorageContainer.Type) -> NullStorageContainer {
-        return NullStorageContainer.null
-    }
-
-    ///
-    ///  Reads a `KeyedStorageContainer` from `buffer`.
-    ///
-    /// ```
-    ///     |----------|-------|---------|-------|---------|
-    ///     |  count   | Key 0 | Value 0 | Key n | Value n |
-    ///     |----------|-------|---------|-------|---------|
-    ///         Int32
-    /// ```
-    ///
-    @inline(__always)
-    private static func read(_ buffer: UnsafeRawBufferPointer, as: KeyedStorageContainer.Type) -> KeyedStorageContainer {
-
-        let container = KeyedStorageContainer()
-
-        /// Read -> count
-        let count = buffer.load(as: Int32.self)
-
-        var elementOffset = align(offset: MemoryLayout<Int32>.stride, to: UnsafeRawPointer.self)
-
-        for _ in 0..<Int32(count) {
-
-            /// Read -> Key n
-            let (key, keyByteCount) = read(UnsafeRawBufferPointer(rebasing: buffer[elementOffset...]), as: String.self)
-            elementOffset = align(offset: elementOffset + keyByteCount, to: UnsafeRawPointer.self)
-
-            /// Read -> Value n
-            let (value, valueByteCount) = read(from: UnsafeRawBufferPointer(rebasing: buffer[elementOffset...]))
-            elementOffset = align(offset: elementOffset + valueByteCount, to: UnsafeRawPointer.self)
-
-            /// Assign the key/value
-            container[key] = value
-        }
-        return container
-    }
-
-    ///
-    ///  Reads a `UnkeyedStorageContainer` from `buffer`.
-    ///
-    ///
-    /// ```
-    ///     |----------|-----------|-----------|-----------|
-    ///     |  count   | Element 0 | Element 1 | Element n |
-    ///     |----------|-----------|-----------|-----------|
-    ///         Int32
-    /// ```
-    ///
-    @inline(__always)
-    private static func read(_ buffer: UnsafeRawBufferPointer, as: UnkeyedStorageContainer.Type) -> UnkeyedStorageContainer {
-
-        let container = UnkeyedStorageContainer()
-
-        /// Read -> count
-        let count = buffer.load(as: Int32.self)
-
-        var elementOffset = align(offset: MemoryLayout<Int32>.stride, to: UnsafeRawPointer.self)
-
-        for _ in 0..<Int32(count) {
-
-            /// Read -> Element n
-            let (element, byteCount) = read(from: UnsafeRawBufferPointer(rebasing: buffer[elementOffset...]))
-            elementOffset = align(offset: elementOffset + byteCount, to: UnsafeRawPointer.self)
-
-            /// Push the new element on to the result container
-            container.push(element)
-        }
-        return container
-    }
-
-    ///
-    ///  Reads a `SingleValueContainer` from `buffer`.
-    ///
-    @inline(__always)
-    private static func read(_ buffer: UnsafeRawBufferPointer, as: SingleValueContainer.Type) -> SingleValueContainer {
-        return SingleValueContainer(from: buffer)
-    }
-
-    ///
-    ///  Reads a `String` from `buffer` (used for dictionary key storage).
-    ///
-    @inline(__always)
-    private static func read(_ buffer: UnsafeRawBufferPointer, as: String.Type) -> (String, Int) {
-        var utf8: [Unicode.UTF8.CodeUnit] = []
-
-        let count = Int(buffer.load(as: Int32.self))
-        let offset = align(offset: MemoryLayout<Int32>.stride, to: MemoryLayout<Unicode.UTF8.CodeUnit>.self)
-
-        for i in 0..<count{
-            utf8.append(buffer.load(fromByteOffset: offset + i, as: Unicode.UTF8.CodeUnit.self))
-        }
-        return (String(decoding: utf8, as: UTF8.self), offset + (MemoryLayout<Unicode.UTF8.CodeUnit>.stride * count))
     }
 }
 
@@ -248,33 +89,37 @@ internal class StorageContainerWriter {
 
     // MARK: - Private methods
 
+    /// Write a container as an Element (Header + Container).
     ///
     /// ```
-    ///     |---------|------------|---------/ /-----------|
-    ///     |  type   |  byteCount |        Data           |
-    ///     |---------|------------|--------/ /------------|
+    ///     |---------|------------|
+    ///     | Header  |  Container |
+    ///     |---------|------------|
     /// ```
     ///
     /* Do not inline, recursively called */
     private static func write(storageContainer: StorageContainer, to buffer: UnsafeMutableRawBufferPointer) -> Int {
 
-        let elementOffset = align(offset: MemoryLayout<Raw.ContainerHeader>.stride, to: UnsafeRawPointer.self)
+        /// Create a buffer that starts past the header which will be written last.
+        ///
+        let elementOffset = align(offset: MemoryLayout<Element.Header>.stride, to: UnsafeRawPointer.self)
         let elementBuffer = UnsafeMutableRawBufferPointer(rebasing: buffer[elementOffset...])
 
-        var header: Raw.ContainerHeader
+        /// The Element Header
+        var header: Element.Header
 
         /// Write -> Data
         switch storageContainer {
 
-        case let container as KeyedStorageContainer:   header = Raw.ContainerHeader(.keyed,   byteCount: write(keyed:   container, to: elementBuffer)); break
-        case let container as UnkeyedStorageContainer: header = Raw.ContainerHeader(.unkeyed, byteCount: write(unkeyed: container, to: elementBuffer)); break
-        case let container as SingleValueContainer:    header = Raw.ContainerHeader(.value,   byteCount: write(value:   container, to: elementBuffer)); break
+        case let container as SingleValueContainer:    header = Element.Header(.singleValue,   byteCount: write(singleValue: container, to: elementBuffer)); break
+        case let container as UnkeyedStorageContainer: header = Element.Header(.unkeyed,       byteCount: write(unkeyed: container,     to: elementBuffer)); break
+        case let container as KeyedStorageContainer:   header = Element.Header(.keyed,         byteCount: write(keyed: container,       to: elementBuffer)); break
         case is NullStorageContainer: fallthrough
-        default: header = Raw.ContainerHeader(.null, byteCount: write(null: NullStorageContainer.null, to: elementBuffer)); break
+        default: header = Element.Header(.null, byteCount: write(null: NullStorageContainer.null, to: elementBuffer)); break
         }
 
         /// Write -> Type/byteCount
-        buffer.storeBytes(of: header, as: Raw.ContainerHeader.self)
+        buffer.storeBytes(of: header, as: Element.Header.self)
 
         return elementOffset + Int(header.byteCount)
     }
@@ -282,30 +127,81 @@ internal class StorageContainerWriter {
     /* Do not inline, recursively called */
     private static func byteCount(storageContainer: StorageContainer) -> Int {
 
-        var bytes = align(offset: MemoryLayout<Raw.ContainerHeader>.stride, to: UnsafeRawPointer.self)
+        var bytes = align(offset: MemoryLayout<Element.Header>.stride, to: UnsafeRawPointer.self)
 
         /// Write -> Data
         switch storageContainer {
 
         case let container as KeyedStorageContainer:   bytes += byteCount(keyed:   container); break
         case let container as UnkeyedStorageContainer: bytes += byteCount(unkeyed: container); break
-        case let container as SingleValueContainer:    bytes += byteCount(value:   container); break
+        case let container as SingleValueContainer:    bytes += byteCount(singleValue:   container); break
         case is NullStorageContainer: fallthrough
         default: bytes += byteCount(null: NullStorageContainer.null); break
         }
         return bytes
     }
 
-    // MARK: - `NullStorageContainer` methods.
+    // MARK: - `SingleValueContainer` methods.
 
+    /// Writes a single value container to the buffer.
+    ///
+    /// The format is determed by the container iself since,
+    /// in the case of the SingleValueContainer, it is already
+    /// in byte form.
+    /// ```
+    ///     |-------|------|---------/ /--------|
+    ///     | type  | size |       value        |
+    ///     |-------|------|--------/ /---------|
+    ///
+    ///       Int32 | In32 | Determined by size
+    /// ```
     @inline(__always)
-    private static func write(null: NullStorageContainer, to buffer: UnsafeMutableRawBufferPointer) -> Int {
-        return byteCount(null: null)
+    private static func write(singleValue storageContainer: SingleValueContainer, to buffer: UnsafeMutableRawBufferPointer) -> Int {
+        storageContainer.write(to: buffer)
+        return storageContainer.byteCount
     }
 
     @inline(__always)
-    private static func byteCount(null: NullStorageContainer) -> Int {
-        return 0    /// Nothing to store for null
+    private static func byteCount(singleValue storageContainer: SingleValueContainer) -> Int {
+        return storageContainer.byteCount
+    }
+
+    // MARK: - `UnkeyedStorageContainer` methods.
+
+    ///
+    /// Writes an `UnkeyedStorageContainer` to `buffer` and returns the number of bytes written.
+    ///
+    /// ```
+    ///     |----------|-----------|-----------|-----------|
+    ///     |  count   | Element 0 | Element 1 | Element n |
+    ///     |----------|-----------|-----------|-----------|
+    ///         Int32
+    /// ```
+    ///
+    @inline(__always)
+    private static func write(unkeyed storageContainer: UnkeyedStorageContainer, to buffer: UnsafeMutableRawBufferPointer) -> Int {
+
+        /// Write -> Count
+        buffer.storeBytes(of: Int32(storageContainer.count), as: Int32.self)
+        var byteCount = align(offset: MemoryLayout<Int32>.stride, to: UnsafeRawPointer.self)
+
+        for index in 0..<storageContainer.count {
+
+            /// Write -> Element n
+            let elementByteCount =  write(storageContainer: storageContainer[index], to: UnsafeMutableRawBufferPointer(rebasing: buffer[byteCount...]))
+            byteCount = align(offset: byteCount + elementByteCount, to: UnsafeRawPointer.self)
+        }
+        return byteCount
+    }
+
+    @inline(__always)
+    private static func byteCount(unkeyed storageContainer: UnkeyedStorageContainer) -> Int {
+        var bytes = align(offset: MemoryLayout<Int32>.stride, to: UnsafeRawPointer.self)
+
+        for index in 0..<storageContainer.count {
+            bytes = align(offset: bytes + byteCount(storageContainer: storageContainer[index]), to: UnsafeRawPointer.self)
+        }
+        return bytes
     }
 
     // MARK: - `KeyedStorageContainer` methods.
@@ -352,57 +248,6 @@ internal class StorageContainerWriter {
         return bytes
     }
 
-    // MARK: - `UnkeyedStorageContainer` methods.
-
-    ///
-    /// Writes an `UnkeyedStorageContainer` to `buffer` and returns the number of bytes written.
-    ///
-    /// ```
-    ///     |----------|-----------|-----------|-----------|
-    ///     |  count   | Element 0 | Element 1 | Element n |
-    ///     |----------|-----------|-----------|-----------|
-    ///         Int32
-    /// ```
-    ///
-    @inline(__always)
-    private static func write(unkeyed storageContainer: UnkeyedStorageContainer, to buffer: UnsafeMutableRawBufferPointer) -> Int {
-
-        /// Write -> Count
-        buffer.storeBytes(of: Int32(storageContainer.count), as: Int32.self)
-        var byteCount = align(offset: MemoryLayout<Int32>.stride, to: UnsafeRawPointer.self)
-
-        for index in 0..<storageContainer.count {
-
-            /// Write -> Element n
-            let elementByteCount =  write(storageContainer: storageContainer[index], to: UnsafeMutableRawBufferPointer(rebasing: buffer[byteCount...]))
-            byteCount = align(offset: byteCount + elementByteCount, to: UnsafeRawPointer.self)
-        }
-        return byteCount
-    }
-
-    @inline(__always)
-    private static func byteCount(unkeyed storageContainer: UnkeyedStorageContainer) -> Int {
-        var bytes = align(offset: MemoryLayout<Int32>.stride, to: UnsafeRawPointer.self)
-
-        for index in 0..<storageContainer.count {
-            bytes = align(offset: bytes + byteCount(storageContainer: storageContainer[index]), to: UnsafeRawPointer.self)
-        }
-        return bytes
-    }
-
-    // MARK: - `SingleValueContainer` methods.
-
-    @inline(__always)
-    private static func write(value storageContainer: SingleValueContainer, to buffer: UnsafeMutableRawBufferPointer) -> Int {
-        storageContainer.write(to: buffer)
-        return storageContainer.byteCount
-    }
-
-    @inline(__always)
-    private static func byteCount(value storageContainer: SingleValueContainer) -> Int {
-        return storageContainer.byteCount
-    }
-
     // MARK: - `String` methods.
 
     ///
@@ -429,5 +274,186 @@ internal class StorageContainerWriter {
         let bytes = align(offset: MemoryLayout<Int32>.stride, to: MemoryLayout<Unicode.UTF8.CodeUnit>.self)
 
         return bytes + (MemoryLayout<Unicode.UTF8.CodeUnit>.stride * string.count)
+    }
+
+    // MARK: - `NullStorageContainer` methods.
+
+    @inline(__always)
+    private static func write(null: NullStorageContainer, to buffer: UnsafeMutableRawBufferPointer) -> Int {
+        return byteCount(null: null)
+    }
+
+    @inline(__always)
+    private static func byteCount(null: NullStorageContainer) -> Int {
+        return 0    /// Nothing to store for null
+    }
+}
+
+///
+/// Reads binary storage containers into `StorageContainer`.
+///
+internal class StorageContainerReader {
+
+    ///
+    /// Reads `buffer` into a root-level `StorageContainer`.
+    ///
+    /// - Parameter buffer: `UnsafeRawBufferPointer` to a representation previously written to by a writer.
+    ///
+    /// - Returns: `StorageContainer` representation of the raw buffer.
+    ///
+    @inline(__always)
+    static func read(from buffer: UnsafeRawBufferPointer) -> StorageContainer {
+
+        guard buffer.count >= MemoryLayout<Element.Header>.stride
+            else { return NullStorageContainer.null }
+
+        let (container, _) = read(from: buffer)
+
+        return container
+    }
+
+    // MARK: - Private implementation
+
+    ///
+    ///  Reads a root-level `StorageContainer` from `buffer`.
+    ///
+    ///
+    /// ```
+    ///     |----------|-----------|
+    ///     |  Header  | Container |
+    ///     |----------|-----------|
+    /// ```
+    ///
+    /* Do not inline, recursively called */
+    private static func read(from buffer: UnsafeRawBufferPointer) -> (StorageContainer, Int) {
+
+        /// Load the buffer header
+        let header = buffer.load(as: Element.Header.self)
+
+        let containerOffset = align(offset: MemoryLayout<Element.Header>.stride, to: UnsafeRawPointer.self)
+        let containerBuffer = UnsafeRawBufferPointer(rebasing: buffer[containerOffset..<containerOffset + Int(header.byteCount)])
+
+        var storageContainer: StorageContainer
+
+        switch header.type {
+
+        case .singleValue: storageContainer = read(containerBuffer, as: SingleValueContainer.self);    break
+        case .unkeyed:     storageContainer = read(containerBuffer, as: UnkeyedStorageContainer.self); break
+        case .keyed:       storageContainer = read(containerBuffer, as: KeyedStorageContainer.self);   break
+        case .null: fallthrough
+        default:    storageContainer = read(containerBuffer, as: NullStorageContainer.self);    break
+        }
+        return (storageContainer, containerOffset + containerBuffer.count)
+    }
+
+    ///
+    /// Reads a `SingleValueContainer` from `buffer`.
+    ///
+    /// The format is determed by the container iself since,
+    /// in the case of the SingleValueContainer, it is already
+    /// in byte form.
+    /// ```
+    ///     |-------|------|---------/ /--------|
+    ///     | type  | size |       value        |
+    ///     |-------|------|--------/ /---------|
+    ///
+    ///       Int32 | In32 | Determined by size
+    /// ```
+    @inline(__always)
+    private static func read(_ buffer: UnsafeRawBufferPointer, as: SingleValueContainer.Type) -> SingleValueContainer {
+        return SingleValueContainer(from: buffer)
+    }
+
+    ///
+    ///  Reads a `UnkeyedStorageContainer` from `buffer`.
+    ///
+    ///
+    /// ```
+    ///     |----------|-----------|-----------|-----------|
+    ///     |  count   | Element 0 | Element 1 | Element n |
+    ///     |----------|-----------|-----------|-----------|
+    ///         Int32
+    /// ```
+    ///
+    @inline(__always)
+    private static func read(_ buffer: UnsafeRawBufferPointer, as: UnkeyedStorageContainer.Type) -> UnkeyedStorageContainer {
+
+        let container = UnkeyedStorageContainer()
+
+        /// Read -> count
+        let count = buffer.load(as: Int32.self)
+
+        var elementOffset = align(offset: MemoryLayout<Int32>.stride, to: UnsafeRawPointer.self)
+
+        for _ in 0..<Int32(count) {
+
+            /// Read -> Element n
+            let (element, byteCount) = read(from: UnsafeRawBufferPointer(rebasing: buffer[elementOffset...]))
+            elementOffset = align(offset: elementOffset + byteCount, to: UnsafeRawPointer.self)
+
+            /// Push the new element on to the result container
+            container.push(element)
+        }
+        return container
+    }
+
+    ///
+    ///  Reads a `KeyedStorageContainer` from `buffer`.
+    ///
+    /// ```
+    ///     |----------|-------|---------|-------|---------|
+    ///     |  count   | Key 0 | Value 0 | Key n | Value n |
+    ///     |----------|-------|---------|-------|---------|
+    ///         Int32
+    /// ```
+    ///
+    @inline(__always)
+    private static func read(_ buffer: UnsafeRawBufferPointer, as: KeyedStorageContainer.Type) -> KeyedStorageContainer {
+
+        let container = KeyedStorageContainer()
+
+        /// Read -> count
+        let count = buffer.load(as: Int32.self)
+
+        var elementOffset = align(offset: MemoryLayout<Int32>.stride, to: UnsafeRawPointer.self)
+
+        for _ in 0..<Int32(count) {
+
+            /// Read -> Key n
+            let (key, keyByteCount) = read(UnsafeRawBufferPointer(rebasing: buffer[elementOffset...]), as: String.self)
+            elementOffset = align(offset: elementOffset + keyByteCount, to: UnsafeRawPointer.self)
+
+            /// Read -> Value n
+            let (value, valueByteCount) = read(from: UnsafeRawBufferPointer(rebasing: buffer[elementOffset...]))
+            elementOffset = align(offset: elementOffset + valueByteCount, to: UnsafeRawPointer.self)
+
+            /// Assign the key/value
+            container[key] = value
+        }
+        return container
+    }
+
+    ///
+    ///  Reads a `String` from `buffer` (used for dictionary key storage).
+    ///
+    @inline(__always)
+    private static func read(_ buffer: UnsafeRawBufferPointer, as: String.Type) -> (String, Int) {
+        var utf8: [Unicode.UTF8.CodeUnit] = []
+
+        let count = Int(buffer.load(as: Int32.self))
+        let offset = align(offset: MemoryLayout<Int32>.stride, to: MemoryLayout<Unicode.UTF8.CodeUnit>.self)
+
+        for i in 0..<count{
+            utf8.append(buffer.load(fromByteOffset: offset + i, as: Unicode.UTF8.CodeUnit.self))
+        }
+        return (String(decoding: utf8, as: UTF8.self), offset + (MemoryLayout<Unicode.UTF8.CodeUnit>.stride * count))
+    }
+
+    ///
+    /// Reads a `NullStorageContainer` from `buffer`.
+    ///
+    @inline(__always)
+    private static func read(_ buffer: UnsafeRawBufferPointer, as: NullStorageContainer.Type) -> NullStorageContainer {
+        return NullStorageContainer.null
     }
 }
