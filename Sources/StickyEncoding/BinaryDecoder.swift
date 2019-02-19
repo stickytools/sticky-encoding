@@ -22,6 +22,18 @@ import Foundation
 ///
 /// `BinaryDecoder` facilitates the decoding of binary values into semantic `Decodable` types.
 ///
+/// To create an instance of a BinaryDecoder:
+/// ```
+///     let decoder = BinaryDecoder()
+/// ```
+///
+/// > Note: You may optionally pass your own userInfo `BinaryDecoder(userInfo:)` structure and it will be available to you during the decoding.
+///
+/// To decode, you pass the Type of object to create, and an instance of encoded data representing that type.
+/// ```
+///    let employee = try decoder.decode(Employee.self, from: encodedData)
+/// ```
+///
 open class BinaryDecoder {
 
     /// Initializes `self`.

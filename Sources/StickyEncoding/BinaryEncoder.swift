@@ -30,32 +30,34 @@ import Foundation
 ///
 /// ### Examples
 ///
-/// To create an instance of an BinaryEncoder:
+/// To create an instance of a BinaryEncoder:
 /// ```
-///    let encoder = BinaryEncoder()
+///     let encoder = BinaryEncoder()
 /// ```
+///
+/// > Note: You may optionally pass your own userInfo `BinaryEncoder(userInfo:)` structure and it will be available to you during the encoding.
+///
 /// You can encode any top even top-level single value types including Int,
 /// UInt, Double, Bool, and Strings. Simply pass the value to the instance
 /// of the BinaryEncoder and call `encode`.
 /// ```
 ///    let string = "You can encode single values of any type."
 ///
-///    let bytes = try encoder.encode(string).bytes
+///    let encoded = try encoder.encode(string)
 /// ```
 /// Basic structs and classes can also be encoded.
 /// ```
-///     struct Employee: Codable {
+///    struct Employee: Codable {
 ///         let first: String
 ///         let last: String
 ///         let employeeNumber: Int
-///     }
+///    }
 ///
-///     let employee = Employee(first: "John", last: "Doe", employeeNumber: 2345643)
+///    let employee = Employee(first: "John", last: "Doe", employeeNumber: 2345643)
 ///
-///     let bytes = try encoder.encode(employee).bytes
+///    let encodedData = try encoder.encode(employee)
 /// ```
 /// As well as Complex types with sub classes.
-///
 ///
 open class BinaryEncoder {
 
