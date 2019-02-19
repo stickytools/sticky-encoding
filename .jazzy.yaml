@@ -28,3 +28,8 @@ custom_categories:
   - name: User Guide
     children:
     - Binary Format
+  - name: Classes
+    children:
+    - BinaryEncoder
+    - BinaryDecoder
+    - EncodedData

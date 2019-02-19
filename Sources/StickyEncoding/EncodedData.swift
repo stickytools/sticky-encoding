@@ -20,28 +20,47 @@
 import Swift
 
 ///
-/// Intermediary type which represents the first stage of encoding.  This type is the direct connection between
-/// raw memory and a type that can be converted to and from an `Encodable` object.
+/// An intermediate representation which represents the encoded data.  This type is the direct connection between
+/// raw memory and a type that can be converted to and from an `Codable` object.
+///
+/// StickyEncoding uses an intermediate representation so that it can support many use cases from
+/// direct byte conversion to writing/reading directly to/from raw memory.
+///
+/// When encoding of an object, the intermediate representation has already been
+/// encoded down to a form that can be rapidly written to memory.
+/// ```
+///    let encodedData = try encoder.encode(employee)
+///
+///    // Write the bytes directly to a file.
+///    FileManager.default.createFile(atPath: "employee.bin", contents: Data(bytes: encodedData.bytes))
+/// ```
+/// There are use cases that require writing to a buffer or socket in which case StickyEncoding offers a direct write method so that an intermediate structure (byte array) does not have to be created first.
+/// ```
+///    let encodedData = try encoder.encode(employee)
+///
+///    // Allocate byte aligned raw memory to hold the binary encoded data.
+///    let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: encodedData.byteCount, alignment: MemoryLayout<UInt8>.alignment)
+///
+///    // Write the encoded data directly to the raw memory.
+///    encodedData.write(to: buffer)
+/// ```
 ///
 public class EncodedData {
 
     // MARK: - Reading encoded data
 
-    ///
     /// Initializes `self` with a null value.
     ///
     public init() {
         self.storage = NullStorageContainer.null
     }
 
-    ///
     /// Initializes `'self` using the data stored in `buffer`.
     ///
     public init(from buffer: UnsafeRawBufferPointer) {
         self.storage  = StorageContainerReader.read(from: buffer)
     }
 
-    ///
     /// Initializes `'self` using the data stored in `bytes`.
     ///
     public init(bytes: [UInt8]) {
