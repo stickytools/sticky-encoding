@@ -1,6 +1,14 @@
 # Change Log
 All significant changes to this project will be documented in this file.
 
+## [1.0.0-beta.3](https://github.com/stickytools/sticky-encoding/tree/1.0.0-beta.3)
+
+#### Added
+- Added support to/from `Swift.Data` to `EncodedData`.
+
+#### Changed
+- Changed EncodedData `var bytes: [UInt8]` to `Array<UInt8>(_ encodedData: EncodedDate)` constructor.
+
 ## [1.0.0-beta.2](https://github.com/stickytools/sticky-encoding/tree/1.0.0-beta.2)
 
 #### Added

@@ -38,7 +38,7 @@ class EncodedDataTests: XCTestCase {
         let input    = EncodedData()
         let expected = NullStorageContainer.null
 
-        let result = EncodedData(bytes: input.bytes)
+        let result = EncodedData(Array(input))
 
         XCTAssert(result.storage.equal(expected), "\(expected) does not equal \(input.storage)")
     }
@@ -48,7 +48,7 @@ class EncodedDataTests: XCTestCase {
         let input    = EncodedData(UnkeyedStorageContainer())
         let expected = UnkeyedStorageContainer()
 
-        let result = EncodedData(bytes: input.bytes)
+        let result = EncodedData(Array(input))
 
         XCTAssert(result.storage.equal(expected), "\(expected) does not equal \(input.storage)")
     }
@@ -58,7 +58,7 @@ class EncodedDataTests: XCTestCase {
         let input = EncodedData(KeyedStorageContainer())
         let expected = KeyedStorageContainer()
 
-        let result = EncodedData(bytes: input.bytes)
+        let result = EncodedData(Array(input))
 
         XCTAssert(result.storage.equal(expected), "\(expected) does not equal \(input.storage)")
     }
@@ -68,7 +68,7 @@ class EncodedDataTests: XCTestCase {
         let input = EncodedData(SingleValueContainer("Test string"))
         let expected = SingleValueContainer("Test string")
 
-        let result = EncodedData(bytes: input.bytes)
+        let result = EncodedData(Array(input))
 
         XCTAssert(result.storage.equal(expected), "\(expected) does not equal \(input.storage)")
     }

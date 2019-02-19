@@ -86,7 +86,7 @@ class DocumentationExampleTests: XCTestCase {
         ///
         let encodedData = try encoder.encode(employee)
 
-        FileManager.default.createFile(atPath: "employee.bin", contents: Data(bytes: encodedData.bytes))
+        FileManager.default.createFile(atPath: "employee.bin", contents: Data(encodedData))
     }
 
     func testEncodedDataExample2() throws {
