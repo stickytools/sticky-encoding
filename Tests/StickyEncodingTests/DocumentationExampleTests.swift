@@ -37,7 +37,7 @@ class DocumentationExampleTests: XCTestCase {
 
         let string = "You can encode single values of any type."
 
-        let encoded = try encoder.encode(string)
+        let _ = try encoder.encode(string)
     }
 
     func testBinaryEncoderExample2() throws {
@@ -52,7 +52,7 @@ class DocumentationExampleTests: XCTestCase {
 
         let employee = Employee(first: "John", last: "Doe", employeeNumber: 2345643)
 
-        let encodedData = try encoder.encode(employee)
+        let _ = try encoder.encode(employee)
     }
 
     func testBinaryDecoderExample1() throws {
@@ -67,7 +67,7 @@ class DocumentationExampleTests: XCTestCase {
 
         /// Actual code in example.
         ///
-        let employee = try decoder.decode(Employee.self, from: encodedData)
+        let _ = try decoder.decode(Employee.self, from: encodedData)
     }
 
     func testEncodedDataExample1() throws {
