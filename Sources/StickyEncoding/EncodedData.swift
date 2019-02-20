@@ -115,17 +115,6 @@ public extension EncodedData {
     public convenience init(_ bytes: [UInt8]) {
         self.init(bytes.withUnsafeBytes { StorageContainerReader.read(from: $0) })
     }
-
-    /// Constructs an `EncodedData` instance from an any sequence where Element == UInt8.
-    ///
-    /// - Parameter sequence: The `Sequence` instance used to construct the instance from.
-    ///
-    public convenience init<S>(_ sequence: S) where S: Sequence, S.Element == UInt8 {
-        let bytes = sequence.reduce(into: Array<UInt8>()) { (array, byte) in
-            array.append(byte)
-        }
-        self.init(bytes.withUnsafeBytes { StorageContainerReader.read(from: $0) })
-    }
 }
 
 /// Support to/from Data.
