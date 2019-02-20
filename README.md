@@ -91,7 +91,7 @@ encoded down to a form that can be rapidly written to memory.
    let encodedData = try encoder.encode(employee)
 
    // Write the bytes directly to a file.
-   FileManager.default.createFile(atPath: "employee.bin", contents: Data(bytes: encodedData.bytes))
+   FileManager.default.createFile(atPath: "employee.bin", contents: Data(encodedData))
 ```
 There are use cases that require writing to a buffer or socket in which case StickyEncoding offers a direct write method so that an intermediate structure (byte array) does not have to be created first.
 ```Swift
