@@ -22,10 +22,10 @@
 
 ## Overview
 
-StickyEncoding facilitates the encoding and decoding of `Codable` values into and output of a binary
+StickyEncoding facilitates the encoding and decoding of `Codable` values into and out of a binary
 format that can be stored on disk or sent over a socket.
 
-Encoding is done using a `BinaryEncoder` instance and will encode any `Encodable` type whether you declare conformance to `Encodable` and let the compiler create the code or you manually implement the conformance yourself.
+Encoding is done using a `BinaryEncoder` instance and will encode any `Encodable` type whether you declare conformance to `Encodable` and let the compiler create the code, or you manually implement the conformance yourself.
 
 Decoding is done using a `BinaryDecoder` instance and can decode any `Decodable` type that was previously encoded using the `BinaryEncoder`. Of course you can declare `Encodable` or `Decodable` conformance by using `Codable` as well.
 
@@ -43,7 +43,7 @@ To create an instance of a BinaryEncoder:
 
 > Note: You may optionally pass your own userInfo `BinaryEncoder(userInfo:)` structure and it will be available to you during the encoding.
 
-You can encode any top even top-level single value types including Int,
+You can encode any top-level single value type including Int,
 UInt, Double, Bool, and Strings. Simply pass the value to the instance
 of the BinaryEncoder and call `encode`.
 ```Swift
@@ -81,9 +81,9 @@ To decode, you pass the Type of object to create, and an instance of encoded dat
 
 ### EncodedData
 
-An intermediate representation which represents the encoded data.  This type is the direct connection between raw memory and a type that can be converted to and from a `Codable` object.
+The `BinaryEncoder.encode` method returns a type called `EncodedData` (likewise `BinaryDecoder.decode` accepts an `EncodedData` instance).   This type is the direct connection between raw memory and a type that can be converted to and from a `Codable` object.
 
-StickyEncoding uses an intermediate representation so that it can support many use cases from direct byte conversion to writing/reading directly to/from raw memory.
+StickyEncoding uses this intermediate representation so that it can support many use cases from direct byte conversion to writing/reading directly to/from raw memory.
 
 When encoding of an object, the intermediate representation has already been
 encoded down to a form that can be rapidly written to memory.
