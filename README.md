@@ -1,3 +1,6 @@
+## ⚡️ Stay tuned for updates: upcoming version 1.0.0 (currently in beta) ⚡️
+<p align="center">Please <a href="https://github.com/tonystone/tracelog/stargazers">star</a> this github repository to stay up to date and show your support.</p>
+
 # StickyEncoding ![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-lightgray.svg?style=flat)
 
 <a href="https://github.com/stickytools/sticky-encoding/" target="_blank">
