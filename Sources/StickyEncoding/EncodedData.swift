@@ -19,6 +19,8 @@
 ///
 import Foundation
 
+// MARK: EncodedData
+
 /// An intermediate representation which represents the encoded data.  This type is the direct connection between
 /// raw memory and a type that can be converted to and from an `Codable` object.
 ///
@@ -45,6 +47,8 @@ import Foundation
 /// ```
 ///
 public class EncodedData {
+
+    // MARK: Initialization
 
     /// Initializes `self` with a null value.
     ///
@@ -73,6 +77,8 @@ public class EncodedData {
 ///
 public extension EncodedData {
 
+    // MARK: UnsafeRawBufferPointer Support
+
     /// Initializes `'self` using the data stored in `buffer`.
     ///
     public convenience init(from buffer: UnsafeRawBufferPointer) {
@@ -93,7 +99,60 @@ public extension EncodedData {
 
 /// Support to/from Array<UInt8>
 ///
+public extension EncodedData {
+
+    // MARK: Byte Array ([UInt8]) Support
+
+    /// Constructs an `EncodedData` instance from an Array<UInt8>.
+    ///
+    /// - Parameter bytes: The `Array<UInt8>` instance used to construct the instance from.
+    ///
+    public convenience init(_ bytes: [UInt8]) {
+        self.init(bytes.withUnsafeBytes { StorageContainerReader.read(from: $0) })
+    }
+}
+
+/// `Swift.Data` support for `EncodedData`.
+///
+public extension EncodedData {
+
+    // MARK: `Swift.Data` Support
+
+    /// Constructs an `EncodedData` from an `Data` instance.
+    ///
+    /// - Parameter data: The `Data` instance used to construct the instance from.
+    ///
+    public convenience init(_ data: Data) {
+
+        self.init(data.withUnsafeBytes({ (pointer: UnsafePointer<UInt8>) -> StorageContainer in
+            let buffer = UnsafeRawBufferPointer(start: pointer, count: data.count)
+            return StorageContainerReader.read(from: buffer)
+        }))
+    }
+}
+
+// MARK: Transformable types
+
+/// `Swift.Array<UInt8>` support for `EncodedData`.
+///
+/// StickyEncoding supports `EncodedData` conversion to an Array of bytes (`[UInt8]`).
+///
+/// To create an Array from an EncodedData structure, simply pass it as an argument
+/// to the `Array` init method. The result will be an `Array<UInt8>` instance
+/// containing the encoded data.
+///
+/// ```
+///     let encoder     = BinaryEncoder()
+///     let encodedData = try encoder.encode(["String 1", "String 2"])
+///
+///     let array = Array(encodedData)
+///```
+///
+/// - SeeAlso: `EncodedData` for `Array<UInt8>` to `EncodeData` conversion.
+///
 public extension Array where Element == UInt8 {
+
+    // MARK: EncodedData Support
 
     /// Constructs an Array from an EncodedData instance.
     ///
@@ -106,20 +165,26 @@ public extension Array where Element == UInt8 {
     }
 }
 
-public extension EncodedData {
 
-    /// Constructs an `EncodedData` instance from an Array<UInt8>.
-    ///
-    /// - Parameter bytes: The `Array<UInt8>` instance used to construct the instance from.
-    ///
-    public convenience init(_ bytes: [UInt8]) {
-        self.init(bytes.withUnsafeBytes { StorageContainerReader.read(from: $0) })
-    }
-}
-
-/// Support to/from Data.
+/// `Swift.Data` support for `EncodedData`.
+///
+/// StickyEncoding supports conversion to and from an `Swift.Data`.
+///
+/// To create a Data instance from an EncodedData structure, simply pass it as an argument
+/// to the `Data` init method. The result will be a `Data` instance containing the encoded data.
+///
+/// ```
+///     let encoder     = BinaryEncoder()
+///     let encodedData = try encoder.encode(["String 1", "String 2"])
+///
+///     let data = Data(encodedData)
+///```
+///
+/// - SeeAlso: `EncodedData` for `Swift.Data` to `EncodeData` conversion.
 ///
 public extension Data {
+
+    // MARK: EncodedData Support
 
     /// Create a `Data` instance from an `EncodedData` instance.
     ///
@@ -138,17 +203,3 @@ public extension Data {
     }
 }
 
-public extension EncodedData {
-
-    /// Constructs an `EncodedData` from an `Data` instance.
-    ///
-    /// - Parameter data: The `Data` instance used to construct the instance from.
-    ///
-    public convenience init(_ data: Data) {
-
-        self.init(data.withUnsafeBytes({ (pointer: UnsafePointer<UInt8>) -> StorageContainer in
-            let buffer = UnsafeRawBufferPointer(start: pointer, count: data.count)
-            return StorageContainerReader.read(from: buffer)
-        }))
-    }
-}

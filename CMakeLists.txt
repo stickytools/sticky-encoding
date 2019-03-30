@@ -56,6 +56,8 @@ add_custom_target(xcode-project
 add_custom_target(documentation
         DEPENDS generate-source
         COMMAND jazzy --clean
+        COMMAND cp Sources/Documentation/Sections/*.png docs | true
+        COMMAND cp Sources/Documentation/Abstracts/*.png docs | true
         WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
 
 add_subdirectory(Sources)

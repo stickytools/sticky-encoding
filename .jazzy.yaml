@@ -2,7 +2,6 @@ module: StickyEncoding
 author: Tony Stone
 author_url: http://github.com/tonystone
 github_url: http://github.com/stickytools/sticky-encoding
-readme: ./README.md
 exclude:
   - "Tests/**/*.swift"
   - "Sources/StickyEncoding/BinaryCodingKey.swift"
@@ -13,23 +12,39 @@ exclude:
   - "Sources/StickyEncoding/SingleValueContainer.swift"
   - "Sources/StickyEncoding/UnkeyedStorageContainer.swift"
 
+copyright: '© 2019 [Tony Stone](https://github.com/tonystone) under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.html).'
+
 xcodebuild_arguments: [clean,build,-project,StickyEncoding.xcodeproj,-scheme,StickyEncoding-Package]
 
-swift_version: 4.0.3
+theme: fullwidth
 
-theme: apple
+output: docs
 
-documentation: Documentation/Sections/*.md
-abstract: Documentation/Abstracts/*.md
+head: |
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-102615840-6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
 
-output: documentation/html
+    gtag('config', 'UA-102615840-6');
+  </script>
+
+readme: Sources/Documentation/Index/Index.md
+documentation: Sources/Documentation/Sections/*.md
+abstract: Sources/Documentation/Abstracts/*.md
 
 custom_categories:
-  - name: User Guide
-    children:
-    - Binary Format
-  - name: Classes
+  - name: Encoding & Decoding
     children:
     - BinaryEncoder
     - BinaryDecoder
     - EncodedData
+  - name: EncodedData Transformation
+    children:
+    - Array
+    - Data
+  - name: Supplemental Information
+    children:
+    - Binary Format

@@ -27,7 +27,7 @@ import Foundation
 ///     let decoder = BinaryDecoder()
 /// ```
 ///
-/// > Note: You may optionally pass your own userInfo `BinaryDecoder(userInfo:)` structure and it will be available to you during the decoding.
+/// > Note: You may optionally pass your own userInfo `BinaryDecoder(userInfo:)` structure and it will be available to you during the decoding process.
 ///
 /// To decode, you pass the Type of object to create, and an instance of encoded data representing that type.
 /// ```
@@ -36,10 +36,17 @@ import Foundation
 ///
 open class BinaryDecoder {
 
-    /// Initializes `self`.
+    // MARK: Initialization
+
+    /// Initializes an instance of the decoder optionally passing context information for the decoding process.
+    ///
+    /// - Parameter userInfo: Any contextual information set by the user for decoding.
+    ///
     public init(userInfo: [CodingUserInfoKey : Any] = [:]) {
         self.userInfo = userInfo
     }
+
+    // MARK: Decoding binary into objects
 
     ///
     /// Decodes a top-level value of the given type `T` from the Binary representation `data`.
@@ -57,6 +64,10 @@ open class BinaryDecoder {
         return try T.init(from: _BinaryDecoder(codingPath: [], rootStorage: data.storage, userInfo: self.userInfo))
     }
 
+    // MARK: Getting contextual information
+
+    /// Any contextual information set by the user for decoding.
+    ///
     public var userInfo: [CodingUserInfoKey : Any]
 }
 

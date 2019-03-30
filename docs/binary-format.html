@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Binary Format  Reference</title>
+    <link rel="stylesheet" type="text/css" href="css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="css/highlight.css" />
+    <meta charset="utf-8">
+    <script src="js/jquery.min.js" defer></script>
+    <script src="js/jazzy.js" defer></script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-102615840-6"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-102615840-6');
+</script>
+
+    <script src="js/lunr.min.js" defer></script>
+    <script src="js/typeahead.jquery.js" defer></script>
+    <script src="js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+
+
+    <a title="Binary Format  Reference"></a>
+
+    <header class="header">
+      <p class="header-col header-col--primary">
+        <a class="header-link" href="index.html">
+          StickyEncoding Docs
+        </a>
+         (100% documented)
+      </p>
+    
+      <p class="header-col--secondary">
+        <form role="search" action="search.json">
+          <input type="text" placeholder="Search documentation" data-typeahead>
+        </form>
+      </p>
+    
+        <p class="header-col header-col--secondary">
+          <a class="header-link" href="http://github.com/stickytools/sticky-encoding">
+            <img class="header-icon" src="img/gh.png"/>
+            View on GitHub
+          </a>
+        </p>
+    
+    </header>
+
+    <p class="breadcrumbs">
+      <a class="breadcrumb" href="index.html">StickyEncoding Reference</a>
+      <img class="carat" src="img/carat.png" />
+      Binary Format  Reference
+    </p>
+
+    <div class="content-wrapper">
+      <nav class="navigation">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Encoding &amp; Decoding.html">Encoding &amp; Decoding</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/BinaryEncoder.html">BinaryEncoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/BinaryDecoder.html">BinaryDecoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/EncodedData.html">EncodedData</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="EncodedData Transformation.html">EncodedData Transformation</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions/Array.html">Array</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions/Data.html">Data</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Supplemental Information.html">Supplemental Information</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="binary-format.html">Binary Format</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+
+        <section class="section">
+          <div class="section-content">
+            
+            <h1 id='binary-format' class='heading'>Binary Format</h1>
+
+<p>The internal binary representation of the encoded data consists of a series of <strong>Elements</strong> each containing a <strong>Header</strong> section followed by a <strong>Container</strong>.  The Element is essentially a wrapper around a Container defining it&rsquo;s type and size in bytes. The format was designed to be as compact and efficient as possible at storing the simplest to the most complex structures that can be encoded.</p>
+
+<p><img src="Binary-Format-Container-Header.png" alt="Binary Format Container Header"></p>
+
+<p>The Header of each Element contains a 32 bit integer representing the container type followed by a 32 integer containing the total number of bytes stored in the Container section of this Element.</p>
+<h2 id='containers' class='heading'>Containers</h2>
+
+<p>Each Container formats it&rsquo;s data based on the requirements of that container. There are 3 container types that can be stored corresponding to the <code>Encoder</code> and <code>Decoder</code> protocol return types for the functions <code>singleValueContainer()</code>, <code>unkeyedContainer()</code>, and <code>container(keyedBy:)</code>. An Element is created in response to each call to any one of these functions.</p>
+<h3 id='single-value-container' class='heading'>Single Value Container</h3>
+
+<p>Each SingleValueContainer is defined by the Container structure below.
+SingleValueContainers consist of the encoded type of the value it stores, the size in bytes of the value, and the value itself.</p>
+
+<p><img src="Binary-Format-Single-Value-Container.png" alt="Binary Format Single Value Container"></p>
+<h3 id='unkeyed-container' class='heading'>Unkeyed Container</h3>
+
+<p>An unkeyed container consists of the count of the number of elements it stores and a series of the elements
+containing other containers.</p>
+
+<p><img src="Binary-Format-Unkeyed-Container.png" alt="Binary Format"></p>
+<h3 id='keyed-container' class='heading'>Keyed Container</h3>
+
+<p>A keyed container consists of the count of the number of key/Element pairs contained in the container followed by a key and Element for each.</p>
+
+<p><img src="Binary-Format-Keyed-Container.png" alt="Binary Format"></p>
+
+<p>Each key consists of the size in bytes of the string for the key and the value of the string itself.</p>
+
+<blockquote>
+<p>Note: Keys are not null terminated.</p>
+</blockquote>
+<h2 id='memory-alignment' class='heading'>Memory Alignment</h2>
+
+<p>Currently StickyEncoding aligns the data in the file and in memory aligned to the machine it is running on.</p>
+<h2 id='byte-ordering' class='heading'>Byte ordering</h2>
+
+<p>StickyEncoding uses the same byte order as the machine that the binary data is created on uses.</p>
+
+          </div>
+        </section>
+
+
+      </article>
+    </div>
+    <section class="footer">
+      <p>© 2019 <a class="link" href="https://github.com/tonystone" target="_blank" rel="external">Tony Stone</a> under the <a class="link" href="http://www.apache.org/licenses/LICENSE-2.0.html" target="_blank" rel="external">Apache License, Version 2.0</a>.</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.9.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+    </section>
+  </body>
+</div>
+</html>
