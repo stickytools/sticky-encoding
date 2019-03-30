@@ -23,7 +23,6 @@ import Swift
 ///
 /// Extension encapsulating error messages and the context for `DecodingError`s.
 ///
-internal
 extension DecodingError {
 
     // MARK: - `DecodingError.keyNotFound` errors.

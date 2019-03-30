@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
   s.homepage          = "https://github.com/stickytools/sticky-encoding"
   s.author            = { "Tony Stone" => "https://github.com/tonystone" }
   s.source            = { :git => "https://github.com/stickytools/sticky-encoding.git", :tag => s.version.to_s }
-  s.documentation_url = 'https://stickytools.io/stickyencoding/index.html'
+  s.documentation_url = 'https://stickytools.io/sticky-encoding/index.html'
 
   s.swift_version = '4.2'
 
