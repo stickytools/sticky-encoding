@@ -109,4 +109,20 @@ class DocumentationExampleTests: XCTestCase {
 
         encodedData.write(to: buffer)
     }
+
+    func testArrayConstructionExample() throws {
+        
+        let encoder     = BinaryEncoder()
+        let encodedData = try encoder.encode(["String 1", "String 2"])
+
+        let _ = Array(encodedData)
+    }
+
+    func testDataConstructionExample() throws {
+        
+        let encoder     = BinaryEncoder()
+        let encodedData = try encoder.encode(["String 1", "String 2"])
+
+        let _ = Data(encodedData)
+    }
 }

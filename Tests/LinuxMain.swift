@@ -33,7 +33,8 @@ XCTMain([
    testCase(BinaryEncodingSingleValueContainerNegativeTests.allTests),
    testCase(StorageContainerEqualTests.allTests),
    testCase(BinaryDecoderNegativeTests.allTests),
-   testCase(StorageContainerReaderWriterTests.allTests)
+   testCase(StorageContainerReaderWriterTests.allTests),
+   testCase(DocumentationExampleTests.allTests)
 ])
 
 extension KeyedStorageContainerTests {
@@ -1034,6 +1035,20 @@ extension StorageContainerReaderWriterTests {
                 ("testReadWriteRoundTripForUnkeyedContainerWithMixedSingleValueAndNull", testReadWriteRoundTripForUnkeyedContainerWithMixedSingleValueAndNull),
                 ("testReadWriteRoundTripForUnkeyedContainerWithNestedUnkeyedContainers", testReadWriteRoundTripForUnkeyedContainerWithNestedUnkeyedContainers),
                 ("testReadWriteRoundTripForKeyedContainer", testReadWriteRoundTripForKeyedContainer)
+           ]
+   }
+}
+
+extension DocumentationExampleTests {
+   static var allTests: [(String, (DocumentationExampleTests) -> () throws -> Void)] {
+      return [
+                ("testBinaryEncoderExample1", testBinaryEncoderExample1),
+                ("testBinaryEncoderExample2", testBinaryEncoderExample2),
+                ("testBinaryDecoderExample1", testBinaryDecoderExample1),
+                ("testEncodedDataExample1", testEncodedDataExample1),
+                ("testEncodedDataExample2", testEncodedDataExample2),
+                ("testArrayConstructionExample", testArrayConstructionExample),
+                ("testDataConstructionExample", testDataConstructionExample)
            ]
    }
 }
