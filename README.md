@@ -30,7 +30,7 @@ format that can be stored on disk or sent over a socket.
 
 ## Documentation
 
-* [User Guides & Reference](https://stickytools.io/stickyencoding) - Extensive user guides and reference documentation!  100% documented API, full examples and many hidden details.
+* [User Guides & Reference](https://stickytools.io/sticky-encoding) - Extensive user guides and reference documentation!  100% documented API, full examples and many hidden details.
 
 ## Quick Start Guide
 
