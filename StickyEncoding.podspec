@@ -8,16 +8,17 @@
 #
 
 Pod::Spec.new do |s|
-  s.name             = "StickyEncoding"
-  s.version          = "1.0.0-beta.3"
-  s.summary          = "A high performance binary encoder for `Swift.Codable` types."
-  s.description      = <<-DESC
+  s.name              = "StickyEncoding"
+  s.version           = "1.0.0-beta.4"
+  s.summary           = "A high performance binary encoder for `Swift.Codable` types."
+  s.description       = <<-DESC
                              **StickyEncoding**, A high performance binary encoder for `Swift.Codable` types.
-                       DESC
-  s.license          = 'Apache License, Version 2.0'
-  s.homepage         = "https://github.com/stickytools/sticky-encoding"
-  s.author           = { "Tony Stone" => "https://github.com/tonystone" }
-  s.source           = { :git => "https://github.com/stickytools/sticky-encoding.git", :tag => s.version.to_s }
+                        DESC
+  s.license           = 'Apache License, Version 2.0'
+  s.homepage          = "https://github.com/stickytools/sticky-encoding"
+  s.author            = { "Tony Stone" => "https://github.com/tonystone" }
+  s.source            = { :git => "https://github.com/stickytools/sticky-encoding.git", :tag => s.version.to_s }
+  s.documentation_url = 'https://stickytools.io/stickyencoding/index.html'
 
   s.swift_version = '4.2'
 
