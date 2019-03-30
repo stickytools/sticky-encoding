@@ -75,7 +75,7 @@ public class EncodedData {
 
 /// Support to/from UnsafeRawBuffers.
 ///
-public extension EncodedData {
+extension EncodedData {
 
     // MARK: UnsafeRawBufferPointer Support
 
@@ -99,7 +99,7 @@ public extension EncodedData {
 
 /// Support to/from Array<UInt8>
 ///
-public extension EncodedData {
+extension EncodedData {
 
     // MARK: Byte Array ([UInt8]) Support
 
@@ -114,7 +114,7 @@ public extension EncodedData {
 
 /// `Swift.Data` support for `EncodedData`.
 ///
-public extension EncodedData {
+extension EncodedData {
 
     // MARK: `Swift.Data` Support
 
