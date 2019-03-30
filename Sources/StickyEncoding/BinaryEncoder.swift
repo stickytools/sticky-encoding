@@ -19,6 +19,8 @@
 ///
 import Foundation
 
+// MARK: Encoders & Decoders
+
 /// ## Overview
 ///
 /// `BinaryEncoder` facilitates the encoding of `Encodable` values into a binary
@@ -35,7 +37,7 @@ import Foundation
 ///     let encoder = BinaryEncoder()
 /// ```
 ///
-/// > Note: You may optionally pass your own userInfo `BinaryEncoder(userInfo:)` structure and it will be available to you during the encoding.
+/// > Note: You may optionally pass your own userInfo `BinaryEncoder(userInfo:)` structure and it will be available to you during the encoding process.
 ///
 /// You can encode any top even top-level single value types including Int,
 /// UInt, Double, Bool, and Strings. Simply pass the value to the instance
@@ -61,14 +63,18 @@ import Foundation
 ///
 open class BinaryEncoder {
 
+    // MARK: Initialization
+
+    /// Initializes an instance of the encoder optionally passing context information for the encoding process.
     ///
-    /// Initializes `self`.
+    /// - Parameter userInfo: Any contextual information set by the user for encoding.
     ///
     public init(userInfo: [CodingUserInfoKey : Any] = [:]) {
         self.userInfo = userInfo
     }
 
-    ///
+    // MARK: Encoding objects into binary
+
     /// Encodes the given top-level value and returns its Binary representation.
     ///
     /// - parameters:
@@ -88,19 +94,21 @@ open class BinaryEncoder {
         return EncodedData(NullStorageContainer.null)
     }
 
+    // MARK: Getting contextual information
+
+    /// Any contextual information set by the user for encoding.
+    ///
     public var userInfo: [CodingUserInfoKey : Any]
 }
 
 // MARK: -
 
-///
 /// Main Encoder class
 ///
 private class _BinaryEncoder : Encoder {
 
     // MARK: - Initialization
 
-    ///
     /// Init with the current codingPath and a default `PassthroughReference` (local storage) which will be filled with
     /// the result of this containers encoding.
     ///
@@ -113,7 +121,6 @@ private class _BinaryEncoder : Encoder {
         self.userInfo    = userInfo
     }
 
-    ///
     /// Init with the current codingPath and a `StorageContainerReference` which will be filled with
     /// the result of this containers encoding.
     ///
@@ -129,14 +136,12 @@ private class _BinaryEncoder : Encoder {
 
     // MARK: - `Encoder` conformance.
 
-    ///
     /// The path of coding keys taken to get to this point in encoding.
     ///
     /// - Note: At this point this should be empty
     ///
     public var codingPath: [CodingKey]
 
-    ///
     /// Any contextual information set by the user for encoding.
     ///
     public var userInfo: [CodingUserInfoKey : Any]
@@ -170,7 +175,6 @@ private class _BinaryEncoder : Encoder {
         return _BinarySingleValueEncodingContainer(referencing: self, codingPath: codingPath, rootStorage: self.rootStorage)
     }
 
-    ///
     /// For each instance of the encoder, there is only one
     /// root storage container which can be a `SingleValueContainer`,
     /// a `UnkeyedStorageContainer`, or a `KeyStorageContainer`.
@@ -180,21 +184,18 @@ private class _BinaryEncoder : Encoder {
 
 // MARK: - Containers
 
-///
 /// Encoding containers used by `_BinaryEncoder`.
 ///
 extension _BinaryEncoder {
 
     // MARK: -
 
-    ///
     ///  Encoding container which encodes values into an keyed (Dictionary type) container.
     ///
     private struct _BinaryKeyedEncodingContainer<K : CodingKey>: KeyedEncodingContainerProtocol  {
 
         // MARK: - Initialization
 
-        ///
         /// Init with the current codingPath and a `KeyedStorageContainer` which will be filled with
         /// the result of this containers encoding.
         ///
@@ -215,7 +216,6 @@ extension _BinaryEncoder {
 
         mutating func encodeNil(forKey key: K) throws { self.rootStorage[key.stringValue] = NullStorageContainer.null }
 
-        ///
         /// All encode types accpet encodeNil can throw the following.
         //
         /// - throws: `EncodingError.invalidValue` if the given value is invalid in the current context for this format.
@@ -235,7 +235,6 @@ extension _BinaryEncoder {
         mutating func encode(_ value: Double, forKey key: K) throws { self.rootStorage[key.stringValue] = SingleValueContainer(value) }
         mutating func encode(_ value: String, forKey key: K) throws { self.rootStorage[key.stringValue] = SingleValueContainer(value) }
 
-        ///
         /// - throws: `EncodingError.invalidValue` if the given value is invalid in the current context for this format.
         ///
         mutating func encode<T: Encodable>(_ value: T, forKey key: K) throws {
@@ -278,14 +277,12 @@ extension _BinaryEncoder {
 
     // MARK: -
 
-    ///
     ///  Encoding container which encodes values into an unkeyed (Array type) container.
     ///
     private struct _BinaryUnkeyedEncodingContainer: UnkeyedEncodingContainer {
 
         // MARK: - Initialization
 
-        ///
         /// Init with the current codingPath and an `UnkeyedStorageContainer` which will be filled with
         /// the result of this containers encoding.
         ///
@@ -307,7 +304,6 @@ extension _BinaryEncoder {
 
         mutating func encodeNil() throws { self.rootStorage.push(NullStorageContainer.null) }
 
-        ///
         /// All encode types accept encodeNil can throw the following.
         //
         /// - throws: `EncodingError.invalidValue` if the given value is invalid in the current context for this format.
@@ -366,14 +362,12 @@ extension _BinaryEncoder {
 
     // MARK: -
 
-    ///
     ///  Encoding container which encodes single primitive type values to storage.
     ///
     private struct _BinarySingleValueEncodingContainer: SingleValueEncodingContainer {
 
         // MARK: - Initialization
 
-        ///
         /// Init with the current codingPath and a `StorageContainerReference` which will be filled with
         /// the result of this containers encoding.
         ///
@@ -393,7 +387,6 @@ extension _BinaryEncoder {
 
         mutating func encodeNil() throws { self.rootStorage.value = NullStorageContainer.null }
 
-        ///
         /// All encode types accept encodeNil can throw the following.
         //
         /// - throws: `EncodingError.invalidValue` if the given value is invalid in the current context for this format.
@@ -413,12 +406,10 @@ extension _BinaryEncoder {
         mutating func encode(_ value: Double) throws { self.rootStorage.value = SingleValueContainer(value) }
         mutating func encode(_ value: String) throws { self.rootStorage.value = SingleValueContainer(value) }
 
-        ///
         /// Encode an object type value.
         ///
         mutating func encode<T: Encodable>(_ value: T) throws {
 
-            ///
             /// Object values are a special case here.  We can't encode them in a primitive Single value container
             /// as they are not meant to support that type.
             ///
@@ -435,7 +426,6 @@ extension _BinaryEncoder {
         ///
         private let encoder: _BinaryEncoder
 
-        ///
         /// The root storage of our container is a reference because we are called
         /// from a previous level which does not know the type of container that
         /// will be stored at its current location.

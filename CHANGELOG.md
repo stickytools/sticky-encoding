@@ -1,6 +1,11 @@
 # Change Log
 All significant changes to this project will be documented in this file.
 
+## [1.0.0-beta.4](https://github.com/stickytools/sticky-encoding/tree/1.0.0-beta.4)
+
+#### Added
+- Added complete documentation set available @ [https://stickytools.io/stickyencoding](https://stickytools.io/stickyencoding).
+
 ## [1.0.0-beta.3](https://github.com/stickytools/sticky-encoding/tree/1.0.0-beta.3)
 
 #### Added
