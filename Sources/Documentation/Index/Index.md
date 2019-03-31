@@ -1,6 +1,6 @@
 # StickyEncoding
 ---
-*High performance binary encoding/decoding for `Swift.Codable` types.*
+*High-performance binary encoding/decoding for `Swift.Codable` types.*
 
 ## Overview
 

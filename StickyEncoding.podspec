@@ -10,9 +10,9 @@
 Pod::Spec.new do |s|
   s.name              = "StickyEncoding"
   s.version           = "1.0.0-beta.4"
-  s.summary           = "A high performance binary encoder for `Swift.Codable` types."
+  s.summary           = "High-performance binary encoding/decoding of `Swift.Codable` types."
   s.description       = <<-DESC
-                             **StickyEncoding**, A high performance binary encoder for `Swift.Codable` types.
+                             **StickyEncoding, high-performance binary encoding/decoding for `Swift.Codable` types.
                         DESC
   s.license           = 'Apache License, Version 2.0'
   s.homepage          = "https://github.com/stickytools/sticky-encoding"
