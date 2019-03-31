@@ -17,7 +17,7 @@ get_filename_component(LINUX_MAIN ${LINUX_MAIN} ABSOLUTE BASE_DIR ${CMAKE_SOURCE
 #
 add_custom_target(tests ALL
         COMMAND swift test
-        DEPENDS build
+        DEPENDS build generate-tests ${TEST_FILES}
         SOURCES ${TEST_FILES} ${CMAKE_SOURCE_DIR}/Package.swift
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
         )
@@ -85,22 +85,18 @@ add_custom_target(generate-tests
         DEPENDS generate-BinaryEncodingKeyedContainerNegativeTests generate-BinaryEncodingKeyedContainerTests generate-BinaryEncodingSingleValueContainerNegativeTests generate-BinaryEncodingSingleValueContainerTests generate-BinaryEncodingUnkeyedContainerNegativeTests generate-BinaryEncodingUnkeyedContainerTests generate-EncodedTypeTests generate-SingleValueContainerTests
         )
 
-add_dependencies(tests generate-tests)
-
 #
 # Build the LinuxMain file.
 #
 # Note: We do this for all platforms so that we are assured that it is maintained whenever a change is made to the tests.
 #
 add_custom_command(
-        DEPENDS build-tools
+        DEPENDS tests generate-tests
         OUTPUT "${LINUX_MAIN}"
-        COMMAND "${BUILD_TOOLS_BIN}/xctest_tool.rb"
-        ARGS --package-path "${CMAKE_SOURCE_DIR}"
-        VERBATIM
+        COMMAND swift test --generate-linuxmain
+        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
 )
 
 add_custom_target(linux-main
-        DEPENDS "${LINUX_MAIN}" generate-tests
+        DEPENDS "${LINUX_MAIN}"
         )
-add_dependencies(tests linux-main)
