@@ -22,4 +22,4 @@ import Swift
 ///
 /// Protocol defining a storage container
 ///
-internal protocol StorageContainer: AnyObject {}
+internal protocol StorageContainer {}

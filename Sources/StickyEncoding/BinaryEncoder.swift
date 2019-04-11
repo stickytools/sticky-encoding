@@ -86,12 +86,18 @@ open class BinaryEncoder {
     ///
     open func encode<T: Encodable>(_ value: T) throws -> EncodedData {
         let encoder = _BinaryEncoder(codingPath: [], userInfo: self.userInfo)
+
         try value.encode(to: encoder)
 
         if let storage = encoder.rootStorage.value {
-            return EncodedData(storage)
+            var bytes = Array<UInt8>(repeating: 0, count: StorageContainerWriter.byteCount(storage))
+
+            bytes.withUnsafeMutableBytes { (buffer) -> Void in
+               StorageContainerWriter.write(storage, to: buffer)
+            }
+            return EncodedData(bytes)
         }
-        return EncodedData(NullStorageContainer.null)
+        return EncodedData()
     }
 
     // MARK: Getting contextual information

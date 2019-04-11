@@ -35,7 +35,7 @@ class StorageContainerReaderWriterTests: XCTestCase {
 
         StorageContainerWriter.write(input, to: buffer)
 
-        let result = StorageContainerReader.read(from: UnsafeRawBufferPointer(buffer))
+        let result = try StorageContainerReader.read(from: UnsafeRawBufferPointer(buffer))
 
         XCTAssert(result.equal(expected), "\(expected) does not equal \(input)")
     }
@@ -52,7 +52,7 @@ class StorageContainerReaderWriterTests: XCTestCase {
 
         StorageContainerWriter.write(input, to: buffer)
 
-        let result = StorageContainerReader.read(from: UnsafeRawBufferPointer(buffer))
+        let result = try StorageContainerReader.read(from: UnsafeRawBufferPointer(buffer))
 
         XCTAssert(result.equal(expected), "\(expected) does not equal \(input)")
     }
@@ -75,7 +75,7 @@ class StorageContainerReaderWriterTests: XCTestCase {
 
         StorageContainerWriter.write(input, to: buffer)
 
-        let result = StorageContainerReader.read(from: UnsafeRawBufferPointer(buffer))
+        let result = try StorageContainerReader.read(from: UnsafeRawBufferPointer(buffer))
 
         XCTAssert(result.equal(expected), "\(expected) does not equal \(input)")
     }
@@ -97,7 +97,7 @@ class StorageContainerReaderWriterTests: XCTestCase {
 
         StorageContainerWriter.write(input, to: buffer)
 
-        let result = StorageContainerReader.read(from: UnsafeRawBufferPointer(buffer))
+        let result = try StorageContainerReader.read(from: UnsafeRawBufferPointer(buffer))
 
         XCTAssert(result.equal(expected), "\(expected) does not equal \(input)")
     }
@@ -117,7 +117,7 @@ class StorageContainerReaderWriterTests: XCTestCase {
 
         StorageContainerWriter.write(input, to: buffer)
 
-        let result = StorageContainerReader.read(from: UnsafeRawBufferPointer(buffer))
+        let result = try StorageContainerReader.read(from: UnsafeRawBufferPointer(buffer))
 
         XCTAssert(result.equal(expected), "\(expected) does not equal \(input)")
     }
@@ -140,7 +140,7 @@ class StorageContainerReaderWriterTests: XCTestCase {
 
         StorageContainerWriter.write(input, to: buffer)
 
-        let result = StorageContainerReader.read(from: UnsafeRawBufferPointer(buffer))
+        let result = try StorageContainerReader.read(from: UnsafeRawBufferPointer(buffer))
 
         XCTAssert(result.equal(expected), "\(expected) does not equal \(input)")
     }

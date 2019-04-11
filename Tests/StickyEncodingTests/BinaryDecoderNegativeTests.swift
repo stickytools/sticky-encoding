@@ -117,7 +117,7 @@ class BinaryDecoderNegativeTests: XCTestCase {
     ///
     /// Test the ability to rethrow an error occurring in the user's code during decoding.
     ///
-    func testDecodeWithUserObjectThrowing() {
+    func testDecodeWithUserObjectThrowing() throws {
 
         enum Error: Swift.Error { case testError(String) }
 
@@ -131,13 +131,17 @@ class BinaryDecoderNegativeTests: XCTestCase {
                 throw Error.testError("Test Error")
             }
             func encode(to encoder: Encoder) throws {
-                throw Error.testError("Test Error")
+                var container = encoder.singleValueContainer()
+                try container.encode(self.value)
             }
         }
 
+        let encoder = BinaryEncoder()
         let decoder = BinaryDecoder()
 
-        XCTAssertThrowsError(try decoder.decode(InputType.self, from: EncodedData())) { (error) in
+        let encodedData = try encoder.encode(InputType(value: 10))
+
+        XCTAssertThrowsError(try decoder.decode(InputType.self, from: encodedData)) { (error) in
             switch error {
             case Error.testError(let message):
                 XCTAssertEqual(message, "Test Error")

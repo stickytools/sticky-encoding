@@ -75,7 +75,7 @@ class SingleValueContainerTests: XCTestCase {
         input.write(to: buffer)
 
         /// Create a new instance using the buffer.
-        let result = SingleValueContainer(from: UnsafeRawBufferPointer(buffer))
+        let result = try SingleValueContainer(from: UnsafeRawBufferPointer(buffer))
 
         /// Validate that the old and new containers are equivalent.
         XCTAssertEqual(result.type, input.type)
@@ -140,7 +140,7 @@ class SingleValueContainerTests: XCTestCase {
         input.write(to: buffer)
 
         /// Create a new instance using the buffer.
-        let result = SingleValueContainer(from: UnsafeRawBufferPointer(buffer))
+        let result = try SingleValueContainer(from: UnsafeRawBufferPointer(buffer))
 
         /// Validate that the old and new containers are equivalent.
         XCTAssertEqual(result.type, input.type)
@@ -219,7 +219,7 @@ class SingleValueContainerTests: XCTestCase {
         input.write(to: buffer)
 
         /// Create a new instance using the buffer.
-        let result = SingleValueContainer(from: UnsafeRawBufferPointer(buffer))
+        let result = try SingleValueContainer(from: UnsafeRawBufferPointer(buffer))
 
         /// Validate that the old and new containers are equivalent.
         XCTAssertEqual(result.type, input.type)
@@ -298,7 +298,7 @@ class SingleValueContainerTests: XCTestCase {
         input.write(to: buffer)
 
         /// Create a new instance using the buffer.
-        let result = SingleValueContainer(from: UnsafeRawBufferPointer(buffer))
+        let result = try SingleValueContainer(from: UnsafeRawBufferPointer(buffer))
 
         /// Validate that the old and new containers are equivalent.
         XCTAssertEqual(result.type, input.type)
@@ -377,7 +377,7 @@ class SingleValueContainerTests: XCTestCase {
         input.write(to: buffer)
 
         /// Create a new instance using the buffer.
-        let result = SingleValueContainer(from: UnsafeRawBufferPointer(buffer))
+        let result = try SingleValueContainer(from: UnsafeRawBufferPointer(buffer))
 
         /// Validate that the old and new containers are equivalent.
         XCTAssertEqual(result.type, input.type)
@@ -456,7 +456,7 @@ class SingleValueContainerTests: XCTestCase {
         input.write(to: buffer)
 
         /// Create a new instance using the buffer.
-        let result = SingleValueContainer(from: UnsafeRawBufferPointer(buffer))
+        let result = try SingleValueContainer(from: UnsafeRawBufferPointer(buffer))
 
         /// Validate that the old and new containers are equivalent.
         XCTAssertEqual(result.type, input.type)
@@ -535,7 +535,7 @@ class SingleValueContainerTests: XCTestCase {
         input.write(to: buffer)
 
         /// Create a new instance using the buffer.
-        let result = SingleValueContainer(from: UnsafeRawBufferPointer(buffer))
+        let result = try SingleValueContainer(from: UnsafeRawBufferPointer(buffer))
 
         /// Validate that the old and new containers are equivalent.
         XCTAssertEqual(result.type, input.type)
@@ -614,7 +614,7 @@ class SingleValueContainerTests: XCTestCase {
         input.write(to: buffer)
 
         /// Create a new instance using the buffer.
-        let result = SingleValueContainer(from: UnsafeRawBufferPointer(buffer))
+        let result = try SingleValueContainer(from: UnsafeRawBufferPointer(buffer))
 
         /// Validate that the old and new containers are equivalent.
         XCTAssertEqual(result.type, input.type)
@@ -693,7 +693,7 @@ class SingleValueContainerTests: XCTestCase {
         input.write(to: buffer)
 
         /// Create a new instance using the buffer.
-        let result = SingleValueContainer(from: UnsafeRawBufferPointer(buffer))
+        let result = try SingleValueContainer(from: UnsafeRawBufferPointer(buffer))
 
         /// Validate that the old and new containers are equivalent.
         XCTAssertEqual(result.type, input.type)
@@ -772,7 +772,7 @@ class SingleValueContainerTests: XCTestCase {
         input.write(to: buffer)
 
         /// Create a new instance using the buffer.
-        let result = SingleValueContainer(from: UnsafeRawBufferPointer(buffer))
+        let result = try SingleValueContainer(from: UnsafeRawBufferPointer(buffer))
 
         /// Validate that the old and new containers are equivalent.
         XCTAssertEqual(result.type, input.type)
@@ -851,7 +851,7 @@ class SingleValueContainerTests: XCTestCase {
         input.write(to: buffer)
 
         /// Create a new instance using the buffer.
-        let result = SingleValueContainer(from: UnsafeRawBufferPointer(buffer))
+        let result = try SingleValueContainer(from: UnsafeRawBufferPointer(buffer))
 
         /// Validate that the old and new containers are equivalent.
         XCTAssertEqual(result.type, input.type)
@@ -930,7 +930,7 @@ class SingleValueContainerTests: XCTestCase {
         input.write(to: buffer)
 
         /// Create a new instance using the buffer.
-        let result = SingleValueContainer(from: UnsafeRawBufferPointer(buffer))
+        let result = try SingleValueContainer(from: UnsafeRawBufferPointer(buffer))
 
         /// Validate that the old and new containers are equivalent.
         XCTAssertEqual(result.type, input.type)
@@ -1008,7 +1008,7 @@ class SingleValueContainerTests: XCTestCase {
         input.write(to: buffer)
 
         /// Create a new instance using the buffer.
-        let result = SingleValueContainer(from: UnsafeRawBufferPointer(buffer))
+        let result = try SingleValueContainer(from: UnsafeRawBufferPointer(buffer))
 
         /// Validate that the old and new containers are equivalent.
         XCTAssertEqual(result.type, input.type)
@@ -1086,7 +1086,7 @@ class SingleValueContainerTests: XCTestCase {
         input.write(to: buffer)
 
         /// Create a new instance using the buffer.
-        let result = SingleValueContainer(from: UnsafeRawBufferPointer(buffer))
+        let result = try SingleValueContainer(from: UnsafeRawBufferPointer(buffer))
 
         /// Validate that the old and new containers are equivalent.
         XCTAssertEqual(result.type, input.type)

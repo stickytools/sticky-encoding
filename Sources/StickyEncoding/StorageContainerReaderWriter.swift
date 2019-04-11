@@ -302,12 +302,9 @@ internal class StorageContainerReader {
     /// - Returns: `StorageContainer` representation of the raw buffer.
     ///
     @inline(__always)
-    static func read(from buffer: UnsafeRawBufferPointer) -> StorageContainer {
+    static func read(from buffer: UnsafeRawBufferPointer) throws -> StorageContainer {
 
-        guard buffer.count >= MemoryLayout<Element.Header>.stride
-            else { return NullStorageContainer.null }
-
-        let (container, _) = read(from: buffer)
+        let (container, _) = try read(from: buffer)
 
         return container
     }
@@ -325,10 +322,18 @@ internal class StorageContainerReader {
     /// ```
     ///
     /* Do not inline, recursively called */
-    private static func read(from buffer: UnsafeRawBufferPointer) -> (StorageContainer, Int) {
+    private static func read(from buffer: UnsafeRawBufferPointer) throws -> (StorageContainer, Int) {
+
+        /// Ensure we can load the header
+        guard buffer.count >= MemoryLayout<Element.Header>.stride
+            else { throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Binary data does not contian a proper header.")) }
 
         /// Load the buffer header
         let header = buffer.load(as: Element.Header.self)
+
+        /// Ensure the buffer is large enough based on the header byte count
+        guard buffer.count >= MemoryLayout<Element.Header>.stride + Int(header.byteCount)
+            else { throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Binary data truncated or missing."))  }
 
         let containerOffset = align(offset: MemoryLayout<Element.Header>.stride, to: UnsafeRawPointer.self)
         let containerBuffer = UnsafeRawBufferPointer(rebasing: buffer[containerOffset..<containerOffset + Int(header.byteCount)])
@@ -337,11 +342,12 @@ internal class StorageContainerReader {
 
         switch header.type {
 
-        case .singleValue: storageContainer = read(containerBuffer, as: SingleValueContainer.self);    break
-        case .unkeyed:     storageContainer = read(containerBuffer, as: UnkeyedStorageContainer.self); break
-        case .keyed:       storageContainer = read(containerBuffer, as: KeyedStorageContainer.self);   break
-        case .null: fallthrough
-        default:    storageContainer = read(containerBuffer, as: NullStorageContainer.self);    break
+        case .singleValue: storageContainer = try read(containerBuffer, as: SingleValueContainer.self);    break
+        case .unkeyed:     storageContainer = try read(containerBuffer, as: UnkeyedStorageContainer.self); break
+        case .keyed:       storageContainer = try read(containerBuffer, as: KeyedStorageContainer.self);   break
+        case .null:        storageContainer = try read(containerBuffer, as: NullStorageContainer.self);    break
+        default:
+            throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Binary data contains an unknown container type."))
         }
         return (storageContainer, containerOffset + containerBuffer.count)
     }
@@ -360,8 +366,12 @@ internal class StorageContainerReader {
     ///       Int32 | In32 | Determined by size
     /// ```
     @inline(__always)
-    private static func read(_ buffer: UnsafeRawBufferPointer, as: SingleValueContainer.Type) -> SingleValueContainer {
-        return SingleValueContainer(from: buffer)
+    private static func read(_ buffer: UnsafeRawBufferPointer, as: SingleValueContainer.Type) throws -> SingleValueContainer {
+
+        guard buffer.count >= SingleValueContainer.HeaderSize
+            else { throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Single value container header missing or corrupt.")) }
+
+        return try SingleValueContainer(from: buffer)
     }
 
     ///
@@ -376,19 +386,27 @@ internal class StorageContainerReader {
     /// ```
     ///
     @inline(__always)
-    private static func read(_ buffer: UnsafeRawBufferPointer, as: UnkeyedStorageContainer.Type) -> UnkeyedStorageContainer {
+    private static func read(_ buffer: UnsafeRawBufferPointer, as: UnkeyedStorageContainer.Type) throws -> UnkeyedStorageContainer {
 
-        let container = UnkeyedStorageContainer()
+        /// Ensure we can load the header
+        guard buffer.count >= MemoryLayout<Int32>.stride
+            else { throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Unkeyed container header missing or corrupt.")) }
 
         /// Read -> count
-        let count = buffer.load(as: Int32.self)
+        let containerSize = buffer.load(as: Int32.self)
+
+        /// Ensure we can load the container
+        guard buffer.count >= containerSize
+            else { throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Unkeyed container corrupt, expected \(containerSize) bytes but found \(buffer.count).")) }
 
         var elementOffset = align(offset: MemoryLayout<Int32>.stride, to: UnsafeRawPointer.self)
 
-        for _ in 0..<Int32(count) {
+        let container = UnkeyedStorageContainer()
+
+        for _ in 0..<Int32(containerSize) {
 
             /// Read -> Element n
-            let (element, byteCount) = read(from: UnsafeRawBufferPointer(rebasing: buffer[elementOffset...]))
+            let (element, byteCount) = try read(from: UnsafeRawBufferPointer(rebasing: buffer[elementOffset...]))
             elementOffset = align(offset: elementOffset + byteCount, to: UnsafeRawPointer.self)
 
             /// Push the new element on to the result container
@@ -408,23 +426,31 @@ internal class StorageContainerReader {
     /// ```
     ///
     @inline(__always)
-    private static func read(_ buffer: UnsafeRawBufferPointer, as: KeyedStorageContainer.Type) -> KeyedStorageContainer {
+    private static func read(_ buffer: UnsafeRawBufferPointer, as: KeyedStorageContainer.Type) throws -> KeyedStorageContainer {
 
-        let container = KeyedStorageContainer()
+        /// Ensure we can load the header
+        guard buffer.count >= MemoryLayout<Int32>.stride
+            else { throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Keyed container header missing or corrupt.")) }
 
         /// Read -> count
-        let count = buffer.load(as: Int32.self)
+        let containerSize = buffer.load(as: Int32.self)
+
+        /// Ensure we can load the container
+        guard buffer.count >= containerSize
+            else { throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Unkeyed container corrupt, expected \(containerSize) bytes but found \(buffer.count).")) }
 
         var elementOffset = align(offset: MemoryLayout<Int32>.stride, to: UnsafeRawPointer.self)
 
-        for _ in 0..<Int32(count) {
+        let container = KeyedStorageContainer()
+
+        for _ in 0..<Int32(containerSize) {
 
             /// Read -> Key n
-            let (key, keyByteCount) = read(UnsafeRawBufferPointer(rebasing: buffer[elementOffset...]), as: String.self)
+            let (key, keyByteCount) = try read(UnsafeRawBufferPointer(rebasing: buffer[elementOffset...]), as: String.self)
             elementOffset = align(offset: elementOffset + keyByteCount, to: UnsafeRawPointer.self)
 
             /// Read -> Value n
-            let (value, valueByteCount) = read(from: UnsafeRawBufferPointer(rebasing: buffer[elementOffset...]))
+            let (value, valueByteCount) = try read(from: UnsafeRawBufferPointer(rebasing: buffer[elementOffset...]))
             elementOffset = align(offset: elementOffset + valueByteCount, to: UnsafeRawPointer.self)
 
             /// Assign the key/value
@@ -437,10 +463,19 @@ internal class StorageContainerReader {
     ///  Reads a `String` from `buffer` (used for dictionary key storage).
     ///
     @inline(__always)
-    private static func read(_ buffer: UnsafeRawBufferPointer, as: String.Type) -> (String, Int) {
+    private static func read(_ buffer: UnsafeRawBufferPointer, as: String.Type) throws -> (String, Int) {
         var utf8: [Unicode.UTF8.CodeUnit] = []
 
+        /// Ensure we can load the header
+        guard buffer.count >= MemoryLayout<Int32>.stride
+            else { throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Key value header missing or corrupt.")) }
+
         let count = Int(buffer.load(as: Int32.self))
+
+        /// Ensure we can load the value
+        guard buffer.count >= count
+            else { throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Key value corrupt, expected \(count) bytes but found \(buffer.count).")) }
+
         let offset = align(offset: MemoryLayout<Int32>.stride, to: MemoryLayout<Unicode.UTF8.CodeUnit>.self)
 
         for i in 0..<count{
@@ -453,7 +488,7 @@ internal class StorageContainerReader {
     /// Reads a `NullStorageContainer` from `buffer`.
     ///
     @inline(__always)
-    private static func read(_ buffer: UnsafeRawBufferPointer, as: NullStorageContainer.Type) -> NullStorageContainer {
+    private static func read(_ buffer: UnsafeRawBufferPointer, as: NullStorageContainer.Type) throws -> NullStorageContainer {
         return NullStorageContainer.null
     }
 }

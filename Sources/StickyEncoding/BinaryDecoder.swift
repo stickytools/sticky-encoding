@@ -60,8 +60,11 @@ open class BinaryDecoder {
     /// - throws: `DecodingError.dataCorrupted` if values requested from the payload are corrupted, or if the given data is not valid.
     /// - throws: An error if any value throws an error during decoding.
     ///
-    open func decode<T : Decodable>(_ type: T.Type, from data: EncodedData) throws -> T {
-        return try T.init(from: _BinaryDecoder(codingPath: [], rootStorage: data.storage, userInfo: self.userInfo))
+    open func decode<T : Decodable>(_ type: T.Type, from encodedData: EncodedData) throws -> T {
+
+        let storage = try StorageContainerReader.read(from: encodedData.buffer)
+
+        return try T.init(from: _BinaryDecoder(codingPath: [], rootStorage: storage, userInfo: self.userInfo))
     }
 
     // MARK: Getting contextual information
@@ -619,8 +622,13 @@ extension _BinaryDecoder {
 
             do {
                 return try storage.value(as: type)
+
             } catch SingleValueContainer.Error.typeMismatch(_, let actualType) {
                 throw DecodingError.typeMismatchError(at: self.codingPath, expected: type, actual: actualType)
+            } catch SingleValueContainer.Error.valueCorrupt(_, let message) {
+                /// Note: we directly used the enum case here instead of the static constructor
+                /// methods because the compiler was erroring with an Ambiguous reference.
+                throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: self.codingPath, debugDescription: message))
             }
         }
 

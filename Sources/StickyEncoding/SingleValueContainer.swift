@@ -67,7 +67,7 @@ internal class SingleValueContainer {
     /// Initializes `self` with an UnsafeMutableRawBufferPointer representing the underlying storage.
     ///
     @inline(__always)
-    init(from buffer: UnsafeRawBufferPointer) {
+    init(from buffer: UnsafeRawBufferPointer) throws {
         let tmp = UnsafeMutableRawBufferPointer.allocate(byteCount: buffer.count, alignment: MemoryLayout<UInt8>.alignment)
         tmp.copyMemory(from: buffer)
         self.buffer = UnsafeRawBufferPointer(tmp)
@@ -128,12 +128,16 @@ internal class SingleValueContainer {
     /// - Parameter type: the type `T` to return the value as.
     ///
     /// - Throws: `SingleValueContainer.typeMisMatchError` if the requested `type` is not the type stored.
+    /// - Throws: `SingleValueContainer.valueCorrupt` if the stored `T` value can not be created from storage.
     ///
     @inline(__always)
     func value<T: EncodableType>(as type: T.Type) throws -> T {
         guard self.type == T.encodedType
             else { throw SingleValueContainer.Error.typeMismatch(type, self.type) }
 
+        guard self.buffer.count >= Offset.value + MemoryLayout<T>.stride
+            else { throw SingleValueContainer.Error.valueCorrupt(type, "Not enough bytes stored to read value of type \(type).") }
+        
         return self.buffer.load(fromByteOffset: Offset.value, as: type)
     }
 
@@ -150,6 +154,9 @@ internal class SingleValueContainer {
         guard self.type == EncodedType.string
             else { throw SingleValueContainer.Error.typeMismatch(type, self.type) }
 
+        guard self.buffer.count >= Offset.value + self.size
+            else { throw SingleValueContainer.Error.valueCorrupt(type, "Not enough bytes stored to read value of type \(type).") }
+
         var utf8: [Unicode.UTF8.CodeUnit] = []
 
         for i in 0..<self.size {
@@ -159,6 +166,8 @@ internal class SingleValueContainer {
     }
 
     // MARK: - Private methods and vars
+
+    internal static let HeaderSize = Offset.value
 
     ///
     /// Table of offsets into the raw storage buffer.
