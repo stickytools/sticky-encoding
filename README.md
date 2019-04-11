@@ -145,7 +145,7 @@ Build Environment
 | Platform | Swift | Swift Build | Xcode |
 |:--------:|:-----:|:----------:|:------:|
 | Linux    | 4.2 | &#x2714; | &#x2718; |
-| OSX      | 4.2 | &#x2714; | Xcode 10.0 |
+| OSX      | 4.2 | &#x2714; | Xcode 10.2 |
 
 Minimum Runtime Version
 
