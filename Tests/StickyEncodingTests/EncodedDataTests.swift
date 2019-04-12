@@ -28,104 +28,22 @@ class EncodedDataTests: XCTestCase {
     func testInit() throws {
 
         let input    = EncodedData()
-        let expected = NullStorageContainer.null
+        let expected = 0
 
-        XCTAssert(input.storage.equal(expected), "\(expected) does not equal \(input.storage)")
+        XCTAssertEqual(input.byteCount, expected)
     }
 
     func testBytesRoundTripOfNullStorageContainer() throws {
 
         let input    = EncodedData()
-        let expected = NullStorageContainer.null
+        let expected = 0
 
         let result = EncodedData(Array(input))
 
-        XCTAssert(result.storage.equal(expected), "\(expected) does not equal \(input.storage)")
-    }
-
-    func testBytesRoundTripOfUnkeyedStorageContainer() throws {
-
-        let input    = EncodedData(UnkeyedStorageContainer())
-        let expected = UnkeyedStorageContainer()
-
-        let result = EncodedData(Array(input))
-
-        XCTAssert(result.storage.equal(expected), "\(expected) does not equal \(input.storage)")
-    }
-
-    func testBytesRoundTripOfKeyedStorageContainer() throws {
-
-        let input = EncodedData(KeyedStorageContainer())
-        let expected = KeyedStorageContainer()
-
-        let result = EncodedData(Array(input))
-
-        XCTAssert(result.storage.equal(expected), "\(expected) does not equal \(input.storage)")
-    }
-
-    func testBytesRoundTripOfSingleValueContainer() throws {
-
-        let input = EncodedData(SingleValueContainer("Test string"))
-        let expected = SingleValueContainer("Test string")
-
-        let result = EncodedData(Array(input))
-
-        XCTAssert(result.storage.equal(expected), "\(expected) does not equal \(input.storage)")
+        XCTAssertEqual(result.byteCount, expected)
     }
 
     // MARK: - `UnsafeRawBufferPointer` tests
-
-    func testUnsafeRawBufferPointerRoundTripOfNullStorageContainer() throws {
-
-        let input    = EncodedData()
-        let expected = NullStorageContainer.null
-
-        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: input.byteCount, alignment: MemoryLayout<UInt8>.alignment)
-        input.write(to: buffer)
-
-        let result = EncodedData(from: UnsafeRawBufferPointer(buffer))
-
-        XCTAssert(result.storage.equal(expected), "\(expected) does not equal \(input.storage)")
-    }
-
-    func testUnsafeRawBufferPointerRoundTripOfUnkeyedStorageContainer() throws {
-
-        let input    = EncodedData(UnkeyedStorageContainer())
-        let expected = UnkeyedStorageContainer()
-
-        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: input.byteCount, alignment: MemoryLayout<UInt8>.alignment)
-        input.write(to: buffer)
-
-        let result = EncodedData(from: UnsafeRawBufferPointer(buffer))
-
-        XCTAssert(result.storage.equal(expected), "\(expected) does not equal \(input.storage)")
-    }
-
-    func testUnsafeRawBufferPointerRoundTripOfKeyedStorageContainer() throws {
-
-        let input = EncodedData(KeyedStorageContainer())
-        let expected = KeyedStorageContainer()
-
-        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: input.byteCount, alignment: MemoryLayout<UInt8>.alignment)
-        input.write(to: buffer)
-
-        let result = EncodedData(from: UnsafeRawBufferPointer(buffer))
-
-        XCTAssert(result.storage.equal(expected), "\(expected) does not equal \(input.storage)")
-    }
-
-    func testUnsafeRawBufferPointerRoundTripOfSingleValueContainer() throws {
-
-        let input = EncodedData(SingleValueContainer("Test string"))
-        let expected = SingleValueContainer("Test string")
-
-        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: input.byteCount, alignment: MemoryLayout<UInt8>.alignment)
-        input.write(to: buffer)
-
-        let result = EncodedData(from: UnsafeRawBufferPointer(buffer))
-
-        XCTAssert(result.storage.equal(expected), "\(expected) does not equal \(input.storage)")
-    }
 
     func testUnsafeRawBufferPointerFullRoundTripOfBasicStruct() throws {
 
@@ -147,16 +65,6 @@ class EncodedDataTests: XCTestCase {
 
     // MARK: - `Array` Tests
 
-    func testArrayRoundTripOfSingleValueContainer() throws {
-
-        let input = EncodedData(SingleValueContainer("Test string"))
-        let expected = SingleValueContainer("Test string")
-
-        let result = EncodedData(Array(input))
-
-        XCTAssert(result.storage.equal(expected), "\(expected) does not equal \(input.storage)")
-    }
-
     func testArrayFullRoundTripOfBasicStruct() throws {
 
         let input    = BasicStruct(boolVar: true, intVar: 123, doubleVar: 123.23, stringVar: "Test String")
@@ -172,16 +80,6 @@ class EncodedDataTests: XCTestCase {
     }
 
     // MARK: - `Data` Tests
-
-    func testDataRoundTripOfSingleValueContainer() throws {
-
-        let input = EncodedData(SingleValueContainer("Test string"))
-        let expected = SingleValueContainer("Test string")
-
-        let result = EncodedData(Data(input))
-
-        XCTAssert(result.storage.equal(expected), "\(expected) does not equal \(input.storage)")
-    }
 
     func testDataFullRoundTripOfBasicStruct() throws {
 

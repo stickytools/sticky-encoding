@@ -149,7 +149,7 @@ class UnkeyedStorageContainerElementReferenceTests: XCTestCase {
     /// Test the ability to access set the value via the `value` var.
     ///
     func testValueSet() {
-        let input = UnkeyedStorageContainer().pushReference()
+        var input = UnkeyedStorageContainer().pushReference()
         input.value = ValueType(1)
 
         XCTAssertEqual(input.value as? ValueType, ValueType(1))
@@ -176,7 +176,7 @@ class UnkeyedStorageContainerElementReferenceTests: XCTestCase {
     ///
     func testDescriptionWithValue() {
         let input = UnkeyedStorageContainer()
-        let reference = input.pushReference()
+        var reference = input.pushReference()
         reference.value = ValueType(1)
 
         XCTAssertEqual(String(describing: reference), "Description 1")
@@ -187,7 +187,7 @@ class UnkeyedStorageContainerElementReferenceTests: XCTestCase {
     ///
     func testDebugDescriptionWithValue() {
         let input = UnkeyedStorageContainer()
-        let reference = input.pushReference()
+        var reference = input.pushReference()
         reference.value = ValueType(1)
 
         XCTAssertEqual(String(reflecting: reference), "DebugDescription 1")

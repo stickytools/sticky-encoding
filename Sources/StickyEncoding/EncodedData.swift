@@ -53,36 +53,15 @@ public class EncodedData {
     /// Initializes `self` with a null value.
     ///
     public init() {
-        self.storage = NullStorageContainer.null
+        self.buffer = UnsafeRawBufferPointer(UnsafeMutableRawBufferPointer.allocate(byteCount: 0, alignment: MemoryLayout<UInt8>.alignment))
     }
-
-    /// Returns the count of bytes required to store the value in binary form.
-    ///
-    public lazy var byteCount: Int = {
-        return StorageContainerWriter.byteCount(self.storage)
-    }()
-
-    /// Initialize self with a `StorageContainer` type (intermediary form of binary encoded data).
-    ///
-    internal init(_ storage: StorageContainer) {
-        self.storage = storage
-    }
-
-    /// All inputs convert to the intermediary form of `StorageContainer`.
-    ///
-    internal let storage: StorageContainer
-}
-
-/// Support to/from UnsafeRawBuffers.
-///
-extension EncodedData {
 
     // MARK: UnsafeRawBufferPointer Support
 
     /// Initializes `'self` using the data stored in `buffer`.
     ///
-    public convenience init(from buffer: UnsafeRawBufferPointer) {
-        self.init(StorageContainerReader.read(from: buffer))
+    public init(from buffer: UnsafeRawBufferPointer) {
+        self.buffer = buffer
     }
 
     /// Write the binary representation of the value to `buffer`.
@@ -93,9 +72,24 @@ extension EncodedData {
     ///
     @discardableResult
     public func write(to buffer: UnsafeMutableRawBufferPointer) -> Int {
-        return StorageContainerWriter.write(self.storage, to: buffer)
+        buffer.copyMemory(from: self.buffer)
+
+        return self.buffer.count
     }
+    /// Returns the count of bytes required to store the value in binary form.
+    ///
+    public lazy var byteCount: Int = {
+        return buffer.count
+    }()
+
+    /// All inputs convert to the intermediary form of `StorageContainer`.
+    ///
+    internal let buffer: UnsafeRawBufferPointer
 }
+
+/// Support to/from UnsafeRawBuffers.
+///
+
 
 /// Support to/from Array<UInt8>
 ///
@@ -108,7 +102,13 @@ extension EncodedData {
     /// - Parameter bytes: The `Array<UInt8>` instance used to construct the instance from.
     ///
     public convenience init(_ bytes: [UInt8]) {
-        self.init(bytes.withUnsafeBytes { StorageContainerReader.read(from: $0) })
+        let tmp = UnsafeMutableRawBufferPointer.allocate(byteCount: bytes.count, alignment: MemoryLayout<UInt8>.alignment)
+
+        bytes.withUnsafeBytes { (pointer) -> Void in
+            tmp.copyMemory(from: pointer)
+        }
+
+        self.init(from: UnsafeRawBufferPointer(tmp))
     }
 }
 
@@ -124,10 +124,15 @@ extension EncodedData {
     ///
     public convenience init(_ data: Data) {
 
-        self.init(data.withUnsafeBytes({ (pointer: UnsafePointer<UInt8>) -> StorageContainer in
-            let buffer = UnsafeRawBufferPointer(start: pointer, count: data.count)
-            return StorageContainerReader.read(from: buffer)
-        }))
+        self.init(from:data.withUnsafeBytes { (bytes) -> UnsafeRawBufferPointer in
+            let tmp = UnsafeMutableRawBufferPointer.allocate(byteCount: bytes.count, alignment: MemoryLayout<UInt8>.alignment)
+
+            bytes.withUnsafeBytes { (pointer) -> Void in
+                tmp.copyMemory(from: pointer)
+            }
+
+            return UnsafeRawBufferPointer(tmp)
+        })
     }
 }
 
@@ -161,7 +166,9 @@ public extension Array where Element == UInt8 {
     init(_ encodedData: EncodedData) {
         self.init(repeating: 0x0, count: encodedData.byteCount)
 
-        _ = self.withUnsafeMutableBytes({ StorageContainerWriter.write(encodedData.storage, to: $0) })
+        self.withUnsafeMutableBytes { (bytes) -> Void in
+            encodedData.buffer.copyBytes(to: bytes, count: bytes.count)
+        }
     }
 }
 

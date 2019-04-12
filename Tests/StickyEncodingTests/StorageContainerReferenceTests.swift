@@ -53,7 +53,10 @@ class PassthroughReferenceTests: XCTestCase {
         let input = PassthroughReference(expected)
 
         XCTAssertNotNil(input)
-        XCTAssert(input.value === expected)
+        guard let inputType = input.value as? InputType
+            else { XCTFail("Incorrect type returned"); return }
+
+        XCTAssert(inputType === expected)
     }
 
     ///
