@@ -221,19 +221,19 @@ internal class StorageContainerWriter {
 
         /// Write -> count
         buffer.storeBytes(of: Int32(storageContainer.count), as: Int32.self)
-        var byteCount = align(offset: MemoryLayout<Int32>.stride, to: UnsafeRawPointer.self)
+        var offset = align(offset: MemoryLayout<Int32>.stride, to: UnsafeRawPointer.self)
 
         for (key, value) in storageContainer {
 
             /// Write - Key n
-            let keyByteCount = write(string: key, to: UnsafeMutableRawBufferPointer(rebasing: buffer[byteCount...]))
-            byteCount = align(offset: byteCount + keyByteCount, to: UnsafeRawPointer.self)
+            let keyByteCount = write(string: key, to: UnsafeMutableRawBufferPointer(rebasing: buffer[offset...]))
+            offset = align(offset: offset + keyByteCount, to: UnsafeRawPointer.self)
 
             /// Write -> Value n
-            let valueByteCount = write(storageContainer: value, to: UnsafeMutableRawBufferPointer(rebasing: buffer[byteCount...]))
-            byteCount = align(offset: byteCount + valueByteCount, to: UnsafeRawPointer.self)
+            let valueByteCount = write(storageContainer: value, to: UnsafeMutableRawBufferPointer(rebasing: buffer[offset...]))
+            offset = align(offset: offset + valueByteCount, to: UnsafeRawPointer.self)
         }
-        return byteCount
+        return offset
     }
 
     @inline(__always)
@@ -392,20 +392,20 @@ internal class StorageContainerReader {
         guard buffer.count >= MemoryLayout<Int32>.stride
             else { throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Unkeyed container header missing or corrupt.")) }
 
-        /// Read -> count
-        let containerSize = buffer.load(as: Int32.self)
-
-        /// Ensure we can load the container
-        guard buffer.count >= containerSize
-            else { throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Unkeyed container corrupt, expected \(containerSize) bytes but found \(buffer.count).")) }
-
-        var elementOffset = align(offset: MemoryLayout<Int32>.stride, to: UnsafeRawPointer.self)
-
         let container = UnkeyedStorageContainer()
 
-        for _ in 0..<Int32(containerSize) {
+        /// Read -> count
+        let elementCount = Int32(buffer.load(as: Int32.self))
+        var elementOffset = align(offset: MemoryLayout<Int32>.stride, to: UnsafeRawPointer.self)
+
+        for n in 0..<elementCount {
 
             /// Read -> Element n
+
+            /// Ensure we can load the container
+            guard buffer.count >= elementOffset
+                else { throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Unkeyed container corrupt, expected \(elementCount) elements but found \(n - 1).")) }
+
             let (element, byteCount) = try read(from: UnsafeRawBufferPointer(rebasing: buffer[elementOffset...]))
             elementOffset = align(offset: elementOffset + byteCount, to: UnsafeRawPointer.self)
 
@@ -433,23 +433,28 @@ internal class StorageContainerReader {
             else { throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Keyed container header missing or corrupt.")) }
 
         /// Read -> count
-        let containerSize = buffer.load(as: Int32.self)
-
-        /// Ensure we can load the container
-        guard buffer.count >= containerSize
-            else { throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Unkeyed container corrupt, expected \(containerSize) bytes but found \(buffer.count).")) }
-
+        let elementCount  = buffer.load(as: Int32.self)
         var elementOffset = align(offset: MemoryLayout<Int32>.stride, to: UnsafeRawPointer.self)
 
         let container = KeyedStorageContainer()
 
-        for _ in 0..<Int32(containerSize) {
+        for _ in 0..<elementCount {
 
             /// Read -> Key n
+
+            /// Be sure you can read the first element
+            guard buffer.count >= elementOffset
+                else { throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Keyed container Key missing or corrupt.")) }
+
             let (key, keyByteCount) = try read(UnsafeRawBufferPointer(rebasing: buffer[elementOffset...]), as: String.self)
             elementOffset = align(offset: elementOffset + keyByteCount, to: UnsafeRawPointer.self)
 
             /// Read -> Value n
+
+            /// Be sure you can read the first element
+            guard buffer.count >= elementOffset
+                else { throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Keyed container value missing or corrupt.")) }
+
             let (value, valueByteCount) = try read(from: UnsafeRawBufferPointer(rebasing: buffer[elementOffset...]))
             elementOffset = align(offset: elementOffset + valueByteCount, to: UnsafeRawPointer.self)
 
@@ -472,13 +477,16 @@ internal class StorageContainerReader {
 
         let count = Int(buffer.load(as: Int32.self))
 
+        guard count > 0
+            else { throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Key value header missing or corrupt.")) }
+
         /// Ensure we can load the value
         guard buffer.count >= count
             else { throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Key value corrupt, expected \(count) bytes but found \(buffer.count).")) }
 
         let offset = align(offset: MemoryLayout<Int32>.stride, to: MemoryLayout<Unicode.UTF8.CodeUnit>.self)
 
-        for i in 0..<count{
+        for i in 0..<count {
             utf8.append(buffer.load(fromByteOffset: offset + i, as: Unicode.UTF8.CodeUnit.self))
         }
         return (String(decoding: utf8, as: UTF8.self), offset + (MemoryLayout<Unicode.UTF8.CodeUnit>.stride * count))
