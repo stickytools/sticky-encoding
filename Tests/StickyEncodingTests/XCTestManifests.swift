@@ -632,14 +632,21 @@ extension EncodedDataNegativeTests {
     //   `swift test --generate-linuxmain`
     // to regenerate.
     static let __allTests__EncodedDataNegativeTests = [
-        ("testHeaderByteCountIncorrect", testHeaderByteCountIncorrect),
+        ("testKeyedContainerWithKeyMissing", testKeyedContainerWithKeyMissing),
+        ("testKeyedContainerWithKeyValueMissing", testKeyedContainerWithKeyValueMissing),
+        ("testKeyedContainerWithValidByteInput", testKeyedContainerWithValidByteInput),
+        ("testKeyedContainerWithValueMissingContainer", testKeyedContainerWithValueMissingContainer),
+        ("testKeyedContainerWithZeroLengthByteCount", testKeyedContainerWithZeroLengthByteCount),
+        ("testKeyedContainerWithZeroLengthByteCountForKeyedValueKey", testKeyedContainerWithZeroLengthByteCountForKeyedValueKey),
         ("testNonSupportedFirstByte", testNonSupportedFirstByte),
-        ("testTruncatedValueSize", testTruncatedValueSize),
-        ("testValidByteInput", testValidByteInput),
-        ("testZeroLengthByteCountForKeyedContainer", testZeroLengthByteCountForKeyedContainer),
-        ("testZeroLengthByteCountForNullContainer", testZeroLengthByteCountForNullContainer),
-        ("testZeroLengthByteCountForSingleValueContainer", testZeroLengthByteCountForSingleValueContainer),
-        ("testZeroLengthByteCountForUnkeyedContainer", testZeroLengthByteCountForUnkeyedContainer),
+        ("testNullContainerWithZeroLengthByteCount", testNullContainerWithZeroLengthByteCount),
+        ("testSingleValueContainerWithHeaderByteCountIncorrect", testSingleValueContainerWithHeaderByteCountIncorrect),
+        ("testSingleValueContainerWithTruncatedValueSize", testSingleValueContainerWithTruncatedValueSize),
+        ("testSingleValueContainerWithValidByteInput", testSingleValueContainerWithValidByteInput),
+        ("testSingleValueContainerWithZeroLengthByteCount", testSingleValueContainerWithZeroLengthByteCount),
+        ("testUnkeyedContainerWithValidByteInput", testUnkeyedContainerWithValidByteInput),
+        ("testUnkeyedContainerWithValueMissingContainer", testUnkeyedContainerWithValueMissingContainer),
+        ("testUnkeyedContainerWithZeroLengthByteCount", testUnkeyedContainerWithZeroLengthByteCount),
     ]
 }
 
