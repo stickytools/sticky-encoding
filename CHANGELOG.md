@@ -1,6 +1,11 @@
 # Change Log
 All significant changes to this project will be documented in this file.
 
+## [1.0.0-beta.5](https://github.com/stickytools/sticky-encoding/tree/1.0.0-beta.5)
+
+#### Added
+- Moving binary conversion into decode/encode stage to improve error recovery on invalid binary input.
+
 ## [1.0.0-beta.4](https://github.com/stickytools/sticky-encoding/tree/1.0.0-beta.4)
 
 #### Added
