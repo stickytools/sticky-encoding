@@ -26,6 +26,7 @@ format that can be stored on disk or sent over a socket.
 ## Documentation
 
 * [User Guides & Reference](https://stickytools.io/sticky-encoding) - Extensive user guides and reference documentation!  100% documented API, full examples and many hidden details.
+* [Contributing Guide](CONTRIBUTING.md) - If you'd like to contribute and need instructions on the build environment, this is the place to go.
 
 ## Quick Start Guide
 
@@ -122,6 +123,9 @@ You can find the latest sources and binaries on [github](https://github.com/stic
    - Commit your changes: `git commit -am 'Add some feature'`
    - Push to the branch: `git push origin my-new-feature`
    - Submit a pull request :-)
+
+> Note: for a instructions on how to build and test StickyEncoding for contributing please see the [Contributing Guide](CONTRIBUTING.md).
+
 
 ## Installation
 
