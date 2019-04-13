@@ -68,20 +68,6 @@
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/BinaryDecoder.html">BinaryDecoder</a>
               </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/EncodedData.html">EncodedData</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a class="nav-group-name-link" href="../EncodedData Transformation.html">EncodedData Transformation</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Extensions/Array.html">Array</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Extensions/Data.html">Data</a>
-              </li>
             </ul>
           </li>
           <li class="nav-group-name">
@@ -140,7 +126,7 @@ of the BinaryEncoder and call <code>encode</code>.</p>
 
    <span class="k">let</span> <span class="nv">employee</span> <span class="o">=</span> <span class="kt">Employee</span><span class="p">(</span><span class="nv">first</span><span class="p">:</span> <span class="s">"John"</span><span class="p">,</span> <span class="nv">last</span><span class="p">:</span> <span class="s">"Doe"</span><span class="p">,</span> <span class="nv">employeeNumber</span><span class="p">:</span> <span class="mi">2345643</span><span class="p">)</span>
 
-   <span class="k">let</span> <span class="nv">encodedData</span> <span class="o">=</span> <span class="k">try</span> <span class="n">encoder</span><span class="o">.</span><span class="nf">encode</span><span class="p">(</span><span class="n">employee</span><span class="p">)</span>
+   <span class="k">let</span> <span class="nv">bytes</span> <span class="o">=</span> <span class="k">try</span> <span class="n">encoder</span><span class="o">.</span><span class="nf">encode</span><span class="p">(</span><span class="n">employee</span><span class="p">)</span>
 </code></pre>
 
 <p>As well as Complex types with sub classes.</p>
@@ -219,9 +205,9 @@ of the BinaryEncoder and call <code>encode</code>.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:14StickyEncoding13BinaryEncoderC6encodeyAA11EncodedDataCxKSERzlF"></a>
+                    <a name="/s:14StickyEncoding13BinaryEncoderC6encodeySays5UInt8VGxKSERzlF"></a>
                     <a name="//apple_ref/swift/Method/encode(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StickyEncoding13BinaryEncoderC6encodeyAA11EncodedDataCxKSERzlF">encode(_:)</a>
+                    <a class="token" href="#/s:14StickyEncoding13BinaryEncoderC6encodeySays5UInt8VGxKSERzlF">encode(_:)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -241,7 +227,7 @@ of the BinaryEncoder and call <code>encode</code>.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="n">encode</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">value</span><span class="p">:</span> <span class="kt">T</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/EncodedData.html">EncodedData</a></span> <span class="k">where</span> <span class="kt">T</span> <span class="p">:</span> <span class="kt">Encodable</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">func</span> <span class="n">encode</span><span class="o">&lt;</span><span class="kt">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">_</span> <span class="nv">value</span><span class="p">:</span> <span class="kt">T</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="kt">UInt8</span><span class="p">]</span> <span class="k">where</span> <span class="kt">T</span> <span class="p">:</span> <span class="kt">Encodable</span></code></pre>
 
                         </div>
                       </div>
@@ -266,7 +252,7 @@ of the BinaryEncoder and call <code>encode</code>.</p>
                       </div>
                       <div>
                         <h4>Return Value</h4>
-                        <p>A new <code><a href="../Classes/EncodedData.html">EncodedData</a></code> value containing the encoded Binary data.</p>
+                        <p>A new <code>EncodedData</code> value containing the encoded Binary data.</p>
                       </div>
                     </section>
                   </div>

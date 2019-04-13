@@ -68,20 +68,6 @@
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/BinaryDecoder.html">BinaryDecoder</a>
               </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Classes/EncodedData.html">EncodedData</a>
-              </li>
-            </ul>
-          </li>
-          <li class="nav-group-name">
-            <a class="nav-group-name-link" href="EncodedData Transformation.html">EncodedData Transformation</a>
-            <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Extensions/Array.html">Array</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Extensions/Data.html">Data</a>
-              </li>
             </ul>
           </li>
           <li class="nav-group-name">
@@ -107,9 +93,6 @@ format that can be stored on disk or sent over a socket.</p>
 <p>Decoding is done using a <code><a href="Classes/BinaryDecoder.html">BinaryDecoder</a></code> instance and can decode any <code>Decodable</code> type that was previously encoded using the <code><a href="Classes/BinaryEncoder.html">BinaryEncoder</a></code>. Of course you can declare <code>Encodable</code> or <code>Decodable</code> conformance by using <code>Codable</code> as well.</p>
 
 <p>StickyEncoding creates a compact binary format that represents the encoded object or data type.  You can read more about the format in the document <a href="Sources/Documentation/Sections/Binary&#32;Format.md">Binary Format</a>.</p>
-
-<p>To facilitate many use cases, StickyEncoding encodes the data to an instance of <code><a href="Classes/EncodedData.html">EncodedData</a></code>.  EncodedData contains a binary format suitable
-for writing directly to memory, disk, or into a byte array. Or in the case of decoding, the format facilitates rapid decoding to Swift instances.</p>
 
           </div>
         </section>
@@ -173,7 +156,7 @@ of the BinaryEncoder and call <code>encode</code>.</p>
 
    <span class="k">let</span> <span class="nv">employee</span> <span class="o">=</span> <span class="kt">Employee</span><span class="p">(</span><span class="nv">first</span><span class="p">:</span> <span class="s">"John"</span><span class="p">,</span> <span class="nv">last</span><span class="p">:</span> <span class="s">"Doe"</span><span class="p">,</span> <span class="nv">employeeNumber</span><span class="p">:</span> <span class="mi">2345643</span><span class="p">)</span>
 
-   <span class="k">let</span> <span class="nv">encodedData</span> <span class="o">=</span> <span class="k">try</span> <span class="n">encoder</span><span class="o">.</span><span class="nf">encode</span><span class="p">(</span><span class="n">employee</span><span class="p">)</span>
+   <span class="k">let</span> <span class="nv">bytes</span> <span class="o">=</span> <span class="k">try</span> <span class="n">encoder</span><span class="o">.</span><span class="nf">encode</span><span class="p">(</span><span class="n">employee</span><span class="p">)</span>
 </code></pre>
 
 <p>As well as Complex types with sub classes.</p>
@@ -219,7 +202,7 @@ of the BinaryEncoder and call <code>encode</code>.</p>
 </blockquote>
 
 <p>To decode, you pass the Type of object to create, and an instance of encoded data representing that type.</p>
-<pre class="highlight swift"><code>   <span class="k">let</span> <span class="nv">employee</span> <span class="o">=</span> <span class="k">try</span> <span class="n">decoder</span><span class="o">.</span><span class="nf">decode</span><span class="p">(</span><span class="kt">Employee</span><span class="o">.</span><span class="k">self</span><span class="p">,</span> <span class="nv">from</span><span class="p">:</span> <span class="n">encodedData</span><span class="p">)</span>
+<pre class="highlight swift"><code>   <span class="k">let</span> <span class="nv">employee</span> <span class="o">=</span> <span class="k">try</span> <span class="n">decoder</span><span class="o">.</span><span class="nf">decode</span><span class="p">(</span><span class="kt">Employee</span><span class="o">.</span><span class="k">self</span><span class="p">,</span> <span class="nv">from</span><span class="p">:</span> <span class="n">bytes</span><span class="p">)</span>
 </code></pre>
 
                         <a href="Classes/BinaryDecoder.html" class="slightly-smaller">See more</a>
@@ -229,67 +212,6 @@ of the BinaryEncoder and call <code>encode</code>.</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">open</span> <span class="kd">class</span> <span class="kt">BinaryDecoder</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="task-group">
-              <div class="task-name-container">
-                <a name="/EncodedData"></a>
-                <a name="//apple_ref/swift/Section/EncodedData" class="dashAnchor"></a>
-                <a href="#/EncodedData">
-                  <h3 class="section-name">EncodedData</h3>
-                </a>
-              </div>
-              <ul class="item-container">
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:14StickyEncoding11EncodedDataC"></a>
-                    <a name="//apple_ref/swift/Class/EncodedData" class="dashAnchor"></a>
-                    <a class="token" href="#/s:14StickyEncoding11EncodedDataC">EncodedData</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>An intermediate representation which represents the encoded data.  This type is the direct connection between
-raw memory and a type that can be converted to and from an <code>Codable</code> object.</p>
-
-<p>StickyEncoding uses an intermediate representation so that it can support many use cases from
-direct byte conversion to writing/reading directly to/from raw memory.</p>
-
-<p>When encoding of an object, the intermediate representation has already been
-encoded down to a form that can be rapidly written to memory.</p>
-<pre class="highlight swift"><code>   <span class="k">let</span> <span class="nv">encodedData</span> <span class="o">=</span> <span class="k">try</span> <span class="n">encoder</span><span class="o">.</span><span class="nf">encode</span><span class="p">(</span><span class="n">employee</span><span class="p">)</span>
-
-   <span class="c1">// Write the bytes directly to a file.</span>
-   <span class="kt">FileManager</span><span class="o">.</span><span class="k">default</span><span class="o">.</span><span class="nf">createFile</span><span class="p">(</span><span class="nv">atPath</span><span class="p">:</span> <span class="s">"employee.bin"</span><span class="p">,</span> <span class="nv">contents</span><span class="p">:</span> <span class="kt">Data</span><span class="p">(</span><span class="n">encodedData</span><span class="p">))</span>
-</code></pre>
-
-<p>There are use cases that require writing to a buffer or socket in which case StickyEncoding offers a direct write method so that an intermediate structure (byte array) does not have to be created first.</p>
-<pre class="highlight swift"><code>   <span class="k">let</span> <span class="nv">encodedData</span> <span class="o">=</span> <span class="k">try</span> <span class="n">encoder</span><span class="o">.</span><span class="nf">encode</span><span class="p">(</span><span class="n">employee</span><span class="p">)</span>
-
-   <span class="c1">// Allocate byte aligned raw memory to hold the binary encoded data.</span>
-   <span class="k">let</span> <span class="nv">buffer</span> <span class="o">=</span> <span class="kt">UnsafeMutableRawBufferPointer</span><span class="o">.</span><span class="nf">allocate</span><span class="p">(</span><span class="nv">byteCount</span><span class="p">:</span> <span class="n">encodedData</span><span class="o">.</span><span class="n">byteCount</span><span class="p">,</span> <span class="nv">alignment</span><span class="p">:</span> <span class="kt">MemoryLayout</span><span class="o">&lt;</span><span class="kt">UInt8</span><span class="o">&gt;.</span><span class="n">alignment</span><span class="p">)</span>
-
-   <span class="c1">// Write the encoded data directly to the raw memory.</span>
-   <span class="n">encodedData</span><span class="o">.</span><span class="nf">write</span><span class="p">(</span><span class="nv">to</span><span class="p">:</span> <span class="n">buffer</span><span class="p">)</span>
-</code></pre>
-
-                        <a href="Classes/EncodedData.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">EncodedData</span></code></pre>
 
                         </div>
                       </div>
