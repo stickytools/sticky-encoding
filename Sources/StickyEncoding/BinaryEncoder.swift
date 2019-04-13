@@ -57,7 +57,7 @@ import Foundation
 ///
 ///    let employee = Employee(first: "John", last: "Doe", employeeNumber: 2345643)
 ///
-///    let encodedData = try encoder.encode(employee)
+///    let bytes = try encoder.encode(employee)
 /// ```
 /// As well as Complex types with sub classes.
 ///
@@ -84,7 +84,7 @@ open class BinaryEncoder {
     ///
     /// - throws: An error if any value throws an error during encoding.
     ///
-    open func encode<T: Encodable>(_ value: T) throws -> EncodedData {
+    open func encode<T: Encodable>(_ value: T) throws -> [UInt8] {
         let encoder = _BinaryEncoder(codingPath: [], userInfo: self.userInfo)
 
         try value.encode(to: encoder)
@@ -95,9 +95,9 @@ open class BinaryEncoder {
             bytes.withUnsafeMutableBytes { (buffer) -> Void in
                StorageContainerWriter.write(storage, to: buffer)
             }
-            return EncodedData(bytes)
+            return bytes
         }
-        return EncodedData()
+        return []
     }
 
     // MARK: Getting contextual information

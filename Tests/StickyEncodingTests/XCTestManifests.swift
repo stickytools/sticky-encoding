@@ -623,7 +623,6 @@ extension DocumentationExampleTests {
         ("testBinaryEncoderExample2", testBinaryEncoderExample2),
         ("testDataConstructionExample", testDataConstructionExample),
         ("testEncodedDataExample1", testEncodedDataExample1),
-        ("testEncodedDataExample2", testEncodedDataExample2),
     ]
 }
 
@@ -656,10 +655,7 @@ extension EncodedDataTests {
     // to regenerate.
     static let __allTests__EncodedDataTests = [
         ("testArrayFullRoundTripOfBasicStruct", testArrayFullRoundTripOfBasicStruct),
-        ("testBytesRoundTripOfNullStorageContainer", testBytesRoundTripOfNullStorageContainer),
         ("testDataFullRoundTripOfBasicStruct", testDataFullRoundTripOfBasicStruct),
-        ("testInit", testInit),
-        ("testUnsafeRawBufferPointerFullRoundTripOfBasicStruct", testUnsafeRawBufferPointerFullRoundTripOfBasicStruct),
     ]
 }
 

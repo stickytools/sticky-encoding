@@ -29,12 +29,12 @@ class EncodedDataNegativeTests: XCTestCase {
 
     func testNonSupportedFirstByte() throws {
 
-        let input = EncodedData([0xf,  0x0, 0x0, 0x0, /// Header: Container Type
-                                 0xc,  0x0, 0x0, 0x0, /// Header: Byte count
-                                 0xa5, 0x0, 0x0, 0x0, /// SingleValueContainer: Type
-                                 0x4,  0x0, 0x0, 0x0, /// SingleValueContainer: Size
-                                 0xa,  0x0, 0x0, 0x0  /// SingleValueContainer: Value
-            ])
+        let input: [UInt8] = [0xf,  0x0, 0x0, 0x0, /// Header: Container Type
+                              0xc,  0x0, 0x0, 0x0, /// Header: Byte count
+                              0xa5, 0x0, 0x0, 0x0, /// SingleValueContainer: Type
+                              0x4,  0x0, 0x0, 0x0, /// SingleValueContainer: Size
+                              0xa,  0x0, 0x0, 0x0  /// SingleValueContainer: Value
+            ]
 
         XCTAssertThrowsError(try decoder.decode(Int32.self, from: input)) { (error) in
             switch error {
@@ -51,21 +51,21 @@ class EncodedDataNegativeTests: XCTestCase {
 
     func testSingleValueContainerWithValidByteInput() throws {
 
-        let input = EncodedData([0xd,  0x0, 0x0, 0x0, /// Header: Container Type
-                                 0xc,  0x0, 0x0, 0x0, /// Header: Byte count
-                                 0xa5, 0x0, 0x0, 0x0, /// SingleValueContainer: Type
-                                 0x4,  0x0, 0x0, 0x0, /// SingleValueContainer: Size
-                                 0xa,  0x0, 0x0, 0x0  /// SingleValueContainer: Value
-            ])
+        let input: [UInt8] = [0xd,  0x0, 0x0, 0x0, /// Header: Container Type
+                              0xc,  0x0, 0x0, 0x0, /// Header: Byte count
+                              0xa5, 0x0, 0x0, 0x0, /// SingleValueContainer: Type
+                              0x4,  0x0, 0x0, 0x0, /// SingleValueContainer: Size
+                              0xa,  0x0, 0x0, 0x0  /// SingleValueContainer: Value
+            ]
 
         XCTAssertEqual(try decoder.decode(Int32.self, from: input), 10)
     }
 
     func testSingleValueContainerWithZeroLengthByteCount() throws {
 
-        let input = EncodedData([0xd,  0x0, 0x0, 0x0, /// Header: Container Type
-            0x0,  0x0, 0x0, 0x0  /// Header: Byte count
-            ])
+        let input: [UInt8] = [0xd,  0x0, 0x0, 0x0, /// Header: Container Type
+                              0x0,  0x0, 0x0, 0x0  /// Header: Byte count
+            ]
 
         XCTAssertThrowsError(try decoder.decode(Int32.self, from: input)) { (error) in
             switch error {
@@ -81,12 +81,12 @@ class EncodedDataNegativeTests: XCTestCase {
 
     func testSingleValueContainerWithTruncatedValueSize() throws {
 
-        let input = EncodedData([0xd,  0x0, 0x0, 0x0, /// Header: Container Type
-                                 0xc,  0x0, 0x0, 0x0, /// Header: Byte count
-                                 0xa5, 0x0, 0x0, 0x0, /// SingleValueContainer: Type
-                                 0x4,  0x0, 0x0, 0x0, /// SingleValueContainer: Size
-                                 0xa,  0x0, 0x0       /// SingleValueContainer: Value
-            ])
+        let input: [UInt8] = [0xd,  0x0, 0x0, 0x0, /// Header: Container Type
+                              0xc,  0x0, 0x0, 0x0, /// Header: Byte count
+                              0xa5, 0x0, 0x0, 0x0, /// SingleValueContainer: Type
+                              0x4,  0x0, 0x0, 0x0, /// SingleValueContainer: Size
+                              0xa,  0x0, 0x0       /// SingleValueContainer: Value
+            ]
 
         XCTAssertThrowsError(try decoder.decode(Int32.self, from: input)) { (error) in
             switch error {
@@ -101,12 +101,12 @@ class EncodedDataNegativeTests: XCTestCase {
 
     func testSingleValueContainerWithHeaderByteCountIncorrect() throws {
 
-        let input = EncodedData([0xd,  0x0, 0x0, 0x0, /// Header: Container Type
-                                 0xd,  0x0, 0x0, 0x0, /// Header: Byte count
-                                 0xa5, 0x0, 0x0, 0x0, /// SingleValueContainer: Type
-                                 0x4,  0x0, 0x0, 0x0, /// SingleValueContainer: Size
-                                 0xa,  0x0, 0x0, 0x0  /// SingleValueContainer: Value
-            ])
+        let input: [UInt8] = [0xd,  0x0, 0x0, 0x0, /// Header: Container Type
+                              0xd,  0x0, 0x0, 0x0, /// Header: Byte count
+                              0xa5, 0x0, 0x0, 0x0, /// SingleValueContainer: Type
+                              0x4,  0x0, 0x0, 0x0, /// SingleValueContainer: Size
+                              0xa,  0x0, 0x0, 0x0  /// SingleValueContainer: Value
+            ]
 
         XCTAssertThrowsError(try decoder.decode(Int32.self, from: input)) { (error) in
             switch error {
@@ -127,37 +127,37 @@ class EncodedDataNegativeTests: XCTestCase {
             let a: Int32
         }
 
-        let input = EncodedData([                     /// Header:
-                                 0xb,  0x0, 0x0, 0x0, /// - Container Type
-                                 0x24, 0x0, 0x0, 0x0, /// - Byte count
+        let input: [UInt8] = [                     /// Header:
+                              0xb,  0x0, 0x0, 0x0, /// - Container Type
+                              0x24, 0x0, 0x0, 0x0, /// - Byte count
 
                                                       /// KeyedValueContainer:
-                                 0x1,  0x0, 0x0, 0x0, /// - Count
-                                 0x0,  0x0, 0x0, 0x0, /// - Alignment Padding
+                              0x1,  0x0, 0x0, 0x0, /// - Count
+                              0x0,  0x0, 0x0, 0x0, /// - Alignment Padding
 
                                                       /// key:
-                                 0x1,  0x0, 0x0, 0x0, /// - Size
-                                 0x61, 0x0, 0x0, 0x0, /// - Value + Alignment Padding
+                              0x1,  0x0, 0x0, 0x0, /// - Size
+                              0x61, 0x0, 0x0, 0x0, /// - Value + Alignment Padding
 
                                                       /// Header:
-                                 0xd,  0x0, 0x0, 0x0, /// - Container Type
-                                 0xc,  0x0, 0x0, 0x0, /// - Byte count
+                              0xd,  0x0, 0x0, 0x0, /// - Container Type
+                              0xc,  0x0, 0x0, 0x0, /// - Byte count
 
                                                       /// SingleValueContainer:
-                                 0xa5, 0x0, 0x0, 0x0, /// - Type
-                                 0x4,  0x0, 0x0, 0x0, /// - Size
-                                 0xa,  0x0, 0x0, 0x0  /// - Value
-            ])
+                              0xa5, 0x0, 0x0, 0x0, /// - Type
+                              0x4,  0x0, 0x0, 0x0, /// - Size
+                              0xa,  0x0, 0x0, 0x0  /// - Value
+            ]
 
         XCTAssertEqual(try decoder.decode(ExpectedClass.self, from: input).a, 10)
     }
 
     func testKeyedContainerWithZeroLengthByteCount() throws {
 
-        let input = EncodedData([                     /// Header:
-                                 0xb,  0x0, 0x0, 0x0, /// - Container Type
-                                 0x0,  0x0, 0x0, 0x0, /// - Byte count
-            ])
+        let input: [UInt8] = [                     /// Header:
+                              0xb,  0x0, 0x0, 0x0, /// - Container Type
+                              0x0,  0x0, 0x0, 0x0, /// - Byte count
+            ]
 
         XCTAssertThrowsError(try decoder.decode(Int32.self, from: input)) { (error) in
             switch error {
@@ -172,13 +172,13 @@ class EncodedDataNegativeTests: XCTestCase {
 
     func testKeyedContainerWithKeyMissing() throws {
 
-        let input = EncodedData([                     /// Header:
-                                 0xb,  0x0, 0x0, 0x0, /// - Container Type
-                                 0x24, 0x0, 0x0, 0x0, /// - Byte count
+        let input: [UInt8] = [                     /// Header:
+                              0xb,  0x0, 0x0, 0x0, /// - Container Type
+                              0x24, 0x0, 0x0, 0x0, /// - Byte count
 
                                                       /// KeyedValueContainer:
-                                 0x1,  0x0, 0x0, 0x0, /// - Count
-            ])
+                              0x1,  0x0, 0x0, 0x0, /// - Count
+            ]
 
         XCTAssertThrowsError(try decoder.decode(Int32.self, from: input)) { (error) in
             switch error {
@@ -193,18 +193,18 @@ class EncodedDataNegativeTests: XCTestCase {
 
     func testKeyedContainerWithKeyValueMissing() throws {
 
-        let input = EncodedData([                     /// Header:
-                                 0xb,  0x0, 0x0, 0x0, /// - Container Type
-                                 0x10, 0x0, 0x0, 0x0, /// - Byte count
+        let input: [UInt8] = [                     /// Header:
+                              0xb,  0x0, 0x0, 0x0, /// - Container Type
+                              0x10, 0x0, 0x0, 0x0, /// - Byte count
 
                                                       /// KeyedValueContainer:
-                                 0x1,  0x0, 0x0, 0x0, /// - Count
-                                 0x0,  0x0, 0x0, 0x0, /// - Alignment Padding
+                              0x1,  0x0, 0x0, 0x0, /// - Count
+                              0x0,  0x0, 0x0, 0x0, /// - Alignment Padding
 
                                                       /// key:
-                                 0x1,  0x0, 0x0, 0x0, /// - Size
-                                 0x61, 0x0, 0x0, 0x0, /// - Value + Alignment Padding
-            ])
+                              0x1,  0x0, 0x0, 0x0, /// - Size
+                              0x61, 0x0, 0x0, 0x0, /// - Value + Alignment Padding
+            ]
 
         XCTAssertThrowsError(try decoder.decode(Int32.self, from: input)) { (error) in
             switch error {
@@ -219,22 +219,22 @@ class EncodedDataNegativeTests: XCTestCase {
 
     func testKeyedContainerWithValueMissingContainer() throws {
 
-        let input = EncodedData([                     /// Header:
-                                 0xb,  0x0, 0x0, 0x0, /// - Container Type
-                                 0x10, 0x0, 0x0, 0x0, /// - Byte count
+        let input: [UInt8] = [                     /// Header:
+                              0xb,  0x0, 0x0, 0x0, /// - Container Type
+                              0x10, 0x0, 0x0, 0x0, /// - Byte count
 
                                                       /// KeyedValueContainer:
-                                 0x1,  0x0, 0x0, 0x0, /// - Count
-                                 0x0,  0x0, 0x0, 0x0, /// - Alignment Padding
+                              0x1,  0x0, 0x0, 0x0, /// - Count
+                              0x0,  0x0, 0x0, 0x0, /// - Alignment Padding
 
                                                       /// key:
-                                 0x1,  0x0, 0x0, 0x0, /// - Size
-                                 0x61, 0x0, 0x0, 0x0, /// - Value + Alignment Padding
+                              0x1,  0x0, 0x0, 0x0, /// - Size
+                              0x61, 0x0, 0x0, 0x0, /// - Value + Alignment Padding
 
                                                       /// Header:
-                                 0xd,  0x0, 0x0, 0x0, /// - Container Type
-                                 0xc,  0x0, 0x0, 0x0, /// - Byte count
-            ])
+                              0xd,  0x0, 0x0, 0x0, /// - Container Type
+                              0xc,  0x0, 0x0, 0x0, /// - Byte count
+            ]
 
         XCTAssertThrowsError(try decoder.decode(Int32.self, from: input)) { (error) in
             switch error {
@@ -249,18 +249,18 @@ class EncodedDataNegativeTests: XCTestCase {
 
     func testKeyedContainerWithZeroLengthByteCountForKeyedValueKey() throws {
 
-        let input = EncodedData([                     /// Header:
-                                 0xb,  0x0, 0x0, 0x0, /// - Container Type
-                                 0xd,  0x0, 0x0, 0x0, /// - Byte count
+        let input: [UInt8] = [                     /// Header:
+                              0xb,  0x0, 0x0, 0x0, /// - Container Type
+                              0xd,  0x0, 0x0, 0x0, /// - Byte count
 
                                                       /// KeyedValueContainer:
-                                 0x1,  0x0, 0x0, 0x0, /// - Count
-                                 0x0,  0x0, 0x0, 0x0, /// - Alignment Padding
+                              0x1,  0x0, 0x0, 0x0, /// - Count
+                              0x0,  0x0, 0x0, 0x0, /// - Alignment Padding
 
                                                       /// key:
-                                 0x0,  0x0, 0x0, 0x0, /// - Size
-                                 0x61, 0x0, 0x0, 0x0, /// - Value + Alignment Padding
-            ])
+                              0x0,  0x0, 0x0, 0x0, /// - Size
+                              0x61, 0x0, 0x0, 0x0, /// - Value + Alignment Padding
+            ]
 
         XCTAssertThrowsError(try decoder.decode(Int32.self, from: input)) { (error) in
             switch error {
@@ -287,33 +287,33 @@ class EncodedDataNegativeTests: XCTestCase {
             }
         }
 
-        let input = EncodedData([                     /// Header:
-                                 0xc,  0x0, 0x0, 0x0, /// - Container Type
-                                 0x1c, 0x0, 0x0, 0x0, /// - Byte count
+        let input: [UInt8] = [                     /// Header:
+                              0xc,  0x0, 0x0, 0x0, /// - Container Type
+                              0x1c, 0x0, 0x0, 0x0, /// - Byte count
 
                                                       /// UnkeyedValueContainer:
-                                 0x1,  0x0, 0x0, 0x0, /// - Count
-                                 0x0,  0x0, 0x0, 0x0, /// - Alignment Padding
+                              0x1,  0x0, 0x0, 0x0, /// - Count
+                              0x0,  0x0, 0x0, 0x0, /// - Alignment Padding
 
                                                       /// Header:
-                                 0xd,  0x0, 0x0, 0x0, /// - Container Type
-                                 0xc,  0x0, 0x0, 0x0, /// - Byte count
+                              0xd,  0x0, 0x0, 0x0, /// - Container Type
+                              0xc,  0x0, 0x0, 0x0, /// - Byte count
 
                                                       /// SingleValueContainer:
-                                 0xa5, 0x0, 0x0, 0x0, /// - Type
-                                 0x4,  0x0, 0x0, 0x0, /// - Size
-                                 0xa,  0x0, 0x0, 0x0  /// - Value
-            ])
+                              0xa5, 0x0, 0x0, 0x0, /// - Type
+                              0x4,  0x0, 0x0, 0x0, /// - Size
+                              0xa,  0x0, 0x0, 0x0  /// - Value
+            ]
 
         XCTAssertEqual(try decoder.decode(ExpectedClass.self, from: input).a, 10)
     }
 
     func testUnkeyedContainerWithZeroLengthByteCount() throws {
 
-        let input = EncodedData([                     /// Header:
-                                 0xc,  0x0, 0x0, 0x0, /// - Container Type
-                                 0x0,  0x0, 0x0, 0x0  /// - Byte count
-            ])
+        let input: [UInt8] = [                     /// Header:
+                              0xc,  0x0, 0x0, 0x0, /// - Container Type
+                              0x0,  0x0, 0x0, 0x0  /// - Byte count
+            ]
 
         XCTAssertThrowsError(try decoder.decode(Int32.self, from: input)) { (error) in
             switch error {
@@ -328,18 +328,18 @@ class EncodedDataNegativeTests: XCTestCase {
 
     func testUnkeyedContainerWithValueMissingContainer() throws {
 
-        let input = EncodedData([                     /// Header:
-                                 0xc,  0x0, 0x0, 0x0, /// - Container Type
-                                 0x10, 0x0, 0x0, 0x0, /// - Byte count
+        let input: [UInt8] = [                     /// Header:
+                              0xc,  0x0, 0x0, 0x0, /// - Container Type
+                              0x10, 0x0, 0x0, 0x0, /// - Byte count
 
                                                       /// KeyedValueContainer:
-                                 0x1,  0x0, 0x0, 0x0, /// - Count
-                                 0x0,  0x0, 0x0, 0x0, /// - Alignment Padding
+                              0x1,  0x0, 0x0, 0x0, /// - Count
+                              0x0,  0x0, 0x0, 0x0, /// - Alignment Padding
 
                                                       /// Header:
-                                 0xd,  0x0, 0x0, 0x0, /// - Container Type
-                                 0xc,  0x0, 0x0, 0x0, /// - Byte count
-            ])
+                              0xd,  0x0, 0x0, 0x0, /// - Container Type
+                              0xc,  0x0, 0x0, 0x0, /// - Byte count
+            ]
 
         XCTAssertThrowsError(try decoder.decode(Int32.self, from: input)) { (error) in
             switch error {
@@ -356,9 +356,9 @@ class EncodedDataNegativeTests: XCTestCase {
 
     func testNullContainerWithZeroLengthByteCount() throws {
 
-        let input = EncodedData([0xa,  0x0, 0x0, 0x0, /// Header: Container Type
-                                 0x0,  0x0, 0x0, 0x0  /// Header: Byte count
-            ])
+        let input: [UInt8] = [0xa,  0x0, 0x0, 0x0, /// Header: Container Type
+                              0x0,  0x0, 0x0, 0x0  /// Header: Byte count
+            ]
 
         XCTAssertNoThrow(try decoder.decode(Optional<Int32>.self, from: input))
     }

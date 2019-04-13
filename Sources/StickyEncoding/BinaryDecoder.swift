@@ -31,7 +31,7 @@ import Foundation
 ///
 /// To decode, you pass the Type of object to create, and an instance of encoded data representing that type.
 /// ```
-///    let employee = try decoder.decode(Employee.self, from: encodedData)
+///    let employee = try decoder.decode(Employee.self, from: bytes)
 /// ```
 ///
 open class BinaryDecoder {
@@ -60,11 +60,14 @@ open class BinaryDecoder {
     /// - throws: `DecodingError.dataCorrupted` if values requested from the payload are corrupted, or if the given data is not valid.
     /// - throws: An error if any value throws an error during decoding.
     ///
-    open func decode<T : Decodable>(_ type: T.Type, from encodedData: EncodedData) throws -> T {
+    open func decode<T : Decodable>(_ type: T.Type, from bytes: [UInt8]) throws -> T {
 
-        let storage = try StorageContainerReader.read(from: encodedData.buffer)
+        return try bytes.withUnsafeBytes { (bytes) -> T in
 
-        return try T.init(from: _BinaryDecoder(codingPath: [], rootStorage: storage, userInfo: self.userInfo))
+            let storage = try StorageContainerReader.read(from: bytes)
+
+            return try T.init(from: _BinaryDecoder(codingPath: [], rootStorage: storage, userInfo: self.userInfo))
+        }
     }
 
     // MARK: Getting contextual information

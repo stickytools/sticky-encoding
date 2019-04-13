@@ -40,11 +40,6 @@ custom_categories:
     children:
     - BinaryEncoder
     - BinaryDecoder
-    - EncodedData
-  - name: EncodedData Transformation
-    children:
-    - Array
-    - Data
   - name: Supplemental Information
     children:
     - Binary Format

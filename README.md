@@ -66,7 +66,7 @@ Basic structs and classes can also be encoded.
 
    let employee = Employee(first: "John", last: "Doe", employeeNumber: 2345643)
 
-   let encodedData = try encoder.encode(employee)
+   let bytes = try encoder.encode(employee)
 ```
 As well as Complex types with sub classes.
 
@@ -81,32 +81,19 @@ To create an instance of a BinaryDecoder:
 
 To decode, you pass the Type of object to create, and an instance of encoded data representing that type.
 ```Swift
-   let employee = try decoder.decode(Employee.self, from: encodedData)
+   let employee = try decoder.decode(Employee.self, from: bytes)
 ```
 
-### EncodedData
+### Encoded Data
 
-The `BinaryEncoder.encode` method returns a type called `EncodedData` (likewise `BinaryDecoder.decode` accepts an `EncodedData` instance).   This type is the direct connection between raw memory and a type that can be converted to and from a `Codable` object.
+The `BinaryEncoder.encode` method returns type `Array<UInt8>` (likewise `BinaryDecoder.decode` accepts an `Array<UInt8>` instance).
 
-StickyEncoding uses this intermediate representation so that it can support many use cases from direct byte conversion to writing/reading directly to/from raw memory.
-
-When encoding of an object, the intermediate representation has already been
-encoded down to a form that can be rapidly written to memory.
+`[Array<UInt8>` is easily converted to other types such as `Swift.Data` for passing to Foundation methods to store and load data from file.
 ```Swift
-   let encodedData = try encoder.encode(employee)
+   let bytes = try encoder.encode(employee)
 
    // Write the bytes directly to a file.
-   FileManager.default.createFile(atPath: "employee.bin", contents: Data(encodedData))
-```
-There are use cases that require writing to a buffer or socket in which case StickyEncoding offers a direct write method so that an intermediate structure (byte array) does not have to be created first.
-```Swift
-   let encodedData = try encoder.encode(employee)
-
-   // Allocate byte aligned raw memory to hold the binary encoded data.
-   let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: encodedData.byteCount, alignment: MemoryLayout<UInt8>.alignment)
-
-   // Write the encoded data directly to the raw memory.
-   encodedData.write(to: buffer)
+   FileManager.default.createFile(atPath: "employee.bin", contents: Data(bytes))
 ```
 
 ## Sources and Binaries
@@ -125,7 +112,6 @@ You can find the latest sources and binaries on [github](https://github.com/stic
    - Submit a pull request :-)
 
 > Note: for a instructions on how to build and test StickyEncoding for contributing please see the [Contributing Guide](CONTRIBUTING.md).
-
 
 ## Installation
 

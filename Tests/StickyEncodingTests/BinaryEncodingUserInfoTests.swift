@@ -57,8 +57,8 @@ class BinaryEncodingUserInfoTests: XCTestCase {
             }
         }
         /// Execute the tests
-        let encodedData = try BinaryEncoder(userInfo: inputUserInfo).encode(InputType(value: true))
-        _ = try BinaryDecoder(userInfo: inputUserInfo).decode(InputType.self, from: encodedData)
+        let bytes = try BinaryEncoder(userInfo: inputUserInfo).encode(InputType(value: true))
+        _ = try BinaryDecoder(userInfo: inputUserInfo).decode(InputType.self, from: bytes)
     }
 
     func testUserInfoForUnkeyedContainer() throws {
@@ -92,8 +92,8 @@ class BinaryEncodingUserInfoTests: XCTestCase {
             }
         }
         /// Execute the tests
-        let encodedData = try BinaryEncoder(userInfo: inputUserInfo).encode(InputType(value: true))
-        _ = try BinaryDecoder(userInfo: inputUserInfo).decode(InputType.self, from: encodedData)
+        let bytes = try BinaryEncoder(userInfo: inputUserInfo).encode(InputType(value: true))
+        _ = try BinaryDecoder(userInfo: inputUserInfo).decode(InputType.self, from: bytes)
     }
 
     func testUserInfoForUnkeyedNestedUnkeyedContainer() throws {
@@ -129,8 +129,8 @@ class BinaryEncodingUserInfoTests: XCTestCase {
             }
         }
         /// Execute the tests
-        let encodedData = try BinaryEncoder(userInfo: inputUserInfo).encode(InputType(value: true))
-        _ = try BinaryDecoder(userInfo: inputUserInfo).decode(InputType.self, from: encodedData)
+        let bytes = try BinaryEncoder(userInfo: inputUserInfo).encode(InputType(value: true))
+        _ = try BinaryDecoder(userInfo: inputUserInfo).decode(InputType.self, from: bytes)
     }
 
     func testUserInfoForUnkeyedNestedKeyedContainer() throws {
@@ -170,8 +170,8 @@ class BinaryEncodingUserInfoTests: XCTestCase {
             }
         }
         /// Execute the tests
-        let encodedData = try BinaryEncoder(userInfo: inputUserInfo).encode(InputType(value: true))
-        _ = try BinaryDecoder(userInfo: inputUserInfo).decode(InputType.self, from: encodedData)
+        let bytes = try BinaryEncoder(userInfo: inputUserInfo).encode(InputType(value: true))
+        _ = try BinaryDecoder(userInfo: inputUserInfo).decode(InputType.self, from: bytes)
     }
 
     func testUserInfoForKeyedContainer() throws {
@@ -209,8 +209,8 @@ class BinaryEncodingUserInfoTests: XCTestCase {
             }
         }
         /// Execute the tests
-        let encodedData = try BinaryEncoder(userInfo: inputUserInfo).encode(InputType(value: true))
-        _ = try BinaryDecoder(userInfo: inputUserInfo).decode(InputType.self, from: encodedData)
+        let bytes = try BinaryEncoder(userInfo: inputUserInfo).encode(InputType(value: true))
+        _ = try BinaryDecoder(userInfo: inputUserInfo).decode(InputType.self, from: bytes)
     }
 
     func testUserInfoForKeyedNestedUnkeyedContainer() throws {
@@ -250,8 +250,8 @@ class BinaryEncodingUserInfoTests: XCTestCase {
             }
         }
         /// Execute the tests
-        let encodedData = try BinaryEncoder(userInfo: inputUserInfo).encode(InputType(value: true))
-        _ = try BinaryDecoder(userInfo: inputUserInfo).decode(InputType.self, from: encodedData)
+        let bytes = try BinaryEncoder(userInfo: inputUserInfo).encode(InputType(value: true))
+        _ = try BinaryDecoder(userInfo: inputUserInfo).decode(InputType.self, from: bytes)
     }
 
     func testUserInfoForKeyedNestedKeyedContainer() throws {
@@ -291,7 +291,7 @@ class BinaryEncodingUserInfoTests: XCTestCase {
             }
         }
         /// Execute the tests
-        let encodedData = try BinaryEncoder(userInfo: inputUserInfo).encode(InputType(value: true))
-        _ = try BinaryDecoder(userInfo: inputUserInfo).decode(InputType.self, from: encodedData)
+        let bytes = try BinaryEncoder(userInfo: inputUserInfo).encode(InputType(value: true))
+        _ = try BinaryDecoder(userInfo: inputUserInfo).decode(InputType.self, from: bytes)
     }
 }

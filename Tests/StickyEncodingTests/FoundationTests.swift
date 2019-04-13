@@ -23,46 +23,6 @@ import XCTest
 
 class EncodedDataTests: XCTestCase {
 
-    // MARK: - `init` tests.
-
-    func testInit() throws {
-
-        let input    = EncodedData()
-        let expected = 0
-
-        XCTAssertEqual(input.byteCount, expected)
-    }
-
-    func testBytesRoundTripOfNullStorageContainer() throws {
-
-        let input    = EncodedData()
-        let expected = 0
-
-        let result = EncodedData(Array(input))
-
-        XCTAssertEqual(result.byteCount, expected)
-    }
-
-    // MARK: - `UnsafeRawBufferPointer` tests
-
-    func testUnsafeRawBufferPointerFullRoundTripOfBasicStruct() throws {
-
-        let input    = BasicStruct(boolVar: true, intVar: 123, doubleVar: 123.23, stringVar: "Test String")
-        let expected = input
-
-        let encoder = BinaryEncoder()
-        let decoder = BinaryDecoder()
-
-        let encodedData = try encoder.encode(input)
-
-        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: encodedData.byteCount, alignment: MemoryLayout<UInt8>.alignment)
-        encodedData.write(to: buffer)
-
-        let result = try decoder.decode(BasicStruct.self, from: EncodedData(from: UnsafeRawBufferPointer(buffer)))
-
-        XCTAssertEqual(result, expected)
-    }
-
     // MARK: - `Array` Tests
 
     func testArrayFullRoundTripOfBasicStruct() throws {
@@ -74,7 +34,7 @@ class EncodedDataTests: XCTestCase {
         let decoder = BinaryDecoder()
 
         let array = Array(try encoder.encode(input))
-        let result = try decoder.decode(BasicStruct.self, from: EncodedData(array))
+        let result = try decoder.decode(BasicStruct.self, from: array)
 
         XCTAssertEqual(result, expected)
     }
@@ -90,7 +50,7 @@ class EncodedDataTests: XCTestCase {
         let decoder = BinaryDecoder()
 
         let data = Data(try encoder.encode(input))
-        let result = try decoder.decode(BasicStruct.self, from: EncodedData(data))
+        let result = try decoder.decode(BasicStruct.self, from: Array(data))
 
         XCTAssertEqual(result, expected)
     }
