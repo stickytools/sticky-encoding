@@ -89,15 +89,10 @@ open class BinaryEncoder {
 
         try value.encode(to: encoder)
 
-        if let storage = encoder.rootStorage.value {
-            var bytes = Array<UInt8>(repeating: 0, count: StorageContainerWriter.byteCount(storage))
+        guard let storage = encoder.rootStorage.value
+            else { return [] }
 
-            bytes.withUnsafeMutableBytes { (buffer) -> Void in
-               StorageContainerWriter.write(storage, to: buffer)
-            }
-            return bytes
-        }
-        return []
+        return StorageContainerWriter.convert(storage)
     }
 
     // MARK: Getting contextual information

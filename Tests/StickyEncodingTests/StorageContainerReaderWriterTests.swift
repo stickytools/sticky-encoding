@@ -30,12 +30,9 @@ class StorageContainerReaderWriterTests: XCTestCase {
         let input    = NullStorageContainer.null
         let expected = NullStorageContainer.null
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: StorageContainerWriter.byteCount(input), alignment: MemoryLayout<UInt8>.alignment)
-        defer { buffer.deallocate() }
+        let bytes = StorageContainerWriter.convert(input)
 
-        StorageContainerWriter.write(input, to: buffer)
-
-        let result = try StorageContainerReader.read(from: UnsafeRawBufferPointer(buffer))
+        let result = try StorageContainerReader.convert(bytes)
 
         XCTAssert(result.equal(expected), "\(expected) does not equal \(input)")
     }
@@ -47,12 +44,9 @@ class StorageContainerReaderWriterTests: XCTestCase {
         let input    = SingleValueContainer("Test String")
         let expected = SingleValueContainer("Test String")
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: StorageContainerWriter.byteCount(input), alignment: MemoryLayout<UInt8>.alignment)
-        defer { buffer.deallocate() }
+        let bytes = StorageContainerWriter.convert(input)
 
-        StorageContainerWriter.write(input, to: buffer)
-
-        let result = try StorageContainerReader.read(from: UnsafeRawBufferPointer(buffer))
+        let result = try StorageContainerReader.convert(bytes)
 
         XCTAssert(result.equal(expected), "\(expected) does not equal \(input)")
     }
@@ -61,8 +55,8 @@ class StorageContainerReaderWriterTests: XCTestCase {
 
     func testReadWriteRoundTripForUnkeyedContainer() throws {
 
-        var input: UnkeyedStorageContainer = {
-            var container = UnkeyedStorageContainer()
+        let input: UnkeyedStorageContainer = {
+            let container = UnkeyedStorageContainer()
             for i in 0..<5 {
                 container.push(SingleValueContainer("Test String \(i)"))
             }
@@ -70,20 +64,17 @@ class StorageContainerReaderWriterTests: XCTestCase {
         }()
         let expected = input
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: StorageContainerWriter.byteCount(input), alignment: MemoryLayout<UInt8>.alignment)
-        defer { buffer.deallocate() }
+        let bytes = StorageContainerWriter.convert(input)
 
-        StorageContainerWriter.write(input, to: buffer)
-
-        let result = try StorageContainerReader.read(from: UnsafeRawBufferPointer(buffer))
+        let result = try StorageContainerReader.convert(bytes)
 
         XCTAssert(result.equal(expected), "\(expected) does not equal \(input)")
     }
 
     func testReadWriteRoundTripForUnkeyedContainerWithMixedSingleValueAndNull() throws {
 
-        var input: UnkeyedStorageContainer = {
-            var container = UnkeyedStorageContainer()
+        let input: UnkeyedStorageContainer = {
+            let container = UnkeyedStorageContainer()
             container.push(SingleValueContainer("Test String 0"))
             container.push(NullStorageContainer.null)
             container.push(SingleValueContainer("Test String 1"))
@@ -92,32 +83,26 @@ class StorageContainerReaderWriterTests: XCTestCase {
         }()
         let expected = input
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: StorageContainerWriter.byteCount(input), alignment: MemoryLayout<UInt8>.alignment)
-        defer { buffer.deallocate() }
+        let bytes = StorageContainerWriter.convert(input)
 
-        StorageContainerWriter.write(input, to: buffer)
-
-        let result = try StorageContainerReader.read(from: UnsafeRawBufferPointer(buffer))
+        let result = try StorageContainerReader.convert(bytes)
 
         XCTAssert(result.equal(expected), "\(expected) does not equal \(input)")
     }
 
     func testReadWriteRoundTripForUnkeyedContainerWithNestedUnkeyedContainers() throws {
 
-        var input: UnkeyedStorageContainer = {
-            var container = UnkeyedStorageContainer()
+        let input: UnkeyedStorageContainer = {
+            let container = UnkeyedStorageContainer()
             container.push(UnkeyedStorageContainer())
             container.push(UnkeyedStorageContainer())
             return container
         }()
         let expected = input
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: StorageContainerWriter.byteCount(input), alignment: MemoryLayout<UInt8>.alignment)
-        defer { buffer.deallocate() }
+        let bytes = StorageContainerWriter.convert(input)
 
-        StorageContainerWriter.write(input, to: buffer)
-
-        let result = try StorageContainerReader.read(from: UnsafeRawBufferPointer(buffer))
+        let result = try StorageContainerReader.convert(bytes)
 
         XCTAssert(result.equal(expected), "\(expected) does not equal \(input)")
     }
@@ -126,8 +111,8 @@ class StorageContainerReaderWriterTests: XCTestCase {
 
     func testReadWriteRoundTripForKeyedContainer() throws {
 
-        var input: KeyedStorageContainer = {
-            var container = KeyedStorageContainer()
+        let input: KeyedStorageContainer = {
+            let container = KeyedStorageContainer()
             for i in 0..<5 {
                 container["key \(i)"] = SingleValueContainer("Test String \(i)")
             }
@@ -135,12 +120,9 @@ class StorageContainerReaderWriterTests: XCTestCase {
         }()
         let expected = input
 
-        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: StorageContainerWriter.byteCount(input), alignment: MemoryLayout<UInt8>.alignment)
-        defer { buffer.deallocate() }
+        let bytes = StorageContainerWriter.convert(input)
 
-        StorageContainerWriter.write(input, to: buffer)
-
-        let result = try StorageContainerReader.read(from: UnsafeRawBufferPointer(buffer))
+        let result = try StorageContainerReader.convert(bytes)
 
         XCTAssert(result.equal(expected), "\(expected) does not equal \(input)")
     }

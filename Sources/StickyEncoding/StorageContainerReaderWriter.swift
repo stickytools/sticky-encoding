@@ -76,15 +76,14 @@ internal class StorageContainerWriter {
 
     // MARK: - Root level methods
 
-    @discardableResult
     @inline(__always)
-    static func write(_ storageContainer: StorageContainer, to buffer: UnsafeMutableRawBufferPointer) -> Int {
-        return write(storageContainer: storageContainer, to: buffer)
-    }
+    static func convert(_ storageContainer: StorageContainer) -> [UInt8] {
+        var bytes = Array<UInt8>(repeating: 0x0, count: self.byteCount(storageContainer: storageContainer))
 
-    @inline(__always)
-    static func byteCount(_ storageContainer: StorageContainer) -> Int {
-        return byteCount(storageContainer: storageContainer)
+        bytes.withUnsafeMutableBytes { (buffer) -> Void in
+            self.write(storageContainer: storageContainer, to: buffer)
+        }
+        return bytes
     }
 
     // MARK: - Private methods
@@ -98,6 +97,7 @@ internal class StorageContainerWriter {
     /// ```
     ///
     /* Do not inline, recursively called */
+    @discardableResult
     private static func write(storageContainer: StorageContainer, to buffer: UnsafeMutableRawBufferPointer) -> Int {
 
         /// Create a buffer that starts past the header which will be written last.
@@ -302,11 +302,8 @@ internal class StorageContainerReader {
     /// - Returns: `StorageContainer` representation of the raw buffer.
     ///
     @inline(__always)
-    static func read(from buffer: UnsafeRawBufferPointer) throws -> StorageContainer {
-
-        let (container, _) = try read(from: buffer)
-
-        return container
+    static func convert(_ bytes: [UInt8]) throws -> StorageContainer {
+        return try bytes.withUnsafeBytes({ try read(from: $0).0 })
     }
 
     // MARK: - Private implementation
@@ -485,7 +482,6 @@ internal class StorageContainerReader {
             else { throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Key value corrupt, expected \(count) bytes but found \(buffer.count).")) }
 
         let offset = align(offset: MemoryLayout<Int32>.stride, to: MemoryLayout<Unicode.UTF8.CodeUnit>.self)
-
         for i in 0..<count {
             utf8.append(buffer.load(fromByteOffset: offset + i, as: Unicode.UTF8.CodeUnit.self))
         }

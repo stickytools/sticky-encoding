@@ -62,12 +62,9 @@ open class BinaryDecoder {
     ///
     open func decode<T : Decodable>(_ type: T.Type, from bytes: [UInt8]) throws -> T {
 
-        return try bytes.withUnsafeBytes { (bytes) -> T in
+        let storage = try StorageContainerReader.convert(bytes)
 
-            let storage = try StorageContainerReader.read(from: bytes)
-
-            return try T.init(from: _BinaryDecoder(codingPath: [], rootStorage: storage, userInfo: self.userInfo))
-        }
+        return try T.init(from: _BinaryDecoder(codingPath: [], rootStorage: storage, userInfo: self.userInfo))
     }
 
     // MARK: Getting contextual information
