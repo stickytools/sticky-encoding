@@ -1,5 +1,5 @@
 ///
-///  EncodedData+NegativeTests.swift
+///  BinaryDecoder+ByteArrayTests.swift
 ///
 ///  Copyright 2019 Tony Stone
 ///
@@ -21,7 +21,7 @@ import XCTest
 
 @testable import StickyEncoding
 
-class EncodedDataNegativeTests: XCTestCase {
+class BinaryDecoderByteArrayTests: XCTestCase {
 
     let decoder = BinaryDecoder()
 
