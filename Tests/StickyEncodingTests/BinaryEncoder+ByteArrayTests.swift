@@ -31,7 +31,6 @@ class BinaryEncoderByteArrayTests: XCTestCase {
 
         let input             = Int32(10)
         let expected: [UInt8] = [0xd,  0x0, 0x0, 0x0, /// Header: Container Type
-                                 0xc,  0x0, 0x0, 0x0, /// Header: Byte count
                                  0xa5, 0x0, 0x0, 0x0, /// SingleValueContainer: Type
                                  0x4,  0x0, 0x0, 0x0, /// SingleValueContainer: Size
                                  0xa,  0x0, 0x0, 0x0  /// SingleValueContainer: Value
@@ -51,11 +50,9 @@ class BinaryEncoderByteArrayTests: XCTestCase {
         let input             = InputType(a: 10)
         let expected: [UInt8] = [                     /// Header:
                                  0xb,  0x0, 0x0, 0x0, /// - Container Type
-                                 0x28, 0x0, 0x0, 0x0, /// - Byte count
 
                                                       /// KeyedValueContainer:
                                  0x1,  0x0, 0x0, 0x0, /// - Count
-                                 0x0,  0x0, 0x0, 0x0, /// - Alignment Padding
 
                                                       /// key:
                                  0x1,  0x0, 0x0, 0x0, /// - Size
@@ -63,13 +60,11 @@ class BinaryEncoderByteArrayTests: XCTestCase {
 
                                                       /// Header:
                                  0xd,  0x0, 0x0, 0x0, /// - Container Type
-                                 0xc,  0x0, 0x0, 0x0, /// - Byte count
 
                                                      /// SingleValueContainer:
                                  0xa5, 0x0, 0x0, 0x0, /// - Type
                                  0x4,  0x0, 0x0, 0x0, /// - Size
                                  0xa,  0x0, 0x0, 0x0, /// - Value
-                                 0x0,  0x0, 0x0, 0x0  /// - Alignment Padding
         ]
 
         XCTAssertEqual(try encoder.encode(input), expected)
@@ -92,21 +87,17 @@ class BinaryEncoderByteArrayTests: XCTestCase {
         let input             = InputType(a: 10)
         let expected: [UInt8] = [                     /// Header:
                                  0xc,  0x0, 0x0, 0x0, /// - Container Type
-                                 0x20, 0x0, 0x0, 0x0, /// - Byte count
 
                                                       /// UnkeyedValueContainer:
                                  0x1,  0x0, 0x0, 0x0, /// - Count
-                                 0x0,  0x0, 0x0, 0x0, /// - Alignment Padding
 
                                                       /// Header:
                                  0xd,  0x0, 0x0, 0x0, /// - Container Type
-                                 0xc,  0x0, 0x0, 0x0, /// - Byte count
 
                                                       /// SingleValueContainer:
                                  0xa5, 0x0, 0x0, 0x0, /// - Type
                                  0x4,  0x0, 0x0, 0x0, /// - Size
                                  0xa,  0x0, 0x0, 0x0, /// - Value
-                                 0x0,  0x0, 0x0, 0x0  /// - Alignment Padding
         ]
 
         XCTAssertEqual(try encoder.encode(input), expected)
@@ -117,9 +108,7 @@ class BinaryEncoderByteArrayTests: XCTestCase {
     func testNullContainerWithZeroLengthByteCount() throws {
 
         let input: Optional<Int32> = nil
-        let expected: [UInt8] = [0xa,  0x0, 0x0, 0x0, /// Header: Container Type
-                                 0x0,  0x0, 0x0, 0x0  /// Header: Byte count
-        ]
+        let expected: [UInt8] = [0xa,  0x0, 0x0, 0x0] /// Header: Container Type
 
         XCTAssertEqual(try encoder.encode(input), expected)
     }

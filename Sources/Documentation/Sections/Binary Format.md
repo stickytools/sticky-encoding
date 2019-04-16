@@ -1,10 +1,8 @@
 # Binary Format
 
-The internal binary representation of the encoded data consists of a series of **Elements** each containing a **Header** section followed by a **Container**.  The Element is essentially a wrapper around a Container defining it's type and size in bytes. The format was designed to be as compact and efficient as possible at storing the simplest to the most complex structures that can be encoded.
+The internal binary representation of the encoded data consists of a series of **Elements** each containing a **Header** section followed by a **Container**.  The Element is essentially a wrapper around a Container defining it's type. The format was designed to be as compact and efficient as possible at storing the simplest to the most complex structures that can be encoded.
 
 ![Binary Format Container Header](Binary-Format-Container-Header.png)
-
-The Header of each Element contains a 32 bit integer representing the container type followed by a 32 integer containing the total number of bytes stored in the Container section of this Element.
 
 ## Containers
 Each Container formats it's data based on the requirements of that container. There are 3 container types that can be stored corresponding to the `Encoder` and `Decoder` protocol return types for the functions `singleValueContainer()`, `unkeyedContainer()`, and `container(keyedBy:)`. An Element is created in response to each call to any one of these functions.

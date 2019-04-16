@@ -67,9 +67,29 @@ internal class SingleValueContainer {
     /// Initializes `self` with an UnsafeMutableRawBufferPointer representing the underlying storage.
     ///
     @inline(__always)
-    init(from buffer: UnsafeRawBufferPointer) throws {
-        let tmp = UnsafeMutableRawBufferPointer.allocate(byteCount: buffer.count, alignment: MemoryLayout<UInt8>.alignment)
-        tmp.copyMemory(from: buffer)
+    convenience init(from buffer: UnsafeRawBufferPointer) throws {
+        try self.init(from: buffer[0...])
+    }
+
+    @inline(__always)
+    init(from buffer: Slice<UnsafeRawBufferPointer>) throws {
+
+        /// Find the count offset.
+        let offset = align(offset: buffer.startIndex, to: EncodedType.self)
+
+        /// Ensure we can load the header
+        guard buffer.endIndex > offset && buffer.endIndex - offset >= SingleValueContainer.HeaderSize
+            else { throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Single value container header missing or corrupt.")) }
+
+        let type = UnsafeRawBufferPointer(rebasing: buffer[offset...]).load(fromByteOffset: Offset.type, as: EncodedType.self)
+        let size = UnsafeRawBufferPointer(rebasing: buffer[offset...]).load(fromByteOffset: Offset.size, as: Int32.self)
+        let bufferSize = Offset.value + Int(size)
+
+        guard buffer.endIndex >= offset + bufferSize
+            else { throw DecodingError.dataCorrupted(DecodingError.Context(codingPath: [], debugDescription: "Not enough bytes stored to read value of type \(type).")) }
+
+        let tmp = UnsafeMutableRawBufferPointer.allocate(byteCount: bufferSize, alignment: MemoryLayout<UInt8>.alignment)
+        tmp.copyMemory(from: UnsafeRawBufferPointer(rebasing: buffer[offset..<offset + bufferSize]))
         self.buffer = UnsafeRawBufferPointer(tmp)
     }
 
@@ -189,18 +209,20 @@ internal class SingleValueContainer {
 ///
 extension SingleValueContainer: StorageContainer {
 
-    ///
     /// Returns the byte count of the container and any overhead it requires.
     ///
     var byteCount: Int {
         return self.buffer.count
     }
 
-    ///
     /// Write our contents to a buffer.
     ///
     func write(to buffer: UnsafeMutableRawBufferPointer) {
         buffer.copyMemory(from: self.buffer)
+    }
+
+    var bytes: [UInt8] {
+        return Array(self.buffer)
     }
 }
 

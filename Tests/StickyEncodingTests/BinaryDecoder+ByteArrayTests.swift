@@ -30,7 +30,6 @@ class BinaryDecoderByteArrayTests: XCTestCase {
     func testNonSupportedFirstByte() throws {
 
         let input: [UInt8] = [0xf,  0x0, 0x0, 0x0, /// Header: Container Type
-                              0xc,  0x0, 0x0, 0x0, /// Header: Byte count
                               0xa5, 0x0, 0x0, 0x0, /// SingleValueContainer: Type
                               0x4,  0x0, 0x0, 0x0, /// SingleValueContainer: Size
                               0xa,  0x0, 0x0, 0x0  /// SingleValueContainer: Value
@@ -49,10 +48,9 @@ class BinaryDecoderByteArrayTests: XCTestCase {
 
     // MARK: SingleValueContainer Tests
 
-    func testSingleValueContainerWithValidByteInput() throws {
+    func testSingleValueContainerWithValidInput() throws {
 
         let input: [UInt8] = [0xd,  0x0, 0x0, 0x0, /// Header: Container Type
-                              0xc,  0x0, 0x0, 0x0, /// Header: Byte count
                               0xa5, 0x0, 0x0, 0x0, /// SingleValueContainer: Type
                               0x4,  0x0, 0x0, 0x0, /// SingleValueContainer: Size
                               0xa,  0x0, 0x0, 0x0  /// SingleValueContainer: Value
@@ -61,28 +59,9 @@ class BinaryDecoderByteArrayTests: XCTestCase {
         XCTAssertEqual(try decoder.decode(Int32.self, from: input), 10)
     }
 
-    func testSingleValueContainerWithZeroLengthByteCount() throws {
-
-        let input: [UInt8] = [0xd,  0x0, 0x0, 0x0, /// Header: Container Type
-                              0x0,  0x0, 0x0, 0x0  /// Header: Byte count
-            ]
-
-        XCTAssertThrowsError(try decoder.decode(Int32.self, from: input)) { (error) in
-            switch error {
-            case DecodingError.dataCorrupted(let context):
-
-                XCTAssertEqual(context.debugDescription, "Single value container header missing or corrupt.")
-
-            default: XCTFail("Incorrect error returned: \(error)")
-            }
-        }
-    }
-
-
     func testSingleValueContainerWithTruncatedValueSize() throws {
 
         let input: [UInt8] = [0xd,  0x0, 0x0, 0x0, /// Header: Container Type
-                              0xc,  0x0, 0x0, 0x0, /// Header: Byte count
                               0xa5, 0x0, 0x0, 0x0, /// SingleValueContainer: Type
                               0x4,  0x0, 0x0, 0x0, /// SingleValueContainer: Size
                               0xa,  0x0, 0x0       /// SingleValueContainer: Value
@@ -92,27 +71,7 @@ class BinaryDecoderByteArrayTests: XCTestCase {
             switch error {
             case DecodingError.dataCorrupted(let context):
 
-                XCTAssertEqual(context.debugDescription, "Binary data truncated or missing.")
-
-            default: XCTFail("Incorrect error returned: \(error)")
-            }
-        }
-    }
-
-    func testSingleValueContainerWithHeaderByteCountIncorrect() throws {
-
-        let input: [UInt8] = [0xd,  0x0, 0x0, 0x0, /// Header: Container Type
-                              0xd,  0x0, 0x0, 0x0, /// Header: Byte count
-                              0xa5, 0x0, 0x0, 0x0, /// SingleValueContainer: Type
-                              0x4,  0x0, 0x0, 0x0, /// SingleValueContainer: Size
-                              0xa,  0x0, 0x0, 0x0  /// SingleValueContainer: Value
-            ]
-
-        XCTAssertThrowsError(try decoder.decode(Int32.self, from: input)) { (error) in
-            switch error {
-            case DecodingError.dataCorrupted(let context):
-
-                XCTAssertEqual(context.debugDescription, "Binary data truncated or missing.")
+                XCTAssertEqual(context.debugDescription, "Not enough bytes stored to read value of type Int32.")
 
             default: XCTFail("Incorrect error returned: \(error)")
             }
@@ -129,21 +88,18 @@ class BinaryDecoderByteArrayTests: XCTestCase {
 
         let input: [UInt8] = [                     /// Header:
                               0xb,  0x0, 0x0, 0x0, /// - Container Type
-                              0x24, 0x0, 0x0, 0x0, /// - Byte count
 
-                                                      /// KeyedValueContainer:
+                                                   /// KeyedValueContainer:
                               0x1,  0x0, 0x0, 0x0, /// - Count
-                              0x0,  0x0, 0x0, 0x0, /// - Alignment Padding
 
-                                                      /// key:
+                                                   /// key:
                               0x1,  0x0, 0x0, 0x0, /// - Size
                               0x61, 0x0, 0x0, 0x0, /// - Value + Alignment Padding
 
-                                                      /// Header:
+                                                   /// Header:
                               0xd,  0x0, 0x0, 0x0, /// - Container Type
-                              0xc,  0x0, 0x0, 0x0, /// - Byte count
 
-                                                      /// SingleValueContainer:
+                                                   /// SingleValueContainer:
                               0xa5, 0x0, 0x0, 0x0, /// - Type
                               0x4,  0x0, 0x0, 0x0, /// - Size
                               0xa,  0x0, 0x0, 0x0  /// - Value
@@ -152,31 +108,13 @@ class BinaryDecoderByteArrayTests: XCTestCase {
         XCTAssertEqual(try decoder.decode(ExpectedClass.self, from: input).a, 10)
     }
 
-    func testKeyedContainerWithZeroLengthByteCount() throws {
-
-        let input: [UInt8] = [                     /// Header:
-                              0xb,  0x0, 0x0, 0x0, /// - Container Type
-                              0x0,  0x0, 0x0, 0x0, /// - Byte count
-            ]
-
-        XCTAssertThrowsError(try decoder.decode(Int32.self, from: input)) { (error) in
-            switch error {
-            case DecodingError.dataCorrupted(let context):
-
-                XCTAssertEqual(context.debugDescription, "Keyed container header missing or corrupt.")
-
-            default: XCTFail("Incorrect error returned: \(error)")
-            }
-        }
-    }
 
     func testKeyedContainerWithKeyMissing() throws {
 
         let input: [UInt8] = [                     /// Header:
                               0xb,  0x0, 0x0, 0x0, /// - Container Type
-                              0x24, 0x0, 0x0, 0x0, /// - Byte count
 
-                                                      /// KeyedValueContainer:
+                                                   /// KeyedValueContainer:
                               0x1,  0x0, 0x0, 0x0, /// - Count
             ]
 
@@ -184,7 +122,7 @@ class BinaryDecoderByteArrayTests: XCTestCase {
             switch error {
             case DecodingError.dataCorrupted(let context):
 
-                XCTAssertEqual(context.debugDescription, "Binary data truncated or missing.")
+                XCTAssertEqual(context.debugDescription, "Key value header missing or corrupt.")
 
             default: XCTFail("Incorrect error returned: \(error)")
             }
@@ -195,45 +133,13 @@ class BinaryDecoderByteArrayTests: XCTestCase {
 
         let input: [UInt8] = [                     /// Header:
                               0xb,  0x0, 0x0, 0x0, /// - Container Type
-                              0x10, 0x0, 0x0, 0x0, /// - Byte count
 
-                                                      /// KeyedValueContainer:
+                                                   /// KeyedValueContainer:
                               0x1,  0x0, 0x0, 0x0, /// - Count
-                              0x0,  0x0, 0x0, 0x0, /// - Alignment Padding
 
-                                                      /// key:
+                                                   /// key:
                               0x1,  0x0, 0x0, 0x0, /// - Size
                               0x61, 0x0, 0x0, 0x0, /// - Value + Alignment Padding
-            ]
-
-        XCTAssertThrowsError(try decoder.decode(Int32.self, from: input)) { (error) in
-            switch error {
-            case DecodingError.dataCorrupted(let context):
-
-                XCTAssertEqual(context.debugDescription, "Binary data does not contian a proper header.")
-
-            default: XCTFail("Incorrect error returned: \(error)")
-            }
-        }
-    }
-
-    func testKeyedContainerWithValueMissingContainer() throws {
-
-        let input: [UInt8] = [                     /// Header:
-                              0xb,  0x0, 0x0, 0x0, /// - Container Type
-                              0x10, 0x0, 0x0, 0x0, /// - Byte count
-
-                                                      /// KeyedValueContainer:
-                              0x1,  0x0, 0x0, 0x0, /// - Count
-                              0x0,  0x0, 0x0, 0x0, /// - Alignment Padding
-
-                                                      /// key:
-                              0x1,  0x0, 0x0, 0x0, /// - Size
-                              0x61, 0x0, 0x0, 0x0, /// - Value + Alignment Padding
-
-                                                      /// Header:
-                              0xd,  0x0, 0x0, 0x0, /// - Container Type
-                              0xc,  0x0, 0x0, 0x0, /// - Byte count
             ]
 
         XCTAssertThrowsError(try decoder.decode(Int32.self, from: input)) { (error) in
@@ -251,13 +157,11 @@ class BinaryDecoderByteArrayTests: XCTestCase {
 
         let input: [UInt8] = [                     /// Header:
                               0xb,  0x0, 0x0, 0x0, /// - Container Type
-                              0xd,  0x0, 0x0, 0x0, /// - Byte count
 
-                                                      /// KeyedValueContainer:
+                                                   /// KeyedValueContainer:
                               0x1,  0x0, 0x0, 0x0, /// - Count
-                              0x0,  0x0, 0x0, 0x0, /// - Alignment Padding
 
-                                                      /// key:
+                                                   /// key:
                               0x0,  0x0, 0x0, 0x0, /// - Size
                               0x61, 0x0, 0x0, 0x0, /// - Value + Alignment Padding
             ]
@@ -289,17 +193,14 @@ class BinaryDecoderByteArrayTests: XCTestCase {
 
         let input: [UInt8] = [                     /// Header:
                               0xc,  0x0, 0x0, 0x0, /// - Container Type
-                              0x1c, 0x0, 0x0, 0x0, /// - Byte count
 
-                                                      /// UnkeyedValueContainer:
+                                                   /// UnkeyedValueContainer:
                               0x1,  0x0, 0x0, 0x0, /// - Count
-                              0x0,  0x0, 0x0, 0x0, /// - Alignment Padding
 
-                                                      /// Header:
+                                                   /// Header:
                               0xd,  0x0, 0x0, 0x0, /// - Container Type
-                              0xc,  0x0, 0x0, 0x0, /// - Byte count
 
-                                                      /// SingleValueContainer:
+                                                   /// SingleValueContainer:
                               0xa5, 0x0, 0x0, 0x0, /// - Type
                               0x4,  0x0, 0x0, 0x0, /// - Size
                               0xa,  0x0, 0x0, 0x0  /// - Value
@@ -308,58 +209,27 @@ class BinaryDecoderByteArrayTests: XCTestCase {
         XCTAssertEqual(try decoder.decode(ExpectedClass.self, from: input).a, 10)
     }
 
-    func testUnkeyedContainerWithZeroLengthByteCount() throws {
-
-        let input: [UInt8] = [                     /// Header:
-                              0xc,  0x0, 0x0, 0x0, /// - Container Type
-                              0x0,  0x0, 0x0, 0x0  /// - Byte count
-            ]
-
-        XCTAssertThrowsError(try decoder.decode(Int32.self, from: input)) { (error) in
-            switch error {
-                case DecodingError.dataCorrupted(let context):
-
-                    XCTAssertEqual(context.debugDescription, "Unkeyed container header missing or corrupt.")
-
-                default: XCTFail("Incorrect error returned: \(error)")
-            }
-        }
-    }
-
     func testUnkeyedContainerWithValueMissingContainer() throws {
 
         let input: [UInt8] = [                     /// Header:
                               0xc,  0x0, 0x0, 0x0, /// - Container Type
-                              0x10, 0x0, 0x0, 0x0, /// - Byte count
 
-                                                      /// KeyedValueContainer:
+                                                   /// UnkeyedValueContainer:
                               0x1,  0x0, 0x0, 0x0, /// - Count
-                              0x0,  0x0, 0x0, 0x0, /// - Alignment Padding
 
-                                                      /// Header:
+                                                   /// Header:
                               0xd,  0x0, 0x0, 0x0, /// - Container Type
-                              0xc,  0x0, 0x0, 0x0, /// - Byte count
             ]
 
         XCTAssertThrowsError(try decoder.decode(Int32.self, from: input)) { (error) in
             switch error {
             case DecodingError.dataCorrupted(let context):
 
-                XCTAssertEqual(context.debugDescription, "Binary data truncated or missing.")
+                XCTAssertEqual(context.debugDescription, "Single value container header missing or corrupt.")
 
             default: XCTFail("Incorrect error returned: \(error)")
             }
         }
     }
 
-    // MARK: NullContainer Tests
-
-    func testNullContainerWithZeroLengthByteCount() throws {
-
-        let input: [UInt8] = [0xa,  0x0, 0x0, 0x0, /// Header: Container Type
-                              0x0,  0x0, 0x0, 0x0  /// Header: Byte count
-            ]
-
-        XCTAssertNoThrow(try decoder.decode(Optional<Int32>.self, from: input))
-    }
 }

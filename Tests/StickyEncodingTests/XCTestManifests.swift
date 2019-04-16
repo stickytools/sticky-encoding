@@ -24,18 +24,12 @@ extension BinaryDecoderByteArrayTests {
         ("testKeyedContainerWithKeyMissing", testKeyedContainerWithKeyMissing),
         ("testKeyedContainerWithKeyValueMissing", testKeyedContainerWithKeyValueMissing),
         ("testKeyedContainerWithValidByteInput", testKeyedContainerWithValidByteInput),
-        ("testKeyedContainerWithValueMissingContainer", testKeyedContainerWithValueMissingContainer),
-        ("testKeyedContainerWithZeroLengthByteCount", testKeyedContainerWithZeroLengthByteCount),
         ("testKeyedContainerWithZeroLengthByteCountForKeyedValueKey", testKeyedContainerWithZeroLengthByteCountForKeyedValueKey),
         ("testNonSupportedFirstByte", testNonSupportedFirstByte),
-        ("testNullContainerWithZeroLengthByteCount", testNullContainerWithZeroLengthByteCount),
-        ("testSingleValueContainerWithHeaderByteCountIncorrect", testSingleValueContainerWithHeaderByteCountIncorrect),
         ("testSingleValueContainerWithTruncatedValueSize", testSingleValueContainerWithTruncatedValueSize),
-        ("testSingleValueContainerWithValidByteInput", testSingleValueContainerWithValidByteInput),
-        ("testSingleValueContainerWithZeroLengthByteCount", testSingleValueContainerWithZeroLengthByteCount),
+        ("testSingleValueContainerWithValidInput", testSingleValueContainerWithValidInput),
         ("testUnkeyedContainerWithValidByteInput", testUnkeyedContainerWithValidByteInput),
         ("testUnkeyedContainerWithValueMissingContainer", testUnkeyedContainerWithValueMissingContainer),
-        ("testUnkeyedContainerWithZeroLengthByteCount", testUnkeyedContainerWithZeroLengthByteCount),
     ]
 }
 

@@ -86,11 +86,9 @@
             
             <h1 id='binary-format' class='heading'>Binary Format</h1>
 
-<p>The internal binary representation of the encoded data consists of a series of <strong>Elements</strong> each containing a <strong>Header</strong> section followed by a <strong>Container</strong>.  The Element is essentially a wrapper around a Container defining it&rsquo;s type and size in bytes. The format was designed to be as compact and efficient as possible at storing the simplest to the most complex structures that can be encoded.</p>
+<p>The internal binary representation of the encoded data consists of a series of <strong>Elements</strong> each containing a <strong>Header</strong> section followed by a <strong>Container</strong>.  The Element is essentially a wrapper around a Container defining it&rsquo;s type. The format was designed to be as compact and efficient as possible at storing the simplest to the most complex structures that can be encoded.</p>
 
 <p><img src="Binary-Format-Container-Header.png" alt="Binary Format Container Header"></p>
-
-<p>The Header of each Element contains a 32 bit integer representing the container type followed by a 32 integer containing the total number of bytes stored in the Container section of this Element.</p>
 <h2 id='containers' class='heading'>Containers</h2>
 
 <p>Each Container formats it&rsquo;s data based on the requirements of that container. There are 3 container types that can be stored corresponding to the <code>Encoder</code> and <code>Decoder</code> protocol return types for the functions <code>singleValueContainer()</code>, <code>unkeyedContainer()</code>, and <code>container(keyedBy:)</code>. An Element is created in response to each call to any one of these functions.</p>
