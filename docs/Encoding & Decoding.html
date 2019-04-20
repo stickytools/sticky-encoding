@@ -144,7 +144,7 @@ UInt, Double, Bool, and Strings. Simply pass the value to the instance
 of the BinaryEncoder and call <code>encode</code>.</p>
 <pre class="highlight swift"><code>   <span class="k">let</span> <span class="nv">string</span> <span class="o">=</span> <span class="s">"You can encode single values of any type."</span>
 
-   <span class="k">let</span> <span class="nv">encoded</span> <span class="o">=</span> <span class="k">try</span> <span class="n">encoder</span><span class="o">.</span><span class="nf">encode</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
+   <span class="k">let</span> <span class="nv">bytes</span> <span class="o">=</span> <span class="k">try</span> <span class="n">encoder</span><span class="o">.</span><span class="nf">encode</span><span class="p">(</span><span class="n">string</span><span class="p">)</span>
 </code></pre>
 
 <p>Basic structs and classes can also be encoded.</p>

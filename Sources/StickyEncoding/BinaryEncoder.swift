@@ -45,7 +45,7 @@ import Foundation
 /// ```
 ///    let string = "You can encode single values of any type."
 ///
-///    let encoded = try encoder.encode(string)
+///    let bytes = try encoder.encode(string)
 /// ```
 /// Basic structs and classes can also be encoded.
 /// ```
