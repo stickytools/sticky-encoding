@@ -139,9 +139,9 @@ class BinaryDecoderNegativeTests: XCTestCase {
         let encoder = BinaryEncoder()
         let decoder = BinaryDecoder()
 
-        let encodedData = try encoder.encode(InputType(value: 10))
+        let bytes = try encoder.encode(InputType(value: 10))
 
-        XCTAssertThrowsError(try decoder.decode(InputType.self, from: encodedData)) { (error) in
+        XCTAssertThrowsError(try decoder.decode(InputType.self, from: bytes)) { (error) in
             switch error {
             case Error.testError(let message):
                 XCTAssertEqual(message, "Test Error")

@@ -45,7 +45,7 @@ import Foundation
 /// ```
 ///    let string = "You can encode single values of any type."
 ///
-///    let encoded = try encoder.encode(string)
+///    let bytes = try encoder.encode(string)
 /// ```
 /// Basic structs and classes can also be encoded.
 /// ```
@@ -57,7 +57,7 @@ import Foundation
 ///
 ///    let employee = Employee(first: "John", last: "Doe", employeeNumber: 2345643)
 ///
-///    let encodedData = try encoder.encode(employee)
+///    let bytes = try encoder.encode(employee)
 /// ```
 /// As well as Complex types with sub classes.
 ///
@@ -84,20 +84,15 @@ open class BinaryEncoder {
     ///
     /// - throws: An error if any value throws an error during encoding.
     ///
-    open func encode<T: Encodable>(_ value: T) throws -> EncodedData {
+    open func encode<T: Encodable>(_ value: T) throws -> [UInt8] {
         let encoder = _BinaryEncoder(codingPath: [], userInfo: self.userInfo)
 
         try value.encode(to: encoder)
 
-        if let storage = encoder.rootStorage.value {
-            var bytes = Array<UInt8>(repeating: 0, count: StorageContainerWriter.byteCount(storage))
+        guard let storage = encoder.rootStorage.value
+            else { return [] }
 
-            bytes.withUnsafeMutableBytes { (buffer) -> Void in
-               StorageContainerWriter.write(storage, to: buffer)
-            }
-            return EncodedData(bytes)
-        }
-        return EncodedData()
+        return StorageContainerWriter.convert(storage)
     }
 
     // MARK: Getting contextual information

@@ -63,11 +63,11 @@ class DocumentationExampleTests: XCTestCase {
             let employeeNumber: Int
         }
 
-        let encodedData = try encoder.encode(Employee(first: "John", last: "Doe", employeeNumber: 2345643))
+        let bytes = try encoder.encode(Employee(first: "John", last: "Doe", employeeNumber: 2345643))
 
         /// Actual code in example.
         ///
-        let _ = try decoder.decode(Employee.self, from: encodedData)
+        let _ = try decoder.decode(Employee.self, from: bytes)
     }
 
     func testEncodedDataExample1() throws {
@@ -84,45 +84,24 @@ class DocumentationExampleTests: XCTestCase {
 
         /// Actual code in example.
         ///
-        let encodedData = try encoder.encode(employee)
+        let bytes = try encoder.encode(employee)
 
-        FileManager.default.createFile(atPath: "employee.bin", contents: Data(encodedData))
-    }
-
-    func testEncodedDataExample2() throws {
-
-        /// Code from previous example used as boiler plate for this example.
-        ///
-        struct Employee: Codable {
-            let first: String
-            let last: String
-            let employeeNumber: Int
-        }
-
-        let employee = Employee(first: "John", last: "Doe", employeeNumber: 2345643)
-
-        /// Actual code in example.
-        ///
-        let encodedData = try encoder.encode(employee)
-
-        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: encodedData.byteCount, alignment: MemoryLayout<UInt8>.alignment)
-
-        encodedData.write(to: buffer)
+        FileManager.default.createFile(atPath: "employee.bin", contents: Data(bytes))
     }
 
     func testArrayConstructionExample() throws {
-        
-        let encoder     = BinaryEncoder()
-        let encodedData = try encoder.encode(["String 1", "String 2"])
 
-        let _ = Array(encodedData)
+        let encoder     = BinaryEncoder()
+        let bytes = try encoder.encode(["String 1", "String 2"])
+
+        let _ = Array(bytes)
     }
 
     func testDataConstructionExample() throws {
-        
-        let encoder     = BinaryEncoder()
-        let encodedData = try encoder.encode(["String 1", "String 2"])
 
-        let _ = Data(encodedData)
+        let encoder     = BinaryEncoder()
+        let bytes = try encoder.encode(["String 1", "String 2"])
+
+        let _ = Data(bytes)
     }
 }
