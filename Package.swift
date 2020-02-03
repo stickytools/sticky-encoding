@@ -1,4 +1,4 @@
-// swift-tools-version:4.2
+// swift-tools-version:5.1
 ///
 /// Package.swift
 ///
@@ -25,6 +25,8 @@ let package = Package(
         products: [
             .library(name: "StickyEncoding", type: .dynamic, targets: ["StickyEncoding"])
         ],
+        dependencies: [
+        ],
         targets: [
             /// Module targets
             .target(name: "StickyEncoding", dependencies: [], path: "Sources/StickyEncoding"),
@@ -32,5 +34,5 @@ let package = Package(
             /// Tests
             .testTarget(name: "StickyEncodingTests", dependencies: ["StickyEncoding"], path: "Tests/StickyEncodingTests")
         ],
-        swiftLanguageVersions: [.v4_2]
+        swiftLanguageVersions: [.v5]
 )
